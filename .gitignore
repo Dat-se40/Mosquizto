@@ -1,15 +1,26 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Các file build của Gradle (Cực kỳ quan trọng)
+.gradle/
+build/
+/*/build/
+
+# Các file cấu hình riêng của máy bạn (Chứa đường dẫn SDK)
 local.properties
+
+# Các file của Android Studio / IntelliJ (Tránh xung đột giao diện IDE)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Các file rác của hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Các file log và file tạm
+*.log
+captures/
+
+# Thư mục build của code C++ (nếu có dùng NDK)
+.externalNativeBuild
+.cxx/
