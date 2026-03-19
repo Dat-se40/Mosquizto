@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mosquizto</string>
+    <string name="title_activity_login_form">LoginForm</string>
 </resources>
