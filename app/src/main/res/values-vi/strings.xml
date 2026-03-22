@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mosquizto</string>
+    <string name="textView_Login">Đăng nhập</string>
+    <string name="editText_MailOrUsername">Email hoặc tên đăng nhập</string>
+    <string name="editText_Password">Mật khẩu</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="textView_ForgotPassword">Quên mật khẩu</string>
+</resources>

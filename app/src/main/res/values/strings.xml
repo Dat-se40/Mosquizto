@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Mosquizto</string>
-    <string name="title_activity_login_form">LoginForm</string>
+    <string name="title_activity_login_form" translatable="false">LoginForm</string>
+    <string name="textView_Login">Log in</string>
+    <string name="editText_MailOrUsername">Email or username</string>
+    <string name="editText_Password">Password</string>
+    <string name="btn_login">Log in</string>
+    <string name="textView_ForgotPassword">Forgot password</string>
 </resources>
