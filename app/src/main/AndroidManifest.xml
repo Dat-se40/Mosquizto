@@ -13,20 +13,20 @@
         android:theme="@style/Theme.Mosquizto">
         <activity
             android:name=".Activities.Login"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.LoginForm"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_login_form"
-            android:theme="@style/Theme.Mosquizto" />
+            android:theme="@style/Theme.Mosquizto">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

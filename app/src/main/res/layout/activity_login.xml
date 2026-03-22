@@ -26,8 +26,7 @@
                 android:layout_marginTop="80dp"
                 android:text="@string/textView_Login"
                 android:textColor="#f5f5f6"
-                android:textSize="50sp"
-                android:textStyle="bold" />
+                android:textSize="50sp" />
 
             <EditText
                 android:id="@+id/editText_MailOrUsername"
@@ -41,8 +40,9 @@
                 android:hint="@string/editText_MailOrUsername"
                 android:inputType="textEmailAddress"
                 android:textColorHint="#959fb5"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textSize="23sp"
+
+                />
 
             <EditText
                 android:id="@+id/editText_Password"
@@ -56,11 +56,11 @@
                 android:hint="@string/editText_Password"
                 android:inputType="textPassword"
                 android:textColorHint="#959fb5"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textSize="23sp"/>
 
             <Button
                 android:id="@+id/btn_login"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_login"
@@ -69,8 +69,8 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginEnd="40dp"
                 android:textColor="#4f5877"
-                android:textSize="25sp"
-                android:backgroundTint="#2f3855"
+                android:textSize="23sp"
+                app:backgroundTint="@null"
                 android:background="@drawable/custom_btn"/>
 
             <TextView
@@ -81,8 +81,7 @@
                 android:gravity="center"
                 android:text="@string/textView_ForgotPassword"
                 android:textColor="#aaaef1"
-                android:textSize="25sp"
-                android:textStyle="bold"
+                android:textSize="23sp"
                 android:layout_marginTop="20dp"/>
 
         </LinearLayout>

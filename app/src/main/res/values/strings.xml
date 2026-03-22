@@ -6,4 +6,8 @@
     <string name="editText_Password">Password</string>
     <string name="btn_login">Log in</string>
     <string name="textView_ForgotPassword">Forgot password</string>
+
+    <string name="msg_empty_fields">Please fill in all fields!</string>
+    <string name="msg_dev_mode">This feature is under development!</string>
+    <string name="msg_login_success">Logging in as %1$s...</string>
 </resources>
