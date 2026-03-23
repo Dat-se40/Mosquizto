@@ -4,7 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:fontFamily">@font/geomanist_medium</item>
-        <item name="fontFamily">@font/geomanist_medium</item>
+
     </style>
 
     <style name="Theme.Mosquizto" parent="Base.Theme.Mosquizto" />

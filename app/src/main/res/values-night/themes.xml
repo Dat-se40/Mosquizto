@@ -4,6 +4,6 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:fontFamily">@font/geomanist_medium</item>
-        <item name="fontFamily">@font/geomanist_medium</item>
+
     </style>
 </resources>

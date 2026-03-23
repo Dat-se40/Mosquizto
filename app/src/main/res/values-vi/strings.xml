@@ -10,4 +10,13 @@
     <string name="msg_empty_fields">Vui lòng điền đầy đủ thông tin!</string>
     <string name="msg_dev_mode">Chức năng này đang phát triển!</string>
     <string name="msg_login_success">Đang đăng nhập tài khoản %1$s...</string>
+
+    <string name="textView_ResetPass">Đặt lại mật khẩu</string>
+    <string name="textView_NoteResetPass">Chúng tôi sẽ gửi email cho bạn một liên kết để đặt lại mật khẩu.</string>
+    <string name="editText_MailReset">Nhập địa chỉ email</string>
+    <string name="btn_SendLink">Gửi liên kết</string>"
+    <string name="textView_ResetNoti">Chúng tôi đã gửi một email đến </string>"
+    <string name="textView_NoteRSNoti">Nhấp vào liên kết trong email. Hãy chắc chắn rằng bạn đã
+        kiểm tra hộp thư rác nếu không thấy email trong hộp thư của bạn</string>
+    <string name="btn_Gobacktologin">Quay lại đăng nhập</string>"
 </resources>

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -81,7 +82,8 @@ public class Login extends AppCompatActivity {
 
         // Sự kiện Quên mật khẩu
         tvForgotPassword.setOnClickListener(v -> {
-            Toast.makeText(Login.this, getString(R.string.msg_dev_mode), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Login.this, ResetPass.class);
+            startActivity(intent);
         });
     }
 
@@ -90,16 +92,15 @@ public class Login extends AppCompatActivity {
         String pass = etPassword.getText().toString().trim();
 
         if (!user.isEmpty() && !pass.isEmpty()) {
-            // TRẠNG THÁI: ĐÃ NHẬP ĐỦ
+            // TRẠNG THÁI: ĐÃ NHẬP ĐỦt
             btnLogin.setEnabled(true);
             btnLogin.setAlpha(1.0f);
 
-            // Đổi màu nền nút (Ví dụ: Đổi sang màu Trắng hoặc màu Xanh sáng)
+            // Đổi màu nền nút
             btnLogin.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor("#FFFFFF")));
+                    android.graphics.Color.parseColor("#4254ff")));
 
-            // Đổi màu chữ (Ví dụ: Đổi sang màu Xanh đen giống màu nền App để nổi bật)
-            btnLogin.setTextColor(android.graphics.Color.parseColor("#0a0a2c"));
+            btnLogin.setTextColor(android.graphics.Color.parseColor("#f4f2f8"));
 
         } else {
             // TRẠNG THÁI: CHƯA ĐỦ THÔNG TIN

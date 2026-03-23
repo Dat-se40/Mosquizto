@@ -10,4 +10,13 @@
     <string name="msg_empty_fields">Please fill in all fields!</string>
     <string name="msg_dev_mode">This feature is under development!</string>
     <string name="msg_login_success">Logging in as %1$s...</string>
+
+    <string name="textView_ResetPass">Reset Password</string>
+    <string name="textView_NoteResetPass">We\'ll email you a link to reset your password.</string>
+    <string name="editText_MailReset">Enter your email</string>
+    <string name="btn_SendLink">Send Link</string>
+    <string name="textView_ResetNoti">We\'ve sent an email to %1$s</string>
+    <string name="textView_NoteRSNoti">Click the link in the email. Be sure to check your
+        spam folder if you don\'t see the email in your inbox</string>
+    <string name="btn_Gobacktologin">Go back to login</string>
 </resources>
