@@ -29,7 +29,7 @@ public class ResetPass extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_resetpass);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.imageButton_back).getRootView(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -58,8 +58,8 @@ public class ResetPass extends AppCompatActivity {
                 if (!email.isEmpty()) {
                     btnSendLink.setEnabled(true);
                     btnSendLink.setAlpha(1.0f);
-                    btnSendLink.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
-                    btnSendLink.setTextColor(Color.parseColor("#0a0a2c"));
+                    btnSendLink.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4254ff")));
+                    btnSendLink.setTextColor(Color.parseColor("#f4f2f8"));
                 } else {
                     btnSendLink.setEnabled(false);
                     btnSendLink.setAlpha(0.5f);

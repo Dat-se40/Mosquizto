@@ -19,4 +19,5 @@
     <string name="textView_NoteRSNoti">Click the link in the email. Be sure to check your
         spam folder if you don\'t see the email in your inbox</string>
     <string name="btn_Gobacktologin">Go back to login</string>
+    <string name="imageButton_back">Back</string>"
 </resources>
