@@ -1,6 +1,10 @@
+import org.gradle.kotlin.dsl.dependencies
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id ("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -62,4 +66,12 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+// Hilt
+    implementation("com.google.dagger:hilt-android:2.59.2")
+    annotationProcessor ("com.google.dagger:hilt-android-compiler:2.59.2")
+    // Lifecycle (ViewModel & LiveData)
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
+
 }

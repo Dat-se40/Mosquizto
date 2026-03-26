@@ -1,9 +1,9 @@
-package com.example.mosquizto.services.itf;
+package com.example.mosquizto.Services.itf;
 
 
-import com.example.mosquizto.dto.request.LoginRequest;
-import com.example.mosquizto.dto.response.ApiResponse;
-import com.example.mosquizto.dto.response.LoginResponse;
+import com.example.mosquizto.Dto.request.LoginRequest;
+import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

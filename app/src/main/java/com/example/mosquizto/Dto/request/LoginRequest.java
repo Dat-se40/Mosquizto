@@ -1,4 +1,4 @@
-package com.example.mosquizto.dto.request;
+package com.example.mosquizto.Dto.request;
 
 public class LoginRequest {
     private String username;

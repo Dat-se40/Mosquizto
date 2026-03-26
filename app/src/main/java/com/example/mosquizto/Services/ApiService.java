@@ -1,11 +1,8 @@
-package com.example.mosquizto.services;
-
-import static android.provider.Settings.System.getString;
+package com.example.mosquizto.Services;
 
 import android.content.Context;
 
 import com.example.mosquizto.R;
-import com.google.gson.Gson;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

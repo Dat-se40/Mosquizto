@@ -1,4 +1,9 @@
 package com.example.mosquizto;
 
-public class MosquiztoApp {
+import android.app.Application;
+
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
+public class MosquiztoApp extends Application {
 }

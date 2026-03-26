@@ -1,4 +1,4 @@
-package com.example.mosquizto.dto.response;
+package com.example.mosquizto.Dto.response;
 
 public class ApiResponse<T> {
     private int status;

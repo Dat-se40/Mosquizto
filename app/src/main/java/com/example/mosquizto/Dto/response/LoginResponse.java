@@ -1,8 +1,6 @@
-package com.example.mosquizto.dto.response;
+package com.example.mosquizto.Dto.response;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.jetbrains.annotations.NotNull;
 
 public class LoginResponse {
     @SerializedName("access_token")
