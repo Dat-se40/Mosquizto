@@ -21,4 +21,19 @@
     <string name="btn_Gobacktologin">Go back to login</string>
     <string name="imageButton_back">Back</string>"
     <string name="lostConnectionNoti">Lost Connection</string>
+
+    <string name="title_create_account">Create account</string>
+    <string name="hint_birthdate">Date of birth</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="terms_text">By signing up, you accept Mosquizto\'s Terms of Service and Privacy Policy</string>
+    <string name="btn_create_account">Create account</string>
+
+    <string name="title_profile">Profile</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_activity">Activity</string>
+    <string name="title_achievements">Achievements</string>
+    <string name="see_all">See all</string>
+    <string name="streak_title">Start a study streak</string>
+    <string name="streak_desc">Study streaks help you stay motivated and reach your goals. Start your first streak today!</string>
 </resources>
