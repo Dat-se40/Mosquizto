@@ -13,4 +13,8 @@ public class SessionManager {
     public void saveToken(String _accessToken) {
         accessToken = _accessToken ;
     }
+    public String getAccessToken()
+    {
+        return accessToken ;
+    }
 }

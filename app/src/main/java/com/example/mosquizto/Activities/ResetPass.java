@@ -9,21 +9,30 @@ import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.R;
+import com.example.mosquizto.ViewModels.ResetPassViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ResetPass extends AppCompatActivity {
 
     private ImageButton btnBack;
     private EditText etMailReset;
     private Button btnSendLink;
 
+    private ResetPassViewModel resetPassViewModel ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +52,21 @@ public class ResetPass extends AppCompatActivity {
         btnBack = findViewById(R.id.imageButton_back);
         etMailReset = findViewById(R.id.editText_MailReset);
         btnSendLink = findViewById(R.id.btn_SendLink);
+        resetPassViewModel = new ViewModelProvider(this).get(ResetPassViewModel.class);
+
+        resetPassViewModel.errorMessage.observe(this, msg ->
+        {
+            Toast.makeText(this,msg, Toast.LENGTH_LONG).show();
+        });
+        resetPassViewModel.isResetLinkSet.observe(this,isSent ->
+        {
+            if(isSent){
+                String email = etMailReset.getText().toString().trim();
+                Intent intent = new Intent(ResetPass.this, RSPassNoti.class);
+                intent.putExtra("user_email", email);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupListeners() {
@@ -74,9 +98,11 @@ public class ResetPass extends AppCompatActivity {
 
         btnSendLink.setOnClickListener(v -> {
             String email = etMailReset.getText().toString().trim();
-            Intent intent = new Intent(ResetPass.this, RSPassNoti.class);
-            intent.putExtra("user_email", email);
-            startActivity(intent);
+            resetPassViewModel.ForgetPassword(email);
+//            Intent intent = new Intent(ResetPass.this, RSPassNoti.class);
+//            intent.putExtra("user_email", email);
+//            startActivity(intent);
+//
         });
     }
 }

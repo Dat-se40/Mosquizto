@@ -20,4 +20,5 @@
         kiểm tra hộp thư rác nếu không thấy email trong hộp thư của bạn</string>
     <string name="btn_Gobacktologin">Quay lại đăng nhập</string>"
     <string name="imageButton_back">Quay lại</string>"
+    <string name="lostConnectionNoti">Mất kết nối</string>
 </resources>

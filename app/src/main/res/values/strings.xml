@@ -20,4 +20,5 @@
         spam folder if you don\'t see the email in your inbox</string>
     <string name="btn_Gobacktologin">Go back to login</string>
     <string name="imageButton_back">Back</string>"
+    <string name="lostConnectionNoti">Lost Connection</string>
 </resources>

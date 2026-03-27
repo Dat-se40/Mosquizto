@@ -39,7 +39,7 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String user, String pass) {
         _isLoading.setValue(true);
-        userApi.signUp(new LoginRequest(user, pass)).enqueue(new Callback<ApiResponse<LoginResponse>>() {
+        userApi.login(new LoginRequest(user, pass)).enqueue(new Callback<ApiResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
                 _isLoading.setValue(false);

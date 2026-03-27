@@ -2,6 +2,7 @@ package com.example.mosquizto.Services.itf;
 
 
 import com.example.mosquizto.Dto.request.LoginRequest;
+import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 
@@ -11,7 +12,11 @@ import retrofit2.http.POST;
 
 public interface UserApi {
     @POST("auth/login")
-    Call<ApiResponse<LoginResponse>> signUp(@Body LoginRequest request);
-
-
+    Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
+    @POST("auth/forgot-password")
+    Call<ApiResponse<?>> forgotPassword(@Body String email);
+    @POST("auth/resigter")
+    Call<ApiResponse<String>> signUp(@Body SignupRequest signupRequest);
+    @POST("auth/logout")
+    Call<ApiResponse<String>> logout();
 }
