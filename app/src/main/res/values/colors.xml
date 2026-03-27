@@ -2,4 +2,19 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="bg_dark_navy">#0D1B3E</color>
+
+    <color name="surface_dark">#1E2D50</color>
+    <color name="surface_darker">#1A2540</color>
+
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_hint">#8A9BB5</color>
+    <color name="text_link">#4D8EFF</color>
+    <color name="text_light_purple">#DDDDFF</color>
+    <color name="text_gray">#AABBCC</color>
+
+    <color name="colorPrimary">#4D8EFF</color>
+    <color name="colorPrimaryDark">#0D1B3E</color>
+    <color name="colorAccent">#F5C518</color>
 </resources>
