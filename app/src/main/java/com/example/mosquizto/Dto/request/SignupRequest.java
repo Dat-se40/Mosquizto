@@ -22,4 +22,10 @@ public class SignupRequest {
 
     @NotNull
     private String confirmPassword;
+
+    @NotNull
+    private String birthdate;
+
+    public SignupRequest(String s, String s1, String email, String password, String password1, String birthdate) {
+    }
 }
