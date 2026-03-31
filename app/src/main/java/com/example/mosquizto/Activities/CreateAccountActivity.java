@@ -123,7 +123,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private void setLoading(boolean loading) {
         btnCreateAccount.setEnabled(!loading && isFormValid());
-        btnCreateAccount.setText(loading ? "Đang xử lý…" : getString(R.string.btn_create_account));
+        btnCreateAccount.setText(loading ? "Processing…" : getString(R.string.btn_create_account));
     }
 
     private void showDatePicker() {
