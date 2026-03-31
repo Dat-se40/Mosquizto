@@ -21,8 +21,10 @@
     <string name="btn_Gobacktologin">Quay lại đăng nhập</string>"
     <string name="imageButton_back">Quay lại</string>"
     <string name="lostConnectionNoti">Mất kết nối</string>
-
+    <string name="textView_FullName">Họ và tên</string>
+    <string name="textView_UserName">Tên người dùng</string>
     <string name="title_create_account">Tạo tài khoản</string>
+    <string name="textView_ConfirmPassword">Xác minh mật khẩu</string>
     <string name="hint_birthdate">Ngày sinh</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Mật khẩu</string>

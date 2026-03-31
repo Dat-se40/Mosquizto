@@ -31,18 +31,18 @@
             android:textStyle="bold"
             android:layout_marginBottom="32dp" />
 
-        <EditText
-            android:id="@+id/etBirthdate"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint="@string/hint_birthdate"
-            android:textColorHint="#8A9BB5"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/custom_edittext_border"
-            android:paddingStart="16dp"
-            android:paddingEnd="48dp"
-            android:inputType="date"
-            android:layout_marginBottom="16dp" />
+<!--        <EditText-->
+<!--            android:id="@+id/etBirthdate"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="56dp"-->
+<!--            android:hint="@string/hint_birthdate"-->
+<!--            android:textColorHint="#8A9BB5"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:background="@drawable/custom_edittext_border"-->
+<!--            android:paddingStart="16dp"-->
+<!--            android:paddingEnd="48dp"-->
+<!--            android:inputType="date"-->
+<!--            android:layout_marginBottom="16dp" />-->
 
         <EditText
             android:id="@+id/etEmail"
@@ -56,6 +56,28 @@
             android:paddingEnd="16dp"
             android:inputType="textEmailAddress"
             android:layout_marginBottom="16dp" />
+        <EditText
+            android:id="@+id/etFullName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="@string/textView_FullName"
+            android:textColorHint="#8A9BB5"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/custom_edittext_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="16dp" />
+        <EditText
+            android:id="@+id/etUserName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="@string/textView_UserName"
+            android:textColorHint="#8A9BB5"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/custom_edittext_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="16dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -76,6 +98,35 @@
 
             <ImageButton
                 android:id="@+id/btnTogglePassword"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_visibility_off"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Ẩn/Hiện mật khẩu" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="20dp">
+
+            <EditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="@string/textView_ConfirmPassword"
+                android:textColorHint="#8A9BB5"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/custom_edittext_border"
+                android:paddingStart="16dp"
+                android:paddingEnd="52dp"
+                android:inputType="textPassword" />
+
+            <ImageButton
+                android:id="@+id/btnToggleConfirmPassword"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"

@@ -21,7 +21,9 @@
     <string name="btn_Gobacktologin">Go back to login</string>
     <string name="imageButton_back">Back</string>"
     <string name="lostConnectionNoti">Lost Connection</string>
-
+    <string name="textView_FullName">Full name</string>
+    <string name="textView_UserName">User name</string>
+    <string name="textView_ConfirmPassword">Confirm password</string>
     <string name="title_create_account">Create account</string>
     <string name="hint_birthdate">Date of birth</string>
     <string name="hint_email">Email</string>

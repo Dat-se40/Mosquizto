@@ -34,12 +34,14 @@ public class CreateAccountActivity extends AppCompatActivity {
     private CreateAccountViewModel viewModel;
 
     private ImageButton btnBack;
-    private EditText etBirthdate;
     private EditText etEmail;
     private EditText etPassword;
     private ImageButton btnTogglePassword;
     private Button btnCreateAccount;
 
+    private EditText etConfirmPassword;
+    private EditText etFullName ;
+    private EditText etUserName ;
     private boolean isPasswordVisible = false;
     private String selectedBirthdate = "";
 
@@ -63,9 +65,11 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private void initViews() {
         btnBack          = findViewById(R.id.btnBack);
-        etBirthdate      = findViewById(R.id.etBirthdate);
         etEmail          = findViewById(R.id.etEmail);
+        etFullName      = findViewById(R.id.etFullName);
+        etUserName = findViewById(R.id.etUserName);
         etPassword       = findViewById(R.id.etPassword);
+        etConfirmPassword = findViewById(R.id.etConfirmPassword) ;
         btnTogglePassword = findViewById(R.id.btnTogglePassword);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
     }
@@ -75,9 +79,9 @@ public class CreateAccountActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         // DatePicker
-        etBirthdate.setFocusable(false);
-        etBirthdate.setClickable(true);
-        etBirthdate.setOnClickListener(v -> showDatePicker());
+//        etBirthdate.setFocusable(false);
+//        etBirthdate.setClickable(true);
+//        etBirthdate.setOnClickListener(v -> showDatePicker());
 
         // Toggle password
         btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
@@ -95,7 +99,11 @@ public class CreateAccountActivity extends AppCompatActivity {
         btnCreateAccount.setOnClickListener(v -> {
             String email     = etEmail.getText().toString().trim();
             String password  = etPassword.getText().toString();
-            viewModel.signup(email, password, selectedBirthdate);
+            String confirmPassword = etConfirmPassword.getText().toString() ;
+            String fullName = etFullName.getText().toString() ;
+            String userName = etUserName.getText().toString();
+
+            viewModel.signup(fullName,userName,email, password ,confirmPassword);
         });
     }
 
@@ -119,6 +127,11 @@ public class CreateAccountActivity extends AppCompatActivity {
                     break;
             }
         });
+        viewModel.message.observe(this, msg ->
+        {
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            // Thông báo gửi otp bên mail
+        });
     }
 
     private void setLoading(boolean loading) {
@@ -132,7 +145,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 this,
                 (view, year, month, day) -> {
                     selectedBirthdate = String.format("%02d/%02d/%04d", day, month + 1, year);
-                    etBirthdate.setText(selectedBirthdate);
+                //    etBirthdate.setText(selectedBirthdate);
                     validateForm();
                 },
                 cal.get(Calendar.YEAR) - 18,
