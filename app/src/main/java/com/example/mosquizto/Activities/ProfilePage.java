@@ -19,7 +19,7 @@ import javax.inject.Inject;
 public class ProfilePage extends AppCompatActivity {
     private TextView tvUserName ;
     @Inject
-    private SessionManager sessionManager ;
+    public SessionManager sessionManager ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
