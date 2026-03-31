@@ -44,7 +44,9 @@ public class LoginViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
                 _isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
+                    // chống chế
                     sessionManager.saveToken(response.body().getData().getAccessToken());
+                    sessionManager.setCurrentUserProfile(new LoginRequest(user,pass));
                 } else {
                     _errorMessage.setValue(response.message());
                 }
