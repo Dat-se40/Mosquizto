@@ -38,4 +38,19 @@
     <string name="see_all">Xem tất cả</string>
     <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
     <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
+
+    <string name="title_create_account">Tạo tài khoản</string>
+    <string name="hint_birthdate">Ngày sinh</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="terms_text">Bằng việc đăng ký, bạn chấp nhận Điều khoản dịch vụ và Chính sách quyền riêng tư của Mosquizto</string>
+    <string name="btn_create_account">Tạo tài khoản</string>
+
+    <string name="title_profile">Hồ sơ</string>
+    <string name="menu_settings">Cài đặt</string>
+    <string name="menu_activity">Hoạt động</string>
+    <string name="title_achievements">Thành tựu</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
+    <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
 </resources>
