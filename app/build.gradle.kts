@@ -3,8 +3,8 @@ import org.gradle.kotlin.dsl.dependencies
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    id ("com.google.dagger.hilt.android")
-
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -68,8 +70,9 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
 // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation("com.google.dagger:hilt-android:2.59.2")
-    annotationProcessor ("com.google.dagger:hilt-android-compiler:2.59.2")
     // Lifecycle (ViewModel & LiveData)
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
