@@ -36,4 +36,11 @@
     <string name="see_all">Xem tất cả</string>
     <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
     <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
+
+    <string name="headline">Cách học tốt nhất.\nĐăng ký miễn phí.</string>
+    <string name="welcome_terms_text">Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi</string>
+    <string name="btn_google">Tiếp tục với Google</string>
+    <string name="btn_email">Đăng ký bằng Email</string>
+    <string name="have_an_account">Đã có tài khoản? </string>
+    <string name="login">Đăng nhập</string>
 </resources>
