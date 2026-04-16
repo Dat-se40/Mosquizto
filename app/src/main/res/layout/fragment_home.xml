@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"> <View
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:background="@drawable/bg_home_gradient" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_vertical">
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_search_bar"
+                android:drawableStart="@drawable/icon_search"
+                android:drawablePadding="8dp"
+                android:hint="Search"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColorHint="#8A8A8A"
+                android:textSize="16sp" />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:src="@mipmap/ic_launcher_round" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jump back in"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#282E3E"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvJumpBackIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingStart="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recents"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#282E3E"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:nestedScrollingEnabled="false"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_popup_sync"
+                    app:tint="#4255FF"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Learn questions"
+                        android:textColor="#586380"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quizlet basics"
+                        android:textColor="#282E3E"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 / 1"
+                        android:textColor="#586380"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Study Guides instantly turn your notes into out..."
+                        android:textSize="22sp"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/bg_outline_button"
+                        android:text="Anticipation Guides"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_outline_button"
+                        android:text="Textbooks"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_outline_button"
+                        android:text="Study Guides"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_outline_button"
+                        android:text="References"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp"
+                        android:textColor="#282E3E"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Based on your recent studying"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#586380"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nhập môn mạng máy t..."
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#282E3E"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBasedOnRecent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingStart="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch it up with a game"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#586380"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@android:drawable/ic_menu_send"
+                        app:tint="#4255FF"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Unit 5: The World In Our Hands"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Blast correct answers before time's up"
+                        android:textSize="16sp"
+                        android:textColor="#586380"/>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="16dp"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/bg_image_placeholder" /> <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Play Blast"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#4255FF"
+                    android:background="@drawable/bg_button_light_purple"
+                    app:backgroundTint="@null"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Study exactly what you need"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#586380"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp">
+                        <View android:layout_width="28dp" android:layout_height="28dp" android:layout_marginTop="12dp" android:layout_marginStart="12dp" android:background="#4FBBFF" />
+                        <View android:layout_width="28dp" android:layout_height="28dp" android:background="#4255FF" />
+                    </FrameLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Create your\nown flashcards"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:textColor="#282E3E"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Study exactly what's on\nyour test"
+                        android:textSize="16sp"
+                        android:textColor="#586380"/>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="16dp"
+                        android:background="#DFF2FF" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

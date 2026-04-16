@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvJumpTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unit 5: The World I..."
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#282E3E"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/imgMore"/>
+            <ImageView
+                android:id="@+id/imgMore"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/icon_more" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginTop="24dp"
+            android:max="100"
+            android:progress="1"
+            android:progressDrawable="@drawable/custom_progress_bar" />
+
+        <TextView
+            android:id="@+id/tvProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="1% of questions completed"
+            android:textColor="#586380"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btnContinue"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_button_blue"
+            app:backgroundTint="@null"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
