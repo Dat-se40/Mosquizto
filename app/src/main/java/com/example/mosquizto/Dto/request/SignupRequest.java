@@ -23,9 +23,11 @@ public class SignupRequest {
     @NotNull
     private String confirmPassword;
 
-    @NotNull
-    private String birthdate;
-
-    public SignupRequest(String s, String s1, String email, String password, String password1, String birthdate) {
+    public SignupRequest(@NotNull String fullName, @NotNull String username, @NotNull String email, @NotNull String password, @NotNull String confirmPassword) {
+        this.fullName = fullName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
     }
 }

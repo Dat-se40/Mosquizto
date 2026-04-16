@@ -4,6 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mosquizto.Services.SessionManager;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+
 public class WelcomeViewModel extends ViewModel {
 
     private final MutableLiveData<String> _navigateTo = new MutableLiveData<>();
@@ -23,5 +30,9 @@ public class WelcomeViewModel extends ViewModel {
 
     public void onNavigationDone() {
         _navigateTo.setValue(null);
+    }
+    public void onWelcomeBackClicked()
+    {
+
     }
 }

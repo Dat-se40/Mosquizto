@@ -15,34 +15,20 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Mosquizto"
         android:name=".MosquiztoApp">
-        <!-- usesCleartextTraffic: assume we choose http instead of https (as default) -->
-<!--        <activity-->
-<!--            android:name=".Activities.Login"-->
-<!--            android:exported="true"-->
-<!--            android:label="@string/title_activity_login_form"-->
-<!--            android:theme="@style/Theme.Mosquizto">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
 
         <activity
-            android:name=".Activities.WelcomeActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name=".Activities.Login"
+            android:exported="false"
+            android:label="@string/title_activity_login_form"
+            android:theme="@style/Theme.Mosquizto">
+
         </activity>
 
-        <activity android:name=".Activities.Login"
-            android:exported="false"
-            android:theme="@style/Theme.Mosquizto" />
+        <activity
+            android:name=".Activities.CreateAccountActivity"
+            android:exported="false">
 
-        <activity android:name=".Activities.CreateAccountActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Mosquizto" />
+        </activity>
 
         <activity
             android:name=".Activities.ResetPass"
@@ -54,10 +40,21 @@
             android:name=".Activities.RSPassNoti"
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />
-
+        <activity android:name=".Activities.ProfilePage"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto"
+            />
         <activity
             android:name=".MainActivity"
             android:exported="false">
+
+        </activity>
+        <activity android:name=".Activities.WelcomeActivity" android:exported="true"
+            android:theme="@style/Theme.Mosquizto">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
