@@ -18,120 +18,60 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
-
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.ViewModels.LoginViewModel;
+import com.example.mosquizto.Services.SessionManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class Login extends AppCompatActivity {
 
-    private EditText etMailOrUsername, etPassword;
+    private EditText edtMailOrUsername, edtPassword;
     private Button btnLogin;
-    private TextView tvLoginTitle, tvForgotPassword;
-    private ProgressBar pgLoading ;
+    private SessionManager sessionManager;
 
-    private LoginViewModel viewModel ;
+    private LoginViewModel loginViewModel ;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        initViews();
-        setupListeners();
 
+        sessionManager = new SessionManager(this); // Khởi tạo SessionManager
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-    }
-
-    private void initViews() {
-        etMailOrUsername = findViewById(R.id.editText_MailOrUsername);
-        etPassword = findViewById(R.id.editText_Password);
+        edtMailOrUsername = findViewById(R.id.editText_MailOrUsername); // ID tùy theo file XML của bạn
+        edtPassword = findViewById(R.id.editText_Password);
         btnLogin = findViewById(R.id.btn_login);
-        tvLoginTitle = findViewById(R.id.textView_Login);
-        tvForgotPassword = findViewById(R.id.textView_ForgotPassword);
-        pgLoading = findViewById(R.id.pgLoading) ;
-        // Ban đầu làm mờ nút và khóa không cho bấm
-        btnLogin.setEnabled(false);
-        btnLogin.setAlpha(0.5f);
-        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        viewModel.errorMessage.observe(this, msg ->
-        {
-            Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
-        });
-
-        viewModel.isLoading.observe(this, loading ->
-        {
-            btnLogin.setEnabled(!loading);
-            pgLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-        });
-    }
-
-    private void setupListeners() {
-        // Theo dõi thay đổi text trong 2 ô nhập liệu, tạm block để đỡ lag
-        TextWatcher loginWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                checkInputs();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        };
-
-        etMailOrUsername.addTextChangedListener(loginWatcher)   ;
-        etPassword.addTextChangedListener(loginWatcher);
-
-        // Sự kiện nút Login
+        // 1. Lắng nghe nút bấm
         btnLogin.setOnClickListener(v -> {
-            viewModel.login(etMailOrUsername.getText().toString() , etPassword.getText().toString());
+            String user = edtMailOrUsername.getText().toString();
+            String pass = edtPassword.getText().toString();
+            loginViewModel.login(user, pass);
         });
 
-        // Sự kiện Quên mật khẩu
-        tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(Login.this, ResetPass.class);
-            startActivity(intent);
+        // 2. Lắng nghe kết quả thành công từ API
+        loginViewModel.getLoginResult().observe(this, response -> {
+            if (response.getData() != null) {
+                // Lưu token vào SessionManager.
+                sessionManager.saveAuthToken(response.getData().getAccessToken());
+
+                Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+                // Chuyển sang màn hình chính
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Đóng màn hình login
+            }
         });
-    }
 
-    private void checkInputs() {
-        String user = etMailOrUsername.getText().toString().trim();
-        String pass = etPassword.getText().toString().trim();
-
-        if (!user.isEmpty() && !pass.isEmpty()) {
-            // TRẠNG THÁI: ĐÃ NHẬP ĐỦt
-            btnLogin.setEnabled(true);
-            btnLogin.setAlpha(1.0f);
-
-            // Đổi màu nền nút
-            btnLogin.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor("#4254ff")));
-
-            btnLogin.setTextColor(android.graphics.Color.parseColor("#f4f2f8"));
-
-        } else {
-            // TRẠNG THÁI: CHƯA ĐỦ THÔNG TIN
-            btnLogin.setEnabled(false);
-            btnLogin.setAlpha(0.5f);
-
-            // Trả về màu nền cũ (Màu xanh đen mờ bạn đã chọn)
-            btnLogin.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor("#2f3855")));
-
-            // Trả về màu chữ cũ (Màu xám xanh)
-            btnLogin.setTextColor(android.graphics.Color.parseColor("#4f5877"));
-        }
+        // 3. Lắng nghe lỗi
+        loginViewModel.getErrorMessage().observe(this, error -> {
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+        });
     }
 }

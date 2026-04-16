@@ -1,6 +1,7 @@
 package com.example.mosquizto.Services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.mosquizto.Activities.Login;
 import com.example.mosquizto.Dto.request.LoginRequest;
@@ -15,12 +16,17 @@ public class SessionManager {
         context = _context;
     }
 
-    public void saveToken(String _accessToken) {
-        accessToken = _accessToken ;
+    public void saveAuthToken(String token) {
+        SharedPreferences prefs = context.getSharedPreferences("MosquiztoPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("USER_TOKEN", token);
+        editor.apply();
     }
-    public String getAccessToken()
-    {
-        return accessToken ;
+
+    // Thêm luôn hàm này để lấy Token ra xài (dành cho AuthInterceptor)
+    public String fetchAuthToken() {
+        SharedPreferences prefs = context.getSharedPreferences("MosquiztoPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("USER_TOKEN", null);
     }
 
     public LoginRequest getCurrentUserProfile() {

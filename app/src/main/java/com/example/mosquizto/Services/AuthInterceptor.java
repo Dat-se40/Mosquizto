@@ -23,7 +23,7 @@ public class AuthInterceptor implements Interceptor {
     @Override
     @EverythingIsNonNull
     public Response intercept(Chain chain) throws IOException {
-        String accessToken = sessionManager.getAccessToken() ;
+        String accessToken = sessionManager.fetchAuthToken() ;
         Request request = chain.request();
 
         if(accessToken == null)

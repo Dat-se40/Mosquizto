@@ -22,40 +22,34 @@ import retrofit2.Response;
 @HiltViewModel
 public class LoginViewModel extends ViewModel {
     private final UserApi userApi;
-    private final SessionManager sessionManager;
-
-    // LiveData để Activity "quan sát"
-    private MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
-    public LiveData<Boolean> isLoading = _isLoading;
-
-    private MutableLiveData<String> _errorMessage = new MutableLiveData<>();
-    public LiveData<String> errorMessage = _errorMessage;
-
+    private final MutableLiveData<ApiResponse<LoginResponse>> loginResult = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     @Inject
-    public LoginViewModel(UserApi userApi, SessionManager sessionManager) {
+    public LoginViewModel(UserApi userApi) {
         this.userApi = userApi;
-        this.sessionManager = sessionManager;
+    }
+    public LiveData<ApiResponse<LoginResponse>> getLoginResult() {
+        return loginResult;
     }
 
-    public void login(String user, String pass) {
-        _isLoading.setValue(true);
-        userApi.login(new LoginRequest(user, pass)).enqueue(new Callback<ApiResponse<LoginResponse>>() {
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+    public void login(String username, String password) {
+        LoginRequest request = new LoginRequest(username, password);
+        userApi.login(request).enqueue(new Callback<ApiResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
-                _isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    // chống chế
-                    sessionManager.saveToken(response.body().getData().getAccessToken());
-                    sessionManager.setCurrentUserProfile(new LoginRequest(user,pass));
+                    loginResult.setValue(response.body());
                 } else {
-                    _errorMessage.setValue(response.message());
+                    errorMessage.setValue("Đăng nhập thất bại. Vui lòng kiểm tra lại!");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
-                _isLoading.setValue(false);
-                _errorMessage.setValue("Lỗi kết nối!");
+                errorMessage.setValue("Lỗi kết nối: " + t.getMessage());
             }
         });
     }
