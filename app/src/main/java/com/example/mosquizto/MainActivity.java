@@ -10,6 +10,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mosquizto.Fragments.HomeFragment;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     @Override
