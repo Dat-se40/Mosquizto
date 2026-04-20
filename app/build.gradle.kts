@@ -55,6 +55,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     // Source: https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0") // Dùng để load ảnh từ URL API
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)

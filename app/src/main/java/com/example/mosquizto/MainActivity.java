@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
+import com.example.mosquizto.Fragments.FlashcardSetsFragment;
 import com.example.mosquizto.Fragments.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -20,16 +23,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });*/
-        if (savedInstanceState == null) {
-            // Lệnh này sẽ ném HomeFragment vào cái khung fragment_container
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+        // Mặc định mở trang Home
+        loadFragment(new HomeFragment());
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+                selectedFragment = new HomeFragment();
+            } else if (id == R.id.nav_library) {
+                // Trang Library của Quizlet chứa TabLayout,
+                // ở đây mình gọi thẳng FlashcardSetsFragment để bạn thấy kết quả ngay
+                selectedFragment = new FlashcardSetsFragment();
+            }
+            // Thêm logic cho nav_create và nav_account ở đây
+
+            return loadFragment(selectedFragment);
+        });
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
+                    .replace(R.id.fragment_container, fragment)
                     .commit();
+            return true;
         }
+        return false;
     }
 }
