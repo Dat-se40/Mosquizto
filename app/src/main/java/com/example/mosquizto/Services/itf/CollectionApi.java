@@ -10,6 +10,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+import com.example.mosquizto.Dto.request.CollectionRequest;
 
 public interface CollectionApi {
 
@@ -37,4 +40,7 @@ public interface CollectionApi {
             @Query("page") int page,
             @Query("size") int size
     );
+    // API Tạo bộ sưu tập mới
+    @POST("collections")
+    Call<ApiResponse<Collection>> createCollection(@Body CollectionRequest request);
 }

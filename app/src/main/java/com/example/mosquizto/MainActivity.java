@@ -1,6 +1,8 @@
 package com.example.mosquizto;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,10 +11,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.mosquizto.Activities.CreateCollectionActivity;
+import com.example.mosquizto.Dialogs.CreateFolderDialog;
 import com.example.mosquizto.Fragments.FlashcardSetsFragment;
 import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -57,5 +62,26 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void showCreateMenu() {
+        View v = getLayoutInflater().inflate(R.layout.dialog_create_menu, null);
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(v);
+
+        // Bấm Tạo Học Phần (Flashcard)
+        v.findViewById(R.id.option_flashcard_set).setOnClickListener(view -> {
+            startActivity(new Intent(this, CreateCollectionActivity.class));
+            dialog.dismiss();
+        });
+
+        // Bấm Tạo Thư Mục (Folder) -> Mở Dialog
+        v.findViewById(R.id.option_folder).setOnClickListener(view -> {
+            CreateFolderDialog folderDialog = new CreateFolderDialog();
+            folderDialog.show(getSupportFragmentManager(), "FolderDialog");
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }
