@@ -17,13 +17,13 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        app:elevation="10dp"
+        app:elevation="8dp"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/primary_color"
-        app:itemTextColor="#586380"/>
+        app:itemIconTint="@color/bottom_nav_selector"
+        app:itemTextColor="@color/bottom_nav_selector"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

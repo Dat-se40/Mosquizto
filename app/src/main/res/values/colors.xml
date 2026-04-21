@@ -28,4 +28,8 @@
     <color name="search_bar_hint">#586380</color>
     <color name="progress_bar_color">#00C985</color>
     <color name="option_button_stroke">#E0E0E0</color>
+    <color name="quizlet_border">#E8EAF2</color>
+
+    <color name="quizlet_blue">#4255FF</color>
+    <color name="quizlet_gray_icon">#939BB4</color>
 </resources>

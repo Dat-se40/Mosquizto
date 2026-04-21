@@ -23,24 +23,18 @@ public class LibraryFragment extends Fragment {
         // Load layout fragment_library.xml đã tạo ở bài trước
         View view = inflater.inflate(R.layout.fragment_library, container, false);
 
-        TabLayout tabLayout = view.findViewById(R.id.library_tabs);
-        ViewPager2 viewPager = view.findViewById(R.id.library_viewpager);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
 
         // Gắn adapter cho ViewPager
         viewPager.setAdapter(new LibraryPagerAdapter(this));
 
         // Liên kết TabLayout với ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            switch (position) {
-                case 0:
-                    tab.setText("Học phần"); // Sets
-                    break;
-                case 1:
-                    tab.setText("Thư mục");  // Folders
-                    break;
-                case 2:
-                    tab.setText("Lớp học");  // Classes
-                    break;
+            if (position == 0) {
+                tab.setText("Flashcard sets");
+            } else {
+                tab.setText("Folders");
             }
         }).attach();
 

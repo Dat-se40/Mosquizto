@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mosquizto.Fragments.FlashcardSetsFragment;
 import com.example.mosquizto.Fragments.HomeFragment;
+import com.example.mosquizto.Fragments.LibraryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -26,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
-        // Mặc định mở trang Home
-        loadFragment(new HomeFragment());
+        if (savedInstanceState == null) {
+            bottomNav.setSelectedItemId(R.id.nav_library);
+            loadFragment(new LibraryFragment());
+        }
 
         bottomNav.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_library) {
                 // Trang Library của Quizlet chứa TabLayout,
                 // ở đây mình gọi thẳng FlashcardSetsFragment để bạn thấy kết quả ngay
-                selectedFragment = new FlashcardSetsFragment();
+                selectedFragment = new LibraryFragment();;
             }
             // Thêm logic cho nav_create và nav_account ở đây
 
