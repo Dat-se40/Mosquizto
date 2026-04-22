@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.ViewModels.LoginViewModel;
 
@@ -46,8 +47,6 @@ public class Login extends AppCompatActivity {
         });
         initViews();
         setupListeners();
-
-
     }
 
     private void initViews() {
@@ -71,6 +70,14 @@ public class Login extends AppCompatActivity {
         {
             btnLogin.setEnabled(!loading);
             pgLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+        });
+        viewModel.loginSuccess.observe(this,success ->
+        {
+            if (success == true)
+            {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            }
         });
     }
 

@@ -38,4 +38,21 @@
     <string name="see_all">See all</string>
     <string name="streak_title">Start a study streak</string>
     <string name="streak_desc">Study streaks help you stay motivated and reach your goals. Start your first streak today!</string>
+
+    <string name="hint_search">Courses, textbooks, and more...</string>
+    <string name="cancel">Cancel</string>
+    <string name="scan">Scan a textbook or a question</string>
+    <string name="student_search">What other students are searching</string>
+    <string name="no_results">No results</string>
+    <string name="results">Results</string>
+    <string name="clear_all">Clear all</string>
+
+    <string name="headline">The best way to study.\nSign up for free.</string>
+    <string name="welcome_terms_text">By signing up, you accept our Terms of Service and Privacy Policy</string>
+    <string name="btn_google">Continue with Google</string>
+    <string name="btn_email">Sign up with Email</string>
+    <string name="have_an_account">Have an account? </string>
+    <string name="login">Login </string>
+    <string name="sign_up">Sign Up</string>
+    <string name="continue_with">Continue with %1$s</string>"
 </resources>

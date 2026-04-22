@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mosquizto"
         minSdk = 27
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -76,5 +76,7 @@ dependencies {
     // Lifecycle (ViewModel & LiveData)
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
-
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

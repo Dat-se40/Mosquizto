@@ -4,7 +4,8 @@ import android.content.Context;
 
 import com.example.mosquizto.Services.AuthInterceptor;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import dagger.Module;
 import dagger.Provides;
@@ -45,4 +46,7 @@ public class NetworkModule {
     public UserApi provideUserApi(Retrofit retrofit) {
         return retrofit.create(UserApi.class);
     }
+
+    @Provides
+    public CollectionApi provideCollectionApi(Retrofit retrofit) {return retrofit.create(CollectionApi.class);}
 }
