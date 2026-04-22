@@ -7,24 +7,26 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.mosquizto.model.RecentSearchItem;
-import com.example.mosquizto.model.SearchApiResponse;
-import com.example.mosquizto.model.SearchResultItem;
-import com.example.mosquizto.repository.SearchRepository;
+import com.example.mosquizto.Models.RecentSearchItem;
+import com.example.mosquizto.Dto.response.SearchApiResponse;
+import com.example.mosquizto.Dto.response.SearchResultItem;
+import com.example.mosquizto.Network.itf.CollectionApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@HiltViewModel
 public class SearchViewModel extends ViewModel {
 
-    // ===== Repository =====
-    private final SearchRepository repository = new SearchRepository();
+    private final CollectionApi collectionApi;
 
-    // ===== LiveData =====
     private final MutableLiveData<List<String>> _suggestions = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<String>> suggestions = _suggestions;
 
@@ -43,25 +45,24 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<SearchState> _searchState = new MutableLiveData<>(SearchState.IDLE);
     public LiveData<SearchState> searchState = _searchState;
 
-    // ===== State enum =====
     public enum SearchState {
-        IDLE,           // search bar trống → hiện recent
-        TYPING,         // đang gõ → hiện suggestions
-        LOADING,        // đang tìm kiếm
-        HAS_RESULTS,    // có kết quả
-        EMPTY           // không có kết quả
+        IDLE, TYPING, LOADING, HAS_RESULTS, EMPTY
     }
 
-    // ===== Debounce =====
     private final Handler debounceHandler = new Handler(Looper.getMainLooper());
     private Runnable debounceRunnable;
     private static final long DEBOUNCE_DELAY_MS = 300;
 
-    // ===== Public methods =====
+    @Inject
+    public SearchViewModel(CollectionApi collectionApi) {
+        this.collectionApi = collectionApi;
+    }
 
     public void onQueryChanged(String query) {
         if (query == null || query.trim().isEmpty()) {
-            debounceHandler.removeCallbacks(debounceRunnable);
+            if (debounceRunnable != null) {
+                debounceHandler.removeCallbacks(debounceRunnable);
+            }
             _suggestions.setValue(new ArrayList<>());
             _searchState.setValue(SearchState.IDLE);
             return;
@@ -99,11 +100,6 @@ public class SearchViewModel extends ViewModel {
         _recentSearches.setValue(new ArrayList<>());
     }
 
-    // ===== Private methods =====
-
-    /**
-     * Suggestions: lọc từ recent searches
-     */
     private void fetchSuggestions(String query) {
         List<RecentSearchItem> recents = _recentSearches.getValue();
         List<String> filtered = new ArrayList<>();
@@ -127,7 +123,7 @@ public class SearchViewModel extends ViewModel {
         _isLoading.setValue(true);
         _searchState.setValue(SearchState.LOADING);
 
-        repository.search(query, 1, 10, null, new Callback<SearchApiResponse>() {
+        collectionApi.searchCollections(query, 1, 10, null).enqueue(new Callback<SearchApiResponse>() {
             @Override
             public void onResponse(Call<SearchApiResponse> call, Response<SearchApiResponse> response) {
                 _isLoading.setValue(false);
@@ -159,7 +155,7 @@ public class SearchViewModel extends ViewModel {
 
     private void saveRecentSearch(String query) {
         List<RecentSearchItem> current = _recentSearches.getValue();
-        List<RecentSearchItem> updated = current != null ? new ArrayList<>(current) : new ArrayList<>();
+        List<RecentSearchItem> updated = (current != null) ? new ArrayList<>(current) : new ArrayList<>();
 
         updated.removeIf(item -> item.getText().equalsIgnoreCase(query));
         updated.add(0, new RecentSearchItem(query));

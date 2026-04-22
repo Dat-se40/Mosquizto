@@ -1,4 +1,4 @@
-package com.example.mosquizto.model;
+package com.example.mosquizto.Dto.response;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

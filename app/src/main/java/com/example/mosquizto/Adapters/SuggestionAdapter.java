@@ -1,4 +1,4 @@
-package com.example.mosquizto.adapter;
+package com.example.mosquizto.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

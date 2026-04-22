@@ -1,4 +1,4 @@
-package com.example.mosquizto.network;
+package com.example.mosquizto.Network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
-    // ⚠️ Emulator dùng 10.0.2.2, điện thoại thật đổi thành IP máy tính
-    // VD: http://192.168.1.x:8080/
     private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     private static Retrofit retrofit;

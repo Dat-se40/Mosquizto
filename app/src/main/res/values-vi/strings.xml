@@ -21,8 +21,10 @@
     <string name="btn_Gobacktologin">Quay lại đăng nhập</string>"
     <string name="imageButton_back">Quay lại</string>"
     <string name="lostConnectionNoti">Mất kết nối</string>
-
+    <string name="textView_FullName">Họ và tên</string>
+    <string name="textView_UserName">Tên người dùng</string>
     <string name="title_create_account">Tạo tài khoản</string>
+    <string name="textView_ConfirmPassword">Xác minh mật khẩu</string>
     <string name="hint_birthdate">Ngày sinh</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Mật khẩu</string>
@@ -44,4 +46,13 @@
     <string name="no_results">Không có kết quả</string>
     <string name="results">Kết quả</string>
     <string name="clear_all">Xóa tất cả</string>
+
+    <string name="headline">Cách học tốt nhất.\nĐăng ký miễn phí.</string>
+    <string name="welcome_terms_text">Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi</string>
+    <string name="btn_google">Tiếp tục với Google</string>
+    <string name="btn_email">Đăng ký bằng Email</string>
+    <string name="have_an_account">Đã có tài khoản? </string>
+    <string name="login">Đăng nhập</string>
+    <string name="sign_up">Đăng Kí</string>
+    <string name="continue_with">Tiếp tục với %1$s</string>"
 </resources>

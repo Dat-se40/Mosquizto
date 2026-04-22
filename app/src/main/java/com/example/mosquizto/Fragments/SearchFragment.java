@@ -1,10 +1,13 @@
-package com.example.mosquizto.Activities;
+package com.example.mosquizto.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -14,22 +17,26 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.R;
-import com.example.mosquizto.adapter.RecentSearchAdapter;
-import com.example.mosquizto.adapter.SearchResultAdapter;
-import com.example.mosquizto.adapter.SuggestionAdapter;
-import com.example.mosquizto.model.RecentSearchItem;
-import com.example.mosquizto.model.SearchResultItem;
+import com.example.mosquizto.Adapters.RecentSearchAdapter;
+import com.example.mosquizto.Adapters.SearchResultAdapter;
+import com.example.mosquizto.Adapters.SuggestionAdapter;
+import com.example.mosquizto.Dto.response.SearchResultItem;
 import com.example.mosquizto.ViewModels.SearchViewModel;
 
 import java.util.ArrayList;
 
-public class Search extends AppCompatActivity {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SearchFragment extends Fragment {
 
     private SearchViewModel viewModel;
 
@@ -38,7 +45,7 @@ public class Search extends AppCompatActivity {
     private ImageView ivCamera;
     private TextView tvCancel;
     private TextView tvClearAll;
-    private LinearLayout btnScan;
+    private View btnScan;
 
     private LinearLayout recentSection;
     private LinearLayout suggestionSection;
@@ -54,12 +61,17 @@ public class Search extends AppCompatActivity {
     private SuggestionAdapter suggestionAdapter;
     private SearchResultAdapter searchResultAdapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_search, container, false);
+    }
 
-        initViews();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        
+        initViews(view);
         initAdapters();
         initViewModel();
         setupListeners();
@@ -68,31 +80,26 @@ public class Search extends AppCompatActivity {
         showKeyboard(etSearch);
     }
 
-    // =========================================================
-    // INIT
-    // =========================================================
+    private void initViews(View view) {
+        etSearch = view.findViewById(R.id.etSearch);
+        ivClear = view.findViewById(R.id.ivClear);
+        ivCamera = view.findViewById(R.id.ivCamera);
+        tvCancel = view.findViewById(R.id.tvCancel);
+        tvClearAll = view.findViewById(R.id.tvClearAll);
+        btnScan = view.findViewById(R.id.btnScan);
 
-    private void initViews() {
-        etSearch = findViewById(R.id.etSearch);
-        ivClear = findViewById(R.id.ivClear);
-        ivCamera = findViewById(R.id.ivCamera);
-        tvCancel = findViewById(R.id.tvCancel);
-        tvClearAll = findViewById(R.id.tvClearAll);
-        btnScan = findViewById(R.id.btnScan);
+        recentSection = view.findViewById(R.id.recentSection);
+        suggestionSection = view.findViewById(R.id.suggestionSection);
+        resultsSection = view.findViewById(R.id.resultsSection);
+        emptyState = view.findViewById(R.id.emptyState);
+        progressBar = view.findViewById(R.id.progressBar);
 
-        recentSection = findViewById(R.id.recentSection);
-        suggestionSection = findViewById(R.id.suggestionSection);
-        resultsSection = findViewById(R.id.resultsSection);
-        emptyState = findViewById(R.id.emptyState);
-        progressBar = findViewById(R.id.progressBar);
-
-        rvRecentSearches = findViewById(R.id.rvRecentSearches);
-        rvSuggestions = findViewById(R.id.rvSuggestions);
-        rvSearchResults = findViewById(R.id.rvSearchResults);
+        rvRecentSearches = view.findViewById(R.id.rvRecentSearches);
+        rvSuggestions = view.findViewById(R.id.rvSuggestions);
+        rvSearchResults = view.findViewById(R.id.rvSearchResults);
     }
 
     private void initAdapters() {
-        // Recent searches adapter
         recentSearchAdapter = new RecentSearchAdapter(new ArrayList<>(), new RecentSearchAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(String text) {
@@ -108,10 +115,9 @@ public class Search extends AppCompatActivity {
                 etSearch.setSelection(text.length());
             }
         });
-        rvRecentSearches.setLayoutManager(new LinearLayoutManager(this));
+        rvRecentSearches.setLayoutManager(new LinearLayoutManager(getContext()));
         rvRecentSearches.setAdapter(recentSearchAdapter);
 
-        // Suggestion adapter
         suggestionAdapter = new SuggestionAdapter(new ArrayList<>(), new SuggestionAdapter.OnSuggestionClickListener() {
             @Override
             public void onSuggestionClick(String text) {
@@ -127,79 +133,48 @@ public class Search extends AppCompatActivity {
                 etSearch.setSelection(text.length());
             }
         });
-        rvSuggestions.setLayoutManager(new LinearLayoutManager(this));
+        rvSuggestions.setLayoutManager(new LinearLayoutManager(getContext()));
         rvSuggestions.setAdapter(suggestionAdapter);
 
-        // Search result adapter
         searchResultAdapter = new SearchResultAdapter(new ArrayList<>(), new SearchResultAdapter.OnResultClickListener() {
             @Override
             public void onResultClick(SearchResultItem item) {
-                // TODO: Navigate đến màn hình chi tiết
-                Toast.makeText(Search.this, "Mở: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Mở: " + item.getTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onMoreClick(SearchResultItem item) {
-                // TODO: Hiện bottom sheet options
-                Toast.makeText(Search.this, "More: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "More: " + item.getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
-        rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
+        rvSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
         rvSearchResults.setAdapter(searchResultAdapter);
     }
 
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
-        // Observe recent searches
-        viewModel.recentSearches.observe(this, recentItems -> {
+        viewModel.recentSearches.observe(getViewLifecycleOwner(), recentItems -> {
             recentSearchAdapter.updateData(recentItems);
             tvClearAll.setVisibility(recentItems != null && !recentItems.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
-        // Observe suggestions
-        viewModel.suggestions.observe(this, suggestionList -> {
+        viewModel.suggestions.observe(getViewLifecycleOwner(), suggestionList -> {
             suggestionAdapter.updateData(suggestionList);
         });
 
-        // Observe search results
-        viewModel.searchResults.observe(this, results -> {
+        viewModel.searchResults.observe(getViewLifecycleOwner(), results -> {
             searchResultAdapter.updateData(results);
         });
 
-        // Observe loading
-        viewModel.isLoading.observe(this, loading -> {
+        viewModel.isLoading.observe(getViewLifecycleOwner(), loading -> {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         });
 
-        // Observe state → điều khiển show/hide các section
-        viewModel.searchState.observe(this, state -> {
-            switch (state) {
-                case IDLE:
-                    showSection(Section.RECENT);
-                    break;
-                case TYPING:
-                    showSection(Section.SUGGESTIONS);
-                    break;
-                case LOADING:
-                    showSection(Section.LOADING);
-                    break;
-                case HAS_RESULTS:
-                    showSection(Section.RESULTS);
-                    break;
-                case EMPTY:
-                    showSection(Section.EMPTY);
-                    break;
-            }
-        });
+        viewModel.searchState.observe(getViewLifecycleOwner(), this::updateUIByState);
     }
 
-    // =========================================================
-    // LISTENERS
-    // =========================================================
-
     private void setupListeners() {
-
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -207,10 +182,8 @@ public class Search extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString().trim();
-
                 ivClear.setVisibility(query.isEmpty() ? View.GONE : View.VISIBLE);
                 ivCamera.setVisibility(query.isEmpty() ? View.VISIBLE : View.GONE);
-
                 viewModel.onQueryChanged(query);
             }
 
@@ -219,8 +192,7 @@ public class Search extends AppCompatActivity {
         });
 
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 String query = etSearch.getText().toString().trim();
                 if (!query.isEmpty()) {
                     viewModel.onSearchSubmitted(query);
@@ -239,48 +211,33 @@ public class Search extends AppCompatActivity {
 
         tvCancel.setOnClickListener(v -> {
             hideKeyboard();
-            finish();
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
         });
 
-        ivCamera.setOnClickListener(v -> {
-            Toast.makeText(this, "Camera search (chưa làm)", Toast.LENGTH_SHORT).show();
-        });
-
-        btnScan.setOnClickListener(v -> {
-            Toast.makeText(this, "Scan SGK (chưa làm)", Toast.LENGTH_SHORT).show();
-        });
-
-        tvClearAll.setOnClickListener(v -> {
-            viewModel.clearAllRecentSearches();
-        });
+        tvClearAll.setOnClickListener(v -> viewModel.clearAllRecentSearches());
+        
+        btnScan.setOnClickListener(v -> Toast.makeText(getContext(), "Tính năng đang phát triển", Toast.LENGTH_SHORT).show());
     }
 
-    // =========================================================
-    // UI HELPERS
-    // =========================================================
-
-    private enum Section { RECENT, SUGGESTIONS, LOADING, RESULTS, EMPTY }
-
-    /**
-     * Ẩn tất cả sections, chỉ hiện section được chỉ định
-     */
-    private void showSection(Section section) {
+    private void updateUIByState(SearchViewModel.SearchState state) {
         recentSection.setVisibility(View.GONE);
         suggestionSection.setVisibility(View.GONE);
         resultsSection.setVisibility(View.GONE);
         emptyState.setVisibility(View.GONE);
 
-        switch (section) {
-            case RECENT:
+        switch (state) {
+            case IDLE:
                 recentSection.setVisibility(View.VISIBLE);
                 break;
-            case SUGGESTIONS:
+            case TYPING:
                 suggestionSection.setVisibility(View.VISIBLE);
                 break;
             case LOADING:
-                // progressBar được handle bởi isLoading observer
+                // ProgressBar handles this
                 break;
-            case RESULTS:
+            case HAS_RESULTS:
                 resultsSection.setVisibility(View.VISIBLE);
                 break;
             case EMPTY:
@@ -290,13 +247,13 @@ public class Search extends AppCompatActivity {
     }
 
     private void showKeyboard(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        View focus = getCurrentFocus();
+        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        View focus = requireActivity().getCurrentFocus();
         if (imm != null && focus != null) imm.hideSoftInputFromWindow(focus.getWindowToken(), 0);
     }
 }

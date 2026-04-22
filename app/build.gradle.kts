@@ -3,8 +3,8 @@ import org.gradle.kotlin.dsl.dependencies
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    id ("com.google.dagger.hilt.android")
-
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mosquizto"
         minSdk = 27
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -68,14 +70,13 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
 // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation("com.google.dagger:hilt-android:2.59.2")
-    annotationProcessor ("com.google.dagger:hilt-android-compiler:2.59.2")
     // Lifecycle (ViewModel & LiveData)
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
-
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

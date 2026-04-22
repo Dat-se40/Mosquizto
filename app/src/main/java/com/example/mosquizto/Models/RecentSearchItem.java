@@ -1,4 +1,4 @@
-package com.example.mosquizto.model;
+package com.example.mosquizto.Models;
 
 public class RecentSearchItem {
     private String text;

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import javax.inject.Inject;
 
@@ -22,8 +22,8 @@ public class CreateAccountViewModel extends ViewModel {
     public enum UiState { IDLE, LOADING, SUCCESS, ERROR }
 
     private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.IDLE);
-    private String errorMessage = "";
-
+    private final MutableLiveData<String> _message = new MutableLiveData<String>()  ;
+    public LiveData<String> message = _message ;
     private final UserApi userApi;
     private final SessionManager sessionManager;
 
@@ -38,13 +38,14 @@ public class CreateAccountViewModel extends ViewModel {
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return message.getValue();
     }
 
-    public void signup(String email, String password, String birthdate) {
+    public void signup(String fullName , String userName,String email, String password,
+                       String confirmPassword) {
         uiState.setValue(UiState.LOADING);
 
-        SignupRequest request = new SignupRequest("", "", email, password, password, birthdate);
+        SignupRequest request = new SignupRequest(fullName, userName, email, password, confirmPassword);
 
         userApi.signUp(request).enqueue(new Callback<>() {
             @Override
@@ -52,16 +53,17 @@ public class CreateAccountViewModel extends ViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     // Lưu token nếu có — tuỳ chỉnh theo ApiResponse của bạn
                     // sessionManager.saveToken(response.body().getData().getToken());
+                    _message.postValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
                 } else {
-                    errorMessage = "Đăng ký thất bại. Vui lòng thử lại.";
-                    uiState.setValue(UiState.ERROR);
+                    _message.postValue("Đăng kí thất bại");
+                    uiState.postValue(UiState.ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                errorMessage = "Lỗi kết nối: " + t.getMessage();
+                _message.postValue("Đăng kí thất bại");
                 uiState.setValue(UiState.ERROR);
             }
         });

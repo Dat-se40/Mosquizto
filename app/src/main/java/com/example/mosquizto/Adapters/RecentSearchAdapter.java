@@ -1,4 +1,4 @@
-package com.example.mosquizto.adapter;
+package com.example.mosquizto.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.R;
-import com.example.mosquizto.model.RecentSearchItem;
+import com.example.mosquizto.Models.RecentSearchItem;
 
 import java.util.List;
 

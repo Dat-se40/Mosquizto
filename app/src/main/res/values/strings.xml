@@ -21,7 +21,9 @@
     <string name="btn_Gobacktologin">Go back to login</string>
     <string name="imageButton_back">Back</string>"
     <string name="lostConnectionNoti">Lost Connection</string>
-
+    <string name="textView_FullName">Full name</string>
+    <string name="textView_UserName">User name</string>
+    <string name="textView_ConfirmPassword">Confirm password</string>
     <string name="title_create_account">Create account</string>
     <string name="hint_birthdate">Date of birth</string>
     <string name="hint_email">Email</string>
@@ -44,4 +46,13 @@
     <string name="no_results">No results</string>
     <string name="results">Results</string>
     <string name="clear_all">Clear all</string>
+
+    <string name="headline">The best way to study.\nSign up for free.</string>
+    <string name="welcome_terms_text">By signing up, you accept our Terms of Service and Privacy Policy</string>
+    <string name="btn_google">Continue with Google</string>
+    <string name="btn_email">Sign up with Email</string>
+    <string name="have_an_account">Have an account? </string>
+    <string name="login">Login </string>
+    <string name="sign_up">Sign Up</string>
+    <string name="continue_with">Continue with %1$s</string>"
 </resources>

@@ -1,11 +1,12 @@
-package com.example.mosquizto.network;
+package com.example.mosquizto.Network.itf;
 
-import com.example.mosquizto.model.SearchApiResponse;
+import com.example.mosquizto.Dto.response.SearchApiResponse;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public interface ApiService {
+public interface CollectionApi {
     @GET("collection/search")
     Call<SearchApiResponse> searchCollections(
             @Query("q") String q,
