@@ -36,4 +36,12 @@
     <string name="see_all">See all</string>
     <string name="streak_title">Start a study streak</string>
     <string name="streak_desc">Study streaks help you stay motivated and reach your goals. Start your first streak today!</string>
+
+    <string name="hint_search">Courses, textbooks, and more...</string>
+    <string name="cancel">Cancel</string>
+    <string name="scan">Scan a textbook or a question</string>
+    <string name="student_search">What other students are searching</string>
+    <string name="no_results">No results</string>
+    <string name="results">Results</string>
+    <string name="clear_all">Clear all</string>
 </resources>

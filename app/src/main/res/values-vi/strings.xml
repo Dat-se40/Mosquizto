@@ -36,4 +36,12 @@
     <string name="see_all">Xem tất cả</string>
     <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
     <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
+
+    <string name="hint_search">Hoc phần, sách giáo khoa...</string>
+    <string name="cancel">Hủy</string>
+    <string name="scan">Quét 1 cuốn sách giáo khoa hoặc câu hỏi</string>
+    <string name="student_search">Các học sinh khác tìm kiếm</string>
+    <string name="no_results">Không có kết quả</string>
+    <string name="results">Kết quả</string>
+    <string name="clear_all">Xóa tất cả</string>
 </resources>
