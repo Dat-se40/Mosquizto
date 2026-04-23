@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,18 +76,22 @@ public class CreateCollectionActivity extends AppCompatActivity {
         }
 
         CollectionRequest request = new CollectionRequest(title, "", currentVisibility, itemList);
-        collectionApi.createCollection(request).enqueue(new Callback<ApiResponse<Collection>>() {
+
+        // CHÚ Ý: Đổi từ ApiResponse<Collection> thành ApiResponse<Integer>
+        collectionApi.createCollection(request).enqueue(new Callback<ApiResponse<Integer>>() {
             @Override
-            public void onResponse(Call<ApiResponse<Collection>> call, Response<ApiResponse<Collection>> response) {
+            public void onResponse(@NonNull Call<ApiResponse<Integer>> call, @NonNull Response<ApiResponse<Integer>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(CreateCollectionActivity.this, "Đã tạo bộ thẻ thành công!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    finish(); // Trở về màn hình trước đó
+                } else {
+                    Toast.makeText(CreateCollectionActivity.this, "Lỗi từ Server: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<Collection>> call, Throwable t) {
-                Toast.makeText(CreateCollectionActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<ApiResponse<Integer>> call, @NonNull Throwable t) {
+                Toast.makeText(CreateCollectionActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
             }
         });
     }

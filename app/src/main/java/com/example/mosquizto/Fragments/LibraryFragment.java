@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mosquizto.Adapters.LibraryPagerAdapter;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -37,6 +38,15 @@ public class LibraryFragment extends Fragment {
                 tab.setText("Folders");
             }
         }).attach();
+
+        View btnAdd = view.findViewById(R.id.btn_add);
+        if (btnAdd != null) {
+            btnAdd.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).showCreateMenu();
+                }
+            });
+        }
 
         return view;
     }

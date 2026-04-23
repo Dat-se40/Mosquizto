@@ -18,7 +18,8 @@ import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
+import android.content.Intent;
+import com.example.mosquizto.Activities.ProfilePage;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -43,14 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
+            } else if (id == R.id.nav_create) {
+                showCreateMenu();
+                return false;
             } else if (id == R.id.nav_library) {
-                // Trang Library của Quizlet chứa TabLayout,
-                // ở đây mình gọi thẳng FlashcardSetsFragment để bạn thấy kết quả ngay
                 selectedFragment = new LibraryFragment();;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(MainActivity.this, com.example.mosquizto.Activities.ProfilePage.class));
+                return false;
             }
-            // Thêm logic cho nav_create và nav_account ở đây
 
-            return loadFragment(selectedFragment);
+            if (selectedFragment != null) {
+                loadFragment(selectedFragment);
+            }
+            return true;
         });
     }
 
@@ -64,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void showCreateMenu() {
+    public void showCreateMenu() {
         View v = getLayoutInflater().inflate(R.layout.dialog_create_menu, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         dialog.setContentView(v);

@@ -42,5 +42,5 @@ public interface CollectionApi {
     );
     // API Tạo bộ sưu tập mới
     @POST("collections")
-    Call<ApiResponse<Collection>> createCollection(@Body CollectionRequest request);
+    Call<ApiResponse<Integer>> createCollection(@Body CollectionRequest request);
 }

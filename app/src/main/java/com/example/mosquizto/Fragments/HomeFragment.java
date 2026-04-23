@@ -1,5 +1,6 @@
 package com.example.mosquizto.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import com.example.mosquizto.Activities.ProfilePage;
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
@@ -42,6 +43,13 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        View ivAvatar = view.findViewById(R.id.iv_avatar);
+        if (ivAvatar != null) {
+            ivAvatar.setOnClickListener(v -> {
+                startActivity(new Intent(getContext(), ProfilePage.class));
+            });
+        }
 
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);

@@ -13,7 +13,7 @@
         android:icon="@drawable/ic_library"
         android:title="Library" />
     <item
-        android:id="@+id/nav_account"
+        android:id="@+id/nav_profile"
         android:icon="@drawable/ic_default_avatar"
-        android:title="Account" />
+        android:title="Profile" />
 </menu>
