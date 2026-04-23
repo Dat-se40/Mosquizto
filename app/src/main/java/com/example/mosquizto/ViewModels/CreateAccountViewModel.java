@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import javax.inject.Inject;
 

@@ -7,10 +7,12 @@ public class LoginResponse {
     private String accessToken;
     @SerializedName("user_id")
     private int userId;
-
-    public LoginResponse(String accessToken, int userId) {
+    @SerializedName("refresh_token")
+    private String refreshToken;
+    public LoginResponse(String accessToken, int userId, String refreshToken) {
         this.accessToken = accessToken;
         this.userId = userId;
+        this.refreshToken = refreshToken;
     }
 
     public int getUserId() {
@@ -35,5 +37,13 @@ public class LoginResponse {
                 "accessToken='" + accessToken + '\'' +
                 ", userId=" + userId +
                 '}';
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

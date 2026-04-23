@@ -1,23 +1,25 @@
 package com.example.mosquizto.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
-import com.example.mosquizto.Services.itf.UserApi;
-
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.ViewModels.CreateAccountViewModel;
+import com.example.mosquizto.Services.itf.UserApi;
 
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -27,31 +29,81 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class ProfilePage extends AppCompatActivity {
+
+    private TextView tvUserName;
+    private ImageView imgProfile;
+
+    @Inject
+    public SessionManager sessionManager;
+
     @Inject
     UserApi userApi;
-    private TextView tvUserName, tvEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+
+        // Đã sửa lỗi: Trả về đúng giao diện activity_profile (nhánh đang sửa bị nhầm thành activity_register)
         setContentView(R.layout.activity_profile);
 
-        tvUserName = findViewById(R.id.tvUsername); // ID tạm, thay bằng ID thật trong XML
+        // Xử lý giao diện tràn viền (Edge-to-Edge) từ Master
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.btnBack).getRootView(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
+        // Xử lý khi bấm nút Back cứng trên điện thoại từ Master
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(ProfilePage.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        initViews();
+        setupListeners();
+
+        // Gọi API để lấy thông tin mới nhất từ server (từ nhánh của bạn)
         loadUserProfile();
     }
 
+    private void initViews() {
+        tvUserName = findViewById(R.id.tvUsername);
+        imgProfile = findViewById(R.id.imgProfile);
+
+        // Hiển thị ngay lập tức tên User từ SessionManager để UI không bị trống khi đợi API
+        if (sessionManager.getCurrUser() != null) {
+            tvUserName.setText(sessionManager.getCurrUser().getUsername());
+        } else {
+            Log.d("ProfilePage", "User is null in SessionManager");
+        }
+    }
+
+    private void setupListeners() {
+        // Nút Back trên giao diện app
+        findViewById(R.id.btnBack).setOnClickListener(v -> {
+            getOnBackPressedDispatcher().onBackPressed();
+        });
+    }
+
+    // Hàm lấy dữ liệu mới nhất từ nhánh của bạn
     private void loadUserProfile() {
-        // Nhờ có AuthInterceptor bạn đã cấu hình trước đó, nó sẽ tự động lấy Token
-        // từ SessionManager nhét vào Header, nên ở đây cứ gọi gọi trực tiếp thôi.
         userApi.getCurrentProfile().enqueue(new Callback<ApiResponse<User>>() {
             @Override
             public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     User currentUser = response.body().getData();
-                    // Cập nhật giao diện
-                    tvUserName.setText(currentUser.getUsername());
-                    // tvEmail.setText(currentUser.getEmail()); // Nếu Model User có email
+                    // Cập nhật lại giao diện với dữ liệu mới nhất từ server
+                    if (currentUser != null && currentUser.getUsername() != null) {
+                        tvUserName.setText(currentUser.getUsername());
+
+                        // Cập nhật lại SessionManager luôn để đồng bộ (nếu cần)
+                        sessionManager.saveSession(currentUser);
+                    }
                 }
             }
 

@@ -1,7 +1,8 @@
-package com.example.mosquizto.Services.itf;
+package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Dto.response.SearchApiResponse;
 import com.example.mosquizto.Models.Collection;
 
 import java.util.List;
@@ -31,10 +32,6 @@ public interface CollectionApi {
     @GET("collections/my-collections")
     Call<ApiResponse<List<Collection>>> getMyCollections();
 
-    // Tìm kiếm bộ thẻ theo tên (Thanh search trên cùng)
-    @GET("collections/search")
-    Call<ApiResponse<List<Collection>>> searchCollections(@Query("keyword") String keyword);
-
     @GET("collections/my-collections")
     Call<ApiResponse<PageResponse<Collection>>> getMyCollections(
             @Query("page") int page,
@@ -43,4 +40,12 @@ public interface CollectionApi {
     // API Tạo bộ sưu tập mới
     @POST("collections")
     Call<ApiResponse<Integer>> createCollection(@Body CollectionRequest request);
+
+    @GET("collection/search")
+    Call<SearchApiResponse> searchCollections(
+            @Query("q") String q,
+            @Query("page") int page,
+            @Query("size") int size,
+            @Query("author") String author
+    );
 }

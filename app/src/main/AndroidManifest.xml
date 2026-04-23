@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Mosquizto"
         android:name=".MosquiztoApp">
 
-       <activity
+        <activity
             android:name=".Activities.Login"
             android:exported="false"
             android:label="@string/title_activity_login_form"
@@ -25,9 +25,13 @@
         </activity>
 
         <activity
+            android:name=".Activities.Search"
+            android:exported="false">
+        </activity>
+
+        <activity
             android:name=".Activities.CreateAccountActivity"
             android:exported="false">
-
         </activity>
 
         <activity
@@ -56,7 +60,11 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="false">
+
+        </activity>
+        <activity android:name=".Activities.WelcomeActivity" android:exported="true"
+            android:theme="@style/Theme.Mosquizto">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

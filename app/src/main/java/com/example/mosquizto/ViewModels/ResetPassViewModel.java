@@ -1,22 +1,11 @@
 package com.example.mosquizto.ViewModels;
 
-import static android.provider.Settings.System.getString;
-
-import static com.example.mosquizto.R.string.lostConnectionNoti;
-
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.compose.runtime.external.kotlinx.collections.immutable.implementations.persistentOrderedMap.LinkedValue;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.mosquizto.Activities.RSPassNoti;
-import com.example.mosquizto.Activities.ResetPass;
 import com.example.mosquizto.Dto.response.ApiResponse;
-import com.example.mosquizto.R;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import javax.inject.Inject;
 

@@ -6,12 +6,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mosquizto.Activities.ProfilePage;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.Models.User;
@@ -20,6 +25,7 @@ import com.example.mosquizto.Adapters.JumpBackInAdapter;
 import com.example.mosquizto.Adapters.RecentAdapter;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Services.itf.StudyApi;
+import com.example.mosquizto.Util.FragmentTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ import retrofit2.Response;
 import com.example.mosquizto.Activities.ProfilePage;
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
+
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
     private JumpBackInAdapter jumpAdapter;
     private RecentAdapter recentAdapter;
@@ -39,6 +46,8 @@ public class HomeFragment extends Fragment {
     @Inject
     StudyApi studyApi;
 
+    private ImageView imgView ;
+    private EditText etSearch ;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +63,10 @@ public class HomeFragment extends Fragment {
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
+        imgView = view.findViewById(R.id.imgProfile) ;
+        etSearch = view.findViewById(R.id.etSearch) ;
+        createListener();
+
 
         setupEmptyRecyclerViews();
         fetchJumpBackIn();
@@ -61,6 +74,25 @@ public class HomeFragment extends Fragment {
         // fetchBasedOnRecent(); // Mở comment khi backend có API này
 
         return view;
+    }
+
+    private void createListener() {
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ProfilePage.class);
+                startActivity(intent);
+            }
+        });
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mainActivity.switchToFragment(FragmentTag.search);
+                }
+            }
+        }) ;
     }
 
     private void setupEmptyRecyclerViews() {

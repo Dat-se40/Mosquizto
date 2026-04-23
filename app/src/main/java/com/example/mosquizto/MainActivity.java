@@ -6,24 +6,26 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mosquizto.Activities.CreateCollectionActivity;
 import com.example.mosquizto.Dialogs.CreateFolderDialog;
-import com.example.mosquizto.Fragments.FlashcardSetsFragment;
 import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import android.content.Intent;
 import com.example.mosquizto.Activities.ProfilePage;
 import dagger.hilt.android.AndroidEntryPoint;
+import com.example.mosquizto.Fragments.SearchFragment;
+import com.example.mosquizto.Util.FragmentTag;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
+
+    private Fragment homeFragment;
+    private Fragment searchFragment;
+    private Fragment libraryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,43 +36,70 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         if (savedInstanceState == null) {
-            bottomNav.setSelectedItemId(R.id.nav_library);
-            loadFragment(new LibraryFragment());
+            bottomNav.setSelectedItemId(R.id.nav_home);
+            switchToFragment(FragmentTag.home);
         }
 
         bottomNav.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
+                switchToFragment(FragmentTag.home); // Dùng hàm của master
+                return true;
             } else if (id == R.id.nav_create) {
-                showCreateMenu();
+                showCreateMenu(); // Của bạn: Hiện Popup, không chuyển màu tab
                 return false;
             } else if (id == R.id.nav_library) {
-                selectedFragment = new LibraryFragment();;
+                switchToLibrary(); // Của bạn nhưng được tối ưu theo master
+                return true;
             } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(MainActivity.this, com.example.mosquizto.Activities.ProfilePage.class));
-                return false;
+                startActivity(new Intent(MainActivity.this, ProfilePage.class));
+                return false; // Chuyển trang, không đổi màu tab
             }
-
-            if (selectedFragment != null) {
-                loadFragment(selectedFragment);
-            }
-            return true;
+            return false;
         });
     }
 
-    private boolean loadFragment(Fragment fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
+    public void switchToFragment(FragmentTag tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment targetFragment = null;
+        String tagStr = tag.name();
+
+        switch (tag) {
+            case home:
+                if (homeFragment == null) homeFragment = new HomeFragment();
+                targetFragment = homeFragment;
+                break;
+            case search:
+                if (searchFragment == null) searchFragment = new SearchFragment();
+                targetFragment = searchFragment;
+                break;
+            // Nếu bạn có thêm 'library' vào enum FragmentTag, bạn có thể đưa nó vào switch này
         }
-        return false;
+
+        if (targetFragment != null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, targetFragment, tagStr)
+                    .addToBackStack(tagStr)
+                    .commit();
+        }
     }
 
+    private void switchToLibrary() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Chỉ tạo mới 1 lần duy nhất, các lần sau dùng lại để chạy mượt
+        if (libraryFragment == null) {
+            libraryFragment = new LibraryFragment();
+        }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, libraryFragment, "library")
+                .addToBackStack("library")
+                .commit();
+    }
+
+    // Hàm của bạn: Hiện Menu tạo mới
     public void showCreateMenu() {
         View v = getLayoutInflater().inflate(R.layout.dialog_create_menu, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -90,5 +119,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.mosquizto.Services.itf;
+package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Models.Collection;
