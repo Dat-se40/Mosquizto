@@ -18,27 +18,27 @@ import com.example.mosquizto.Dto.request.CollectionRequest;
 public interface CollectionApi {
 
     // Lấy danh sách collection (có phân trang để app không bị lag nếu data lớn)
-    @GET("collections")
+    @GET("collection/public")
     Call<ApiResponse<List<Collection>>> getAllCollections(
             @Query("page") int page,
             @Query("size") int size
     );
 
     // Lấy chi tiết 1 bộ thẻ theo ID (khi user click vào thẻ ở màn Home)
-    @GET("collections/{id}")
+    @GET("collection/{id}")
     Call<ApiResponse<Collection>> getCollectionById(@Path("id") int id);
 
     // Lấy danh sách thẻ do user tự tạo (cho mục Library/Thư viện)
-    @GET("collections/my-collections")
+    @GET("collection/my-collections")
     Call<ApiResponse<List<Collection>>> getMyCollections();
 
-    @GET("collections/my-collections")
+    @GET("collection/my-list")
     Call<ApiResponse<PageResponse<Collection>>> getMyCollections(
             @Query("page") int page,
             @Query("size") int size
     );
     // API Tạo bộ sưu tập mới
-    @POST("collections")
+    @POST("collection")
     Call<ApiResponse<Integer>> createCollection(@Body CollectionRequest request);
 
     @GET("collection/search")

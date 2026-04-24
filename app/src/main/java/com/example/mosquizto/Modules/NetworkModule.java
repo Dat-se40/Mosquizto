@@ -27,7 +27,19 @@ public class NetworkModule {
     public SessionManager provideSessionManager(@ApplicationContext Context context) {
         return new SessionManager(context);
     }
+    @Provides
+    @Singleton
+    public AuthInterceptor provideAuthInterceptor(SessionManager sessionManager) {
+        return new AuthInterceptor(sessionManager);
+    }
 
+    @Provides
+    @Singleton
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
+                .build();
+    }
     @Provides
     @Singleton
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {

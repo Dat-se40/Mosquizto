@@ -18,12 +18,10 @@ public interface UserApi {
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
     @POST("auth/forgot-password")
     Call<ApiResponse<?>> forgotPassword(@Body String email);
-    @POST("auth/resigter")
+    @POST("auth/register")
     Call<ApiResponse<String>> signUp(@Body SignupRequest signupRequest);
     @POST("auth/logout")
     Call<ApiResponse<String>> logout();
     @GET("user/profile")
     Call<ApiResponse<UserResponse>> getMyProfile();
-    @GET("users/me")
-    Call<ApiResponse<User>> getCurrentProfile();
 }
