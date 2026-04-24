@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mosquizto.Dto.request.ResetPasswordRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Network.itf.UserApi;
 
@@ -28,9 +29,10 @@ public class ResetPassViewModel extends ViewModel {
     }
     public void ForgetPassword(String email)
     {
-        userApi.forgotPassword(email).enqueue(new Callback<ApiResponse<?>>() {
+        ResetPasswordRequest request = new ResetPasswordRequest(email);
+        userApi.forgotPassword(request).enqueue(new Callback<ApiResponse<String>>() {
             @Override
-            public void onResponse(Call<ApiResponse<?>> call, Response<ApiResponse<?>> response) {
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     _isResetLinkSent.postValue(true);
                 } else {
@@ -39,7 +41,7 @@ public class ResetPassViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<?>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 _errorMessage.postValue("Lost connection");
             }
         });

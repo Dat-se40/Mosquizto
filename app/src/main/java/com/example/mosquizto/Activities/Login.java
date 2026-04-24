@@ -2,6 +2,7 @@ package com.example.mosquizto.Activities;
 
 import android.os.Bundle;
 
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.Intent;
@@ -37,6 +38,17 @@ public class Login extends AppCompatActivity {
         edtMailOrUsername = findViewById(R.id.editText_MailOrUsername); // ID tùy theo file XML của bạn
         edtPassword = findViewById(R.id.editText_Password);
         btnLogin = findViewById(R.id.btn_login);
+
+        android.widget.ImageButton btnBack = findViewById(R.id.imageButton_back);
+        btnBack.setOnClickListener(v -> finish());
+
+        View btnForgotPassword = findViewById(R.id.textView_ForgotPassword);
+        if (btnForgotPassword != null) {
+            btnForgotPassword.setOnClickListener(v -> {
+                Intent intent = new Intent(Login.this, ResetPass.class);
+                startActivity(intent);
+            });
+        }
 
         // 1. Lắng nghe nút bấm
         btnLogin.setOnClickListener(v -> {
