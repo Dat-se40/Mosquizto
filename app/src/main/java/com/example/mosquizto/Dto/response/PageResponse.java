@@ -5,7 +5,7 @@ public class PageResponse<T> {
     private int size;
     private long totalElements;
     private int totalPages;
-    private List<T> content; // Đây là danh sách dữ liệu thật
+    private List<T> items; // Đây là danh sách dữ liệu thật
 
-    public List<T> getContent() { return content; }
+    public List<T> getContent() { return items; }
 }

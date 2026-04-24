@@ -17,7 +17,7 @@ import com.example.mosquizto.Dto.request.CollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Services.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.CollectionApi;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,11 +15,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -73,7 +74,7 @@ public class ProfilePage extends AppCompatActivity {
 
     private void initViews() {
         tvUserName = findViewById(R.id.tvUsername);
-        imgProfile = findViewById(R.id.imgProfile);
+        imgProfile = findViewById(R.id.iv_avatar);
 
         // Hiển thị ngay lập tức tên User từ SessionManager để UI không bị trống khi đợi API
         if (sessionManager.getCurrUser() != null) {
@@ -92,23 +93,31 @@ public class ProfilePage extends AppCompatActivity {
 
     // Hàm lấy dữ liệu mới nhất từ nhánh của bạn
     private void loadUserProfile() {
-        userApi.getCurrentProfile().enqueue(new Callback<ApiResponse<User>>() {
+        userApi.getMyProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
+            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    User currentUser = response.body().getData();
+                    UserResponse currentUserData = response.body().getData();
                     // Cập nhật lại giao diện với dữ liệu mới nhất từ server
-                    if (currentUser != null && currentUser.getUsername() != null) {
-                        tvUserName.setText(currentUser.getUsername());
+                    if (currentUserData != null && currentUserData.getUsername() != null) {
+                        tvUserName.setText(currentUserData.getUsername());
 
-                        // Cập nhật lại SessionManager luôn để đồng bộ (nếu cần)
-                        sessionManager.saveSession(currentUser);
+                        User userToSave = new User();
+                        userToSave.setUsername(currentUserData.getUsername());
+                        userToSave.setEmail(currentUserData.getEmail());
+
+                        String currentToken = sessionManager.getAccessToken(); // Hoặc getAccessToken() tùy tên hàm bạn đặt
+                        String currentRefreshToken = sessionManager.getRefreshToken(); // Hàm lấy refresh token
+
+                        sessionManager.saveSession(currentToken, userToSave, currentRefreshToken);
                     }
+                } else {
+                    Toast.makeText(ProfilePage.this, "Không thể tải thông tin profile", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 Toast.makeText(ProfilePage.this, "Lỗi lấy thông tin: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

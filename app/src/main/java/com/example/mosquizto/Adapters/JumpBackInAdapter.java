@@ -33,8 +33,8 @@ public class JumpBackInAdapter extends RecyclerView.Adapter<JumpBackInAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Collection item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
-        holder.progressBar.setProgress(item.getProgress());
-        holder.tvProgressText.setText(item.getProgress() + "% of questions completed");
+//        holder.progressBar.setProgress(item.getProgress());
+//        holder.tvProgressText.setText(item.getProgress() + "% of questions completed");
     }
 
     @Override

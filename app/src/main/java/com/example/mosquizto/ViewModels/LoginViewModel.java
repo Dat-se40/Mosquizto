@@ -15,7 +15,7 @@ import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

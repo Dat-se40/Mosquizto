@@ -16,10 +16,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mosquizto.Adapters.FlashcardSetAdapter;
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Services.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.CollectionApi;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
@@ -75,35 +76,30 @@ public class FlashcardSetsFragment extends Fragment {
     private void fetchMyCollections() {
         swipeRefreshLayout.setRefreshing(true);
 
-        // CHÚ THÍCH: Gọi API getMyCollections. Theo Backend, nó trả về PageResponse
-        Call<ApiResponse<PageResponse<Collection>>> call = collectionApi.getMyCollections(0, 50); // Lấy trang 0, 50 items
+        Call<ApiResponse<PageResponse<CollectionResponse>>> call = collectionApi.getMyCollections(1, 50);
 
-        call.enqueue(new Callback<ApiResponse<PageResponse<Collection>>>() {
+        call.enqueue(new Callback<ApiResponse<PageResponse<CollectionResponse>>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<PageResponse<Collection>>> call, @NonNull Response<ApiResponse<PageResponse<Collection>>> response) {
+            public void onResponse(@NonNull Call<ApiResponse<PageResponse<CollectionResponse>>> call, @NonNull Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    // 1. Lấy ra ApiResponse
-                    ApiResponse<PageResponse<Collection>> apiResponse = response.body();
+                    List<CollectionResponse> remoteList = response.body().getData().getContent();
 
-                    // 2. Lấy ra PageResponse thông qua hàm getData() của ApiResponse
-                    PageResponse<Collection> pageResponse = apiResponse.getData();
-
-                    if (pageResponse != null) {
-                        // 3. Lấy ra List<Collection> thông qua hàm getContent() của PageResponse
-                        List<Collection> collections = pageResponse.getContent();
-
-                        originalList = collections;
-                        adapter.setCollectionList(collections);
+                    // MAP CHỈ VỚI 1 DÒNG
+                    List<Collection> collections = new ArrayList<>();
+                    for (CollectionResponse res : remoteList) {
+                        collections.add(Collection.fromResponse(res));
                     }
+                    originalList = collections;
+                    adapter.setCollectionList(collections);
                 } else {
                     Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
-                    Log.e("API_ERROR", "Code: " + response.code());
+                    Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<PageResponse<Collection>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                 Log.e("API_ERROR", t.getMessage(), t);

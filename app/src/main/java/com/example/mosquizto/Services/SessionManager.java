@@ -6,8 +6,8 @@ import com.example.mosquizto.Models.User;
 import com.google.gson.Gson;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class SessionManager {
@@ -22,8 +22,9 @@ public class SessionManager {
     private String refreshToken ;
     private User currUser;
     private Gson gson;
+    @Inject
+    public SessionManager(@ApplicationContext Context context) {
 
-    public SessionManager(@ApplicationContext   Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
         this.gson = new Gson();
