@@ -19,7 +19,7 @@ import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
-import com.example.mosquizto.Services.itf.UserApi;
+import com.example.mosquizto.Network.itf.UserApi;
 
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;

@@ -24,7 +24,7 @@ import com.example.mosquizto.Adapters.BasedOnRecentAdapter;
 import com.example.mosquizto.Adapters.JumpBackInAdapter;
 import com.example.mosquizto.Adapters.RecentAdapter;
 import com.example.mosquizto.Dto.response.ApiResponse;
-import com.example.mosquizto.Services.itf.StudyApi;
+import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Util.FragmentTag;
 
 import java.util.ArrayList;
