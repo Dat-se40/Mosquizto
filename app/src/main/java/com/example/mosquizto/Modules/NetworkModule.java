@@ -13,11 +13,10 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import jakarta.inject.Singleton;
+import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 @Module
 @InstallIn(SingletonComponent.class) // @Configuraion
@@ -48,13 +47,6 @@ public class NetworkModule {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-    }
-    @Provides
-    @Singleton
-    public OkHttpClient provideHttpClient(SessionManager sessionManager)
-    {
-        return  new OkHttpClient.Builder().
-                addInterceptor( new AuthInterceptor(sessionManager)).build();
     }
     @Provides
     @Singleton
