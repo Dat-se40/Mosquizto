@@ -23,17 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
     @Provides
     @Singleton
-    public SessionManager provideSessionManager(@ApplicationContext Context context) {
-        return new SessionManager(context);
-    }
-    @Provides
-    @Singleton
-    public AuthInterceptor provideAuthInterceptor(SessionManager sessionManager) {
-        return new AuthInterceptor(sessionManager);
-    }
-
-    @Provides
-    @Singleton
     public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
         return new OkHttpClient.Builder()
                 .addInterceptor(authInterceptor)
@@ -43,7 +32,7 @@ public class NetworkModule {
     @Singleton
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .baseUrl("http://172.23.224.1:8080/")
+                .baseUrl("http://192.168.1.1:8080/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
