@@ -73,7 +73,7 @@ public class ProfilePage extends AppCompatActivity {
 
     private void initViews() {
         tvUserName = findViewById(R.id.tvUsername);
-        imgProfile = findViewById(R.id.imgProfile);
+        imgProfile = findViewById(R.id.iv_avatar);
 
         // Hiển thị ngay lập tức tên User từ SessionManager để UI không bị trống khi đợi API
         if (sessionManager.getCurrUser() != null) {
@@ -100,9 +100,10 @@ public class ProfilePage extends AppCompatActivity {
                     // Cập nhật lại giao diện với dữ liệu mới nhất từ server
                     if (currentUser != null && currentUser.getUsername() != null) {
                         tvUserName.setText(currentUser.getUsername());
+                        String currentToken = sessionManager.getAccessToken(); // Hoặc getAccessToken() tùy tên hàm bạn đặt
+                        String currentRefreshToken = sessionManager.getRefreshToken(); // Hàm lấy refresh token
 
-                        // Cập nhật lại SessionManager luôn để đồng bộ (nếu cần)
-                        sessionManager.saveSession(currentUser);
+                        sessionManager.saveSession(currentToken, currentUser, currentRefreshToken);
                     }
                 }
             }

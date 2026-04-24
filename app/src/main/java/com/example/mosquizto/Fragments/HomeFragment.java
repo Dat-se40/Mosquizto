@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
-        imgView = view.findViewById(R.id.imgProfile) ;
+        imgView = view.findViewById(R.id.iv_avatar) ;
         etSearch = view.findViewById(R.id.etSearch) ;
         createListener();
 

@@ -59,6 +59,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0") // Dùng để load ảnh từ URL API
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
