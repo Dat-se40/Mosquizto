@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_grey">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background_white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tùy chọn"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AI CÓ QUYỀN XEM?"
+        android:padding="16sp"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <RadioGroup
+        android:id="@+id/rg_visibility"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_white"
+        android:padding="8dp">
+        <RadioButton
+            android:id="@+id/rb_public"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mọi người"/>
+        <RadioButton
+            android:id="@+id/rb_private"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chỉ mình tôi"/>
+    </RadioGroup>
+</LinearLayout>

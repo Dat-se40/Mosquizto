@@ -11,7 +11,7 @@ public class User {
     private UserStatus status;
     private String role;
     private String password;
-
+    private String avatarUrl;
 
     public User(String username )
     {
@@ -91,5 +91,13 @@ public class User {
                 ", username='" + username + '\'' +
                 ", status=" + status +
                 ", role='" + role ;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

@@ -18,7 +18,10 @@ public class JumpBackInAdapter extends RecyclerView.Adapter<JumpBackInAdapter.Vi
     public JumpBackInAdapter(List<Collection> collections) {
         this.collections = collections;
     }
-
+    public void setCollections(List<Collection> collections) {
+        this.collections = collections;
+        notifyDataSetChanged(); // Báo cho RecyclerView biết dữ liệu đã thay đổi để vẽ lại UI
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,8 +33,8 @@ public class JumpBackInAdapter extends RecyclerView.Adapter<JumpBackInAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Collection item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
-        holder.progressBar.setProgress(item.getProgress());
-        holder.tvProgressText.setText(item.getProgress() + "% of questions completed");
+//        holder.progressBar.setProgress(item.getProgress());
+//        holder.tvProgressText.setText(item.getProgress() + "% of questions completed");
     }
 
     @Override

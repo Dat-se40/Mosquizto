@@ -15,7 +15,7 @@ import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,16 +25,24 @@ public class LoginViewModel extends ViewModel {
     private final UserApi userApi;
     private final SessionManager sessionManager;
 
-    private MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
     public LiveData<Boolean> isLoading = _isLoading;
 
-    private MutableLiveData<String> _errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
     public LiveData<String> errorMessage = _errorMessage;
 
     // LiveData để báo cho Activity biết đã đăng nhập & lấy profile xong
-    private MutableLiveData<Boolean> _loginSuccess = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> _loginSuccess = new MutableLiveData<>(false);
     public LiveData<Boolean> loginSuccess = _loginSuccess;
+
+    // Giữ lại loginResult để tương thích với LoginActivity nếu UI vẫn đang observe
+    private final MutableLiveData<ApiResponse<LoginResponse>> loginResult = new MutableLiveData<>();
+    public LiveData<ApiResponse<LoginResponse>> getLoginResult() {
+        return loginResult;
+    }
+
     private String password = "";
+
     @Inject
     public LoginViewModel(UserApi userApi, SessionManager sessionManager) {
         this.userApi = userApi;
@@ -48,12 +56,19 @@ public class LoginViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    // Trả dữ liệu về biến loginResult đề phòng Activity vẫn đang dùng
+                    loginResult.setValue(response.body());
+
                     String token = response.body().getData().getAccessToken();
                     String refreshToken = response.body().getData().getRefreshToken();
+
                     sessionManager.setAccessToken(token);
                     sessionManager.setRefreshToken(refreshToken);
-                    password = pass ;
+                    password = pass;
+
                     Log.d("LoginViewModel", "on Success:" + token);
+
+                    // Gọi hàm lấy thông tin người dùng ngay sau khi có token
                     fetchUserProfile();
                 } else {
                     _isLoading.setValue(false);
@@ -78,6 +93,8 @@ public class LoginViewModel extends ViewModel {
                     Log.d("LoginViewModel", "on Success:" + response.body().getData());
                     UserResponse rawData = response.body().getData();
                     User userProfile = User.fromResponse(rawData, password);
+
+                    // Lưu User vào SessionManager
                     sessionManager.setCurrUser(userProfile);
                     sessionManager.saveSession(
                             sessionManager.getAccessToken(),
@@ -85,6 +102,7 @@ public class LoginViewModel extends ViewModel {
                             sessionManager.getRefreshToken()
                     );
 
+                    // Báo UI biết toàn bộ quá trình (Đăng nhập + Lấy Profile) đã thành công
                     _loginSuccess.setValue(true);
                 } else {
                     _errorMessage.setValue("Không thể lấy thông tin người dùng!");

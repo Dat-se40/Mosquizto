@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.mosquizto.Services.AuthInterceptor;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.UserApi;
 
@@ -12,7 +13,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import jakarta.inject.Singleton;
+import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -22,10 +23,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkModule {
     @Provides
     @Singleton
-    public SessionManager provideSessionManager(@ApplicationContext Context context) {
-        return new SessionManager(context);
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
+                .build();
     }
-
     @Provides
     @Singleton
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
@@ -37,16 +39,18 @@ public class NetworkModule {
     }
     @Provides
     @Singleton
-    public OkHttpClient provideHttpClient(SessionManager sessionManager)
-    {
-        return  new OkHttpClient.Builder().
-                addInterceptor( new AuthInterceptor(sessionManager)).build();
-    }
-    @Provides
     public UserApi provideUserApi(Retrofit retrofit) {
         return retrofit.create(UserApi.class);
     }
+    @Provides
+    @Singleton
+    public CollectionApi provideCollectionApi(Retrofit retrofit) {
+        return retrofit.create(CollectionApi.class);
+    }
 
     @Provides
-    public CollectionApi provideCollectionApi(Retrofit retrofit) {return retrofit.create(CollectionApi.class);}
+    @Singleton
+    public StudyApi provideStudyApi(Retrofit retrofit) {
+        return retrofit.create(StudyApi.class);
+    }
 }

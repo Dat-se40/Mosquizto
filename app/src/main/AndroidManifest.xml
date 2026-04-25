@@ -25,11 +25,6 @@
         </activity>
 
         <activity
-            android:name=".Activities.Search"
-            android:exported="false">
-        </activity>
-
-        <activity
             android:name=".Activities.CreateAccountActivity"
             android:exported="false">
         </activity>
@@ -44,10 +39,20 @@
             android:name=".Activities.RSPassNoti"
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />
+
         <activity android:name=".Activities.ProfilePage"
             android:exported="false"
             android:theme="@style/Theme.Mosquizto"
             />
+
+        <activity
+            android:name=".Activities.CreateCollectionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activities.CollectionSettingsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false">

@@ -2,6 +2,7 @@ package com.example.mosquizto.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +23,29 @@ import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Adapters.BasedOnRecentAdapter;
 import com.example.mosquizto.Adapters.JumpBackInAdapter;
 import com.example.mosquizto.Adapters.RecentAdapter;
+import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Util.FragmentTag;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.inject.Inject;
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import com.example.mosquizto.Activities.ProfilePage;
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
 
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
+    private JumpBackInAdapter jumpAdapter;
+    private RecentAdapter recentAdapter;
+    private BasedOnRecentAdapter basedAdapter;
+
+    @Inject
+    StudyApi studyApi;
+
     private ImageView imgView ;
     private EditText etSearch ;
     @Nullable
@@ -37,16 +53,25 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        View ivAvatar = view.findViewById(R.id.iv_avatar);
+        if (ivAvatar != null) {
+            ivAvatar.setOnClickListener(v -> {
+                startActivity(new Intent(getContext(), ProfilePage.class));
+            });
+        }
+
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
-        imgView = view.findViewById(R.id.imgProfile) ;
+        imgView = view.findViewById(R.id.iv_avatar) ;
         etSearch = view.findViewById(R.id.etSearch) ;
-        setupJumpBackIn();
-        setupRecents();
-        setupBasedOnRecent();
         createListener();
 
+
+        setupEmptyRecyclerViews();
+        fetchJumpBackIn();
+        fetchRecents();
+        // fetchBasedOnRecent(); // Mở comment khi backend có API này
 
         return view;
     }
@@ -70,33 +95,55 @@ public class HomeFragment extends Fragment {
         }) ;
     }
 
-    private void setupJumpBackIn() {
-        List<Collection> list = new ArrayList<>();
-        list.add(new Collection(1, "Unit 5: The World I...", 37, new User("quanghieu"), 1));
-        list.add(new Collection(2, "General trivia", 7, new User("Quizlet"), 50));
-
-        JumpBackInAdapter adapter = new JumpBackInAdapter(list);
+    private void setupEmptyRecyclerViews() {
+        jumpAdapter = new JumpBackInAdapter(null);
         rvJumpBackIn.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvJumpBackIn.setAdapter(adapter);
-    }
+        rvJumpBackIn.setAdapter(jumpAdapter);
 
-    private void setupRecents() {
-        List<Collection> list = new ArrayList<>();
-        list.add(new Collection(1, "Unit 5: The World I...", 37, new User("quanghieu"), 0));
-        list.add(new Collection(2, "General trivia", 7, new User("Quizlet"), 0));
-
-        RecentAdapter adapter = new RecentAdapter(list);
+        recentAdapter = new RecentAdapter(null);
         rvRecents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        rvRecents.setAdapter(adapter);
+        rvRecents.setAdapter(recentAdapter);
+
+        basedAdapter = new BasedOnRecentAdapter(null);
+        rvBasedOnRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvBasedOnRecent.setAdapter(basedAdapter);
     }
 
-    private void setupBasedOnRecent() {
-        List<Collection> list = new ArrayList<>();
-        list.add(new Collection(3, "bài 1", 46, new User("lforlinh"), 0));
-        list.add(new Collection(4, "bài 2", 45, new User("lforlinh"), 0)); // Thẻ kế tiếp bị che mất trong ảnh
+    // --- CÁC HÀM GỌI API ---
 
-        BasedOnRecentAdapter adapter = new BasedOnRecentAdapter(list);
-        rvBasedOnRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvBasedOnRecent.setAdapter(adapter);
+    private void fetchJumpBackIn() {
+        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Collection> data = response.body().getData();
+                    // Cập nhật adapter và refresh giao diện
+                    jumpAdapter.setCollections(data);
+                    jumpAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+                Log.e("HomeFragment", "Lỗi JumpBackIn: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchRecents() {
+        studyApi.getRecents().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    recentAdapter.setCollections(response.body().getData());
+                    recentAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+                Log.e("HomeFragment", "Lỗi Recents: " + t.getMessage());
+            }
+        });
     }
 }
