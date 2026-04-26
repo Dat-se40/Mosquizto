@@ -1,6 +1,7 @@
 package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
@@ -25,14 +26,21 @@ public interface CollectionApi {
             @Query("size") int size
     );
 
-    // Lấy chi tiết 1 bộ thẻ theo ID (khi user click vào thẻ ở màn Home)
+    // Lấy chi tiết 1 thông tin bộ thẻ theo ID
     @GET("collection/{id}")
     Call<ApiResponse<Collection>> getCollectionById(@Path("id") int id);
+
+    // Lấy ra danh sách các item của 1 bộ thẻ
+    @GET("collection/item/{id}")
+    Call<ApiResponse<List<CollectionItemResponse>>> getCollectionItemById(@Path("id") int id);
 
     // Lấy danh sách thẻ do user tự tạo (cho mục Library/Thư viện)
     @GET("collection/my-collections")
     Call<ApiResponse<List<Collection>>> getMyCollections();
 
+    // lấy ra danh sách bộ thẻ được mở gần đây (Recents)
+    @GET("collection/recent-opened")
+    Call<ApiResponse<List<CollectionResponse>>> getRecentOpenedCollections();
     @GET("collection/my-list")
     Call<ApiResponse<PageResponse<CollectionResponse>>> getMyCollections(
             @Query("page") int page,

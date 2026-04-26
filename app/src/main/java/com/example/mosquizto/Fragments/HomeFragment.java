@@ -16,7 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.Activities.ProfilePage;
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Dto.response.StudySessionResponse;
+import com.example.mosquizto.Dto.response.StudySessionResultResponse;
 import com.example.mosquizto.MainActivity;
+import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.Models.User;
@@ -46,6 +50,8 @@ public class HomeFragment extends Fragment {
     @Inject
     StudyApi studyApi;
 
+    @Inject
+    CollectionApi collectionApi ;
     private ImageView imgView ;
     private EditText etSearch ;
     @Nullable
@@ -112,28 +118,28 @@ public class HomeFragment extends Fragment {
     // --- CÁC HÀM GỌI API ---
 
     private void fetchJumpBackIn() {
-        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<StudySessionResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+            public void onResponse(Call<ApiResponse<List<StudySessionResponse>>> call, Response<ApiResponse<List<StudySessionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Collection> data = response.body().getData();
+                    List<StudySessionResponse> data = response.body().getData();
                     // Cập nhật adapter và refresh giao diện
-                    jumpAdapter.setCollections(data);
+                    jumpAdapter.setSessions(data);
                     jumpAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<StudySessionResponse>>> call, Throwable t) {
                 Log.e("HomeFragment", "Lỗi JumpBackIn: " + t.getMessage());
             }
         });
     }
 
     private void fetchRecents() {
-        studyApi.getRecents().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+        collectionApi.getRecentOpenedCollections().enqueue(new Callback<ApiResponse<List<CollectionResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+            public void onResponse(Call<ApiResponse<List<CollectionResponse>>> call, Response<ApiResponse<List<CollectionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     recentAdapter.setCollections(response.body().getData());
                     recentAdapter.notifyDataSetChanged();
@@ -141,7 +147,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<CollectionResponse>>> call, Throwable t) {
                 Log.e("HomeFragment", "Lỗi Recents: " + t.getMessage());
             }
         });
