@@ -76,34 +76,34 @@ public class FlashcardSetsFragment extends Fragment {
     private void fetchMyCollections() {
         swipeRefreshLayout.setRefreshing(true);
 
-        Call<ApiResponse<PageResponse<CollectionResponse>>> call = collectionApi.getMyCollections(1, 50);
-
-        call.enqueue(new Callback<ApiResponse<PageResponse<CollectionResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<PageResponse<CollectionResponse>>> call, @NonNull Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    List<CollectionResponse> remoteList = response.body().getData().getContent();
-
-                    // MAP CHỈ VỚI 1 DÒNG
-                    List<Collection> collections = new ArrayList<>();
-                    for (CollectionResponse res : remoteList) {
-                        collections.add(Collection.fromResponse(res));
-                    }
-                    originalList = collections;
-                    adapter.setCollectionList(collections);
-                } else {
-                    Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
-                    Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
-                Log.e("API_ERROR", t.getMessage(), t);
-            }
-        });
+//        Call<ApiResponse<PageResponse<CollectionResponse>>> call = collectionApi.getMyCollections(1, 50);
+//
+//        call.enqueue(new Callback<ApiResponse<PageResponse<CollectionResponse>>>() {
+//            @Override
+//            public void onResponse(@NonNull Call<ApiResponse<PageResponse<CollectionResponse>>> call, @NonNull Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
+//                swipeRefreshLayout.setRefreshing(false);
+//                if (response.isSuccessful() && response.body() != null) {
+//                    List<CollectionResponse> remoteList = response.body().getData().getContent();
+//
+//                    // MAP CHỈ VỚI 1 DÒNG
+//                    List<Collection> collections = new ArrayList<>();
+//                    for (CollectionResponse res : remoteList) {
+//                        collections.add(Collection.fromResponse(res));
+//                    }
+//                    originalList = collections;
+//                    adapter.setCollectionList(collections);
+//                } else {
+//                    Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
+//                    Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
+//                swipeRefreshLayout.setRefreshing(false);
+//                Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+//                Log.e("API_ERROR", t.getMessage(), t);
+//            }
+//        });
     }
 }

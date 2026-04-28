@@ -1,15 +1,13 @@
 package com.example.mosquizto.Dto.response;
 
-import java.time.LocalDateTime;
-
 public class CollectionItemResponse {
     private String term ;
     private String definition ;
     private String imageUrl ;
     private Integer orderIndex ;
     private Integer collectionId ;
-    private LocalDateTime createAt ;
-    private LocalDateTime updateAt ;
+    private String createAt ; // Chuyển từ LocalDateTime sang String để Gson không bị crash
+    private String updateAt ;
 
     public String getTerm() {
         return term;
@@ -51,19 +49,19 @@ public class CollectionItemResponse {
         this.collectionId = collectionId;
     }
 
-    public LocalDateTime getCreateAt() {
+    public String getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
+    public void setCreateAt(String createAt) {
         this.createAt = createAt;
     }
 
-    public LocalDateTime getUpdateAt() {
+    public String getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
+    public void setUpdateAt(String updateAt) {
         this.updateAt = updateAt;
     }
 }

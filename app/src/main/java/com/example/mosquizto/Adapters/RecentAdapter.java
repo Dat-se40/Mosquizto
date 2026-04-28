@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import java.util.List;
@@ -13,14 +15,18 @@ import java.util.List;
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder> {
 
     private List<CollectionResponse> collections;
+    private OnItemCollectionClickedListener listener;
 
-    public RecentAdapter(List<CollectionResponse> collections) {
+    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener) {
         this.collections = collections;
+        this.listener = listener;
     }
+
     public void setCollections(List<CollectionResponse> collections) {
         this.collections = collections;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +41,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
         String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
         holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
+
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.OnItemClicked(item);
+            }
+        });
     }
 
     @Override
