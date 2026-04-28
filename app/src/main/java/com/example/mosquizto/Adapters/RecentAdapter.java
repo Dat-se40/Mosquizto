@@ -7,19 +7,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Models.Collection;
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder> {
 
-    private List<Collection> collections;
+    private List<CollectionResponse> collections;
 
-    public RecentAdapter(List<Collection> collections) {
+    public RecentAdapter(List<CollectionResponse> collections) {
         this.collections = collections;
     }
-    public void setCollections(List<Collection> collections) {
+    public void setCollections(List<CollectionResponse> collections) {
         this.collections = collections;
-        notifyDataSetChanged(); // Báo cho RecyclerView biết dữ liệu đã thay đổi để vẽ lại UI
+        notifyDataSetChanged();
     }
     @NonNull
     @Override
@@ -30,11 +30,11 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Collection item = collections.get(position);
+        CollectionResponse item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
 
-        String author = (item.getCreatedBy() != null) ? item.getCreatedBy().getUsername() : "Quizlet";
-        holder.tvDetails.setText(item.getCount() + " cards • by " + author);
+        String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
+        holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
     }
 
     @Override

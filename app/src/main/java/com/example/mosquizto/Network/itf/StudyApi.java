@@ -1,24 +1,33 @@
 package com.example.mosquizto.Network.itf;
 
+import com.example.mosquizto.Dto.request.StartStudySessionRequest;
+import com.example.mosquizto.Dto.request.StudySessionDetailRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.StudySessionResponse;
+import com.example.mosquizto.Dto.response.StudySessionResultResponse;
 import com.example.mosquizto.Models.Collection;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface StudyApi {
-
-    // Lấy danh sách các bộ thẻ đang học dở (Jump back in)
-    @GET("study/jump-back-in")
-    Call<ApiResponse<List<Collection>>> getJumpBackIn();
-
     // Lấy danh sách các bộ thẻ mở gần đây (Recents)
     @GET("study/recents")
     Call<ApiResponse<List<Collection>>> getRecents();
 
-    // Gợi ý học tập (Based on your recent studying)
-    @GET("study/recommendations")
-    Call<ApiResponse<List<Collection>>> getRecommendations();
+
+    @POST("study-session/start")
+    Call<ApiResponse<Long>> startStudySession(@Body StartStudySessionRequest request);
+
+    // sau khi hoàn thành thì gửi kết quả lên server
+    @POST("study-session/{sessionId}/comple-bath")
+    Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId, @Body StudySessionDetailRequest request);
+
+    @GET("study-session/jump-back-in")
+    Call<ApiResponse<List<StudySessionResponse>>> getJumpBackIn();
 }
