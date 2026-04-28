@@ -1,6 +1,7 @@
 package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
 import com.example.mosquizto.Models.Collection;
@@ -33,7 +34,7 @@ public interface CollectionApi {
     Call<ApiResponse<List<Collection>>> getMyCollections();
 
     @GET("collection/my-list")
-    Call<ApiResponse<PageResponse<Collection>>> getMyCollections(
+    Call<ApiResponse<PageResponse<CollectionResponse>>> getMyCollections(
             @Query("page") int page,
             @Query("size") int size
     );
