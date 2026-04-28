@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="#D1D1D1" />
+    <TextView
+        android:id="@+id/btnAddToClass"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_group"
+        android:text="Add to class"
+        android:textSize="20sp"
+        android:textColor="#60687F"
+        />
+
+    <TextView
+        android:id="@+id/btnAddToFolder"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_bookmark"
+        android:text="Add to folder"
+        android:textSize="20sp"
+        android:textColor="#60687F"/>
+
+    <TextView
+        android:id="@+id/btnMakeCopy"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_copy"
+        android:text="Make a copy"
+        android:textSize="20sp"
+        android:textColor="#60687F"/>
+
+    <TextView
+        android:id="@+id/btnShare"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_share"
+        android:text="Share"
+        android:textSize="20sp"
+        android:textColor="#60687F"/>
+
+    <TextView
+        android:id="@+id/btnSetInfo"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_info"
+        android:text="Set info"
+        android:textSize="20sp"
+        android:textColor="#60687F"/>
+
+    <TextView
+        android:id="@+id/btnReport"
+        style="@style/OptionMenuItem"
+        android:drawableStart="@drawable/ic_report"
+        android:text="Report this set"
+        android:textSize="20sp"
+        android:textColor="#60687F"/>
+</LinearLayout>
