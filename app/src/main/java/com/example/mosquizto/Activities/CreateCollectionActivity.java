@@ -1,7 +1,9 @@
 package com.example.mosquizto.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,7 +17,7 @@ import com.example.mosquizto.Adapters.CreateCardAdapter;
 import com.example.mosquizto.Dto.request.CollectionItemRequest;
 import com.example.mosquizto.Dto.request.CollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
-import com.example.mosquizto.Models.Collection;
+import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.CollectionApi;
 
@@ -36,12 +38,19 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
     private CreateCardAdapter adapter;
     private final List<CollectionItemRequest> itemList = new ArrayList<>();
-    private String currentVisibility = "PUBLIC"; // Mặc định là Mọi người
+
+    private Integer createdCollectionId = null;
+    private Boolean currentVisibility = true;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_collection);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Đang lưu học phần...");
+        progressDialog.setCancelable(false);
 
         itemList.add(new CollectionItemRequest("", ""));
         itemList.add(new CollectionItemRequest("", ""));
@@ -55,7 +64,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_settings).setOnClickListener(v -> {
             Intent intent = new Intent(this, CollectionSettingsActivity.class);
-            intent.putExtra("visibility", currentVisibility);
+            intent.putExtra("visibility", currentVisibilityString());
             startActivityForResult(intent, 200);
         });
 
@@ -70,28 +79,74 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
     private void handleSave() {
         String title = ((EditText) findViewById(R.id.et_title)).getText().toString().trim();
+        String description = ((EditText) findViewById(R.id.et_description)).getText().toString().trim();
+        
         if (title.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        CollectionRequest request = new CollectionRequest(title, "", currentVisibility, itemList);
+        progressDialog.show();
 
-        // CHÚ Ý: Đổi từ ApiResponse<Collection> thành ApiResponse<Integer>
+        CollectionRequest request = new CollectionRequest(title, description, currentVisibility);
+        
         collectionApi.createCollection(request).enqueue(new Callback<ApiResponse<Integer>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Integer>> call, @NonNull Response<ApiResponse<Integer>> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(CreateCollectionActivity.this, "Đã tạo bộ thẻ thành công!", Toast.LENGTH_SHORT).show();
-                    finish(); // Trở về màn hình trước đó
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    createdCollectionId = response.body().getData();
+                    Log.d("CreateCollection", "Tạo Collection thành công ID: " + createdCollectionId);
+                    createAllItemsSequentially(0);
                 } else {
-                    Toast.makeText(CreateCollectionActivity.this, "Lỗi từ Server: " + response.code(), Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Toast.makeText(CreateCollectionActivity.this, "Lỗi tạo học phần: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<Integer>> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(CreateCollectionActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createAllItemsSequentially(int index) {
+        if (index >= itemList.size()) {
+            progressDialog.dismiss();
+            Toast.makeText(this, "Đã tạo học phần thành công!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        CollectionItemRequest item = itemList.get(index);
+
+        if (item.getTerm().trim().isEmpty() && item.getDefinition().trim().isEmpty()) {
+            createAllItemsSequentially(index + 1);
+            return;
+        }
+
+        item.setCollectionId(createdCollectionId);
+        item.setOrderIndex(index);
+        item.setImageUrl("");
+        Log.d("CreateCollection", "Đang gửi Item " + index + ": " + item.getTerm());
+
+        collectionApi.createCollectionItem(item).enqueue(new Callback<ApiResponse<CollectionItemResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<CollectionItemResponse>> call, Response<ApiResponse<CollectionItemResponse>> response) {
+                if (response.isSuccessful()) {
+                    Log.d("CreateCollection", "Lưu Item " + index + " thành công");
+                } else {
+                    Log.e("CreateCollection", "Lưu Item " + index + " thất bại: " + response.code());
+
+                }
+                createAllItemsSequentially(index + 1);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<CollectionItemResponse>> call, Throwable t) {
+                Log.e("CreateCollection", "Lỗi mạng khi lưu Item " + index, t);
+                createAllItemsSequentially(index + 1);
             }
         });
     }
@@ -100,7 +155,16 @@ public class CreateCollectionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
-            currentVisibility = data.getStringExtra("visibility");
+            String visibilityStr = data.getStringExtra("visibility");
+            currentVisibility = parseVisibility(visibilityStr);
         }
+    }
+
+    private String currentVisibilityString() {
+        return (currentVisibility != null && currentVisibility) ? "PUBLIC" : "PRIVATE";
+    }
+
+    private Boolean parseVisibility(String mode) {
+        return "PUBLIC".equals(mode);
     }
 }

@@ -8,25 +8,36 @@ import java.util.List;
 public class CollectionRequest {
     private String title;
     private String description;
-    private String accessStatus; // PUBLIC hoặc PRIVATE
-    private List<CollectionItemRequest> items;
 
-    public CollectionRequest(String title, String description, String accessStatus, List<CollectionItemRequest> items) {
+    private Boolean visibility;
+
+    public CollectionRequest(String title, String description, Boolean visibility) {
         this.title = title;
         this.description = description;
-        this.accessStatus = accessStatus;
-        this.items = items;
+        this.visibility = visibility;
     }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getAccessStatus() { return accessStatus; }
-    public void setAccessStatus(String accessStatus) { this.accessStatus = accessStatus; }
+    public String getDescription() {
+        return description;
+    }
 
-    public List<CollectionItemRequest> getItems() { return items; }
-    public void setItems(List<CollectionItemRequest> items) { this.items = items; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Boolean visibility) {
+        this.visibility = visibility;
+    }
 }

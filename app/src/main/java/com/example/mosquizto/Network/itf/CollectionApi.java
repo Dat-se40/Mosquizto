@@ -1,5 +1,6 @@
 package com.example.mosquizto.Network.itf;
 
+import com.example.mosquizto.Dto.request.CollectionItemRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
@@ -49,7 +50,8 @@ public interface CollectionApi {
     // API Tạo bộ sưu tập mới
     @POST("collection")
     Call<ApiResponse<Integer>> createCollection(@Body CollectionRequest request);
-
+    @POST("collection/item")
+    Call<ApiResponse<CollectionItemResponse>> createCollectionItem(@Body CollectionItemRequest request);
     @GET("collection/search")
     Call<SearchApiResponse> searchCollections(
             @Query("q") String q,
