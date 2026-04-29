@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background_grey">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/background_grey"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
@@ -168,12 +168,14 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayoutTerms"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_tab_layout_rounded"
                 app:tabIndicatorColor="#4255FF"
                 app:tabSelectedTextColor="#4255FF"
                 app:tabTextColor="#757575"
-                app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2">
+                app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                >
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
@@ -197,12 +199,13 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabStudy"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="24dp"
         android:text="Study set"
         android:textColor="@color/white"
         android:backgroundTint="#4255FF"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:background="@drawable/custom_btn"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

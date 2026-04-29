@@ -22,8 +22,10 @@
     <color name="primary_color_light">#EAEBFE</color>
     <color name="text_color_primary">#282E3E</color>
     <color name="text_color_secondary">#586380</color>
+
     <color name="background_white">#FFFFFF</color>
     <color name="background_grey">#F6F7FB</color>
+
     <color name="search_bar_background">#FFFFFF</color>
     <color name="search_bar_hint">#586380</color>
     <color name="progress_bar_color">#00C985</color>

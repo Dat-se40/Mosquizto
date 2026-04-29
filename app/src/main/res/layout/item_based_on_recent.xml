@@ -24,8 +24,8 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_gravity="center"
-                android:src="@android:drawable/ic_menu_gallery"
-                app:tint="#4255FF" />
+                android:src="@drawable/ic_card"
+                app:tint="#0887CA" />
         </FrameLayout>
 
         <TextView
