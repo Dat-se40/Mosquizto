@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -88,13 +89,15 @@ public class MemoryGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_memory_game);
 
         collectionId = getIntent().getIntExtra("COLLECTION_ID",-1);
-        List<CollectionItemResponse> items = (List<CollectionItemResponse>) getIntent().getSerializableExtra("ITEMS_LIST");
+        ArrayList<CollectionItemResponse> items = getIntent().getParcelableArrayListExtra("ITEMS_LIST");
         if (items != null) {
             this.allItems = items;
         }
 
         initViews();
-        fetchDataAndStartSession();
+        getWindow().getDecorView().post(() -> {
+            fetchDataAndStartSession();
+        });
     }
 
     private void initViews() {
@@ -132,17 +135,29 @@ public class MemoryGameActivity extends AppCompatActivity {
 
     private void fetchDataAndStartSession() {
 
+        String uniqueKey = java.util.UUID.randomUUID().toString();
+        Log.d("DEBUG_GAME", "collectionId: " + collectionId + ", uniqueKey: " + uniqueKey);
         // 2. Start Session
-        StartStudySessionRequest request = new StartStudySessionRequest(collectionId); // Hoặc mode tương ứng
-        studyApi.startStudySession(request).enqueue(new Callback<ApiResponse<Long>>() {
+        StartStudySessionRequest request = new StartStudySessionRequest(collectionId);
+        studyApi.startStudySession(uniqueKey,request).enqueue(new Callback<ApiResponse<Long>>() {
             @Override
             public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
                 if(response.isSuccessful() && response.body() != null) {
-                    sessionId = response.body().getData().longValue() ;
-                    startRound1();
+                    sessionId = response.body().getData();
+                    Log.d("DEBUG_GAME", "API Start Session Success: " + sessionId);
+                    if (sessionId != null)
+                    {
+                        startRound1();
+                    }
+
+                } else {
+                    Log.e("DEBUG_GAME", "API Start Session Failed: " + response.code());
                 }
             }
-            @Override public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {}
+            @Override
+            public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
+                Log.e("DEBUG_GAME", "API Error: " + t.getMessage());
+            }
         });
     }
 
@@ -277,7 +292,7 @@ public class MemoryGameActivity extends AppCompatActivity {
         viewFillBlank.setVisibility(View.GONE);
         viewSummary.setVisibility(View.VISIBLE);
 
-        if (currentRound == 1) {
+        if (currentRound == 1 && currentQuestionIndex < currentRoundItems.size()) {
             btnContinueSummary.setText("Continue to round 2");
             btnContinueSummary.setOnClickListener(v -> {
                 // Sang vòng 2 (Fill blank)
@@ -304,9 +319,15 @@ public class MemoryGameActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     Toast.makeText(MemoryGameActivity.this, "Completed!", Toast.LENGTH_SHORT).show();
                     finish(); // Thoát game
+                }else
+                {
+                    Log.e("DEBUG_GAME", "API Complete Session Failed: " + response.code());
                 }
             }
-            @Override public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t) {}
+            @Override public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t)
+            {
+                Log.e("DEBUG_GAME", "API Error: " + t.getMessage());
+            }
         });
     }
     private void handleClose() {

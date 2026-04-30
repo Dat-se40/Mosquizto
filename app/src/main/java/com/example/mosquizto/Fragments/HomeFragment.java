@@ -132,7 +132,9 @@ public class HomeFragment extends Fragment {
                     List<StudySessionResponse> data = response.body().getData();
                     // Cập nhật adapter và refresh giao diện
                     jumpAdapter.setSessions(data);
-                    jumpAdapter.notifyDataSetChanged();
+                }else
+                {
+                    Log.e("HomeFragment", "Lỗi JumpBackIn: " + response.code());
                 }
             }
 

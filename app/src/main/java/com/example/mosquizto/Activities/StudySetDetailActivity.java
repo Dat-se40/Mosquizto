@@ -85,7 +85,10 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 setupListeners();
                 
                 if (collectionId != -1) {
-                    fetchCollectionData();
+                    getWindow().getDecorView().post(() -> {
+                        fetchCollectionData();
+                    });
+
                 } else {
                     Log.w(TAG, "onCreate: collectionId is -1");
                     Toast.makeText(this, "ID bộ thẻ không hợp lệ!", Toast.LENGTH_SHORT).show();
@@ -294,8 +297,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     
                     // Lấy List từ adapter và truyền đi
                     if (termListAdapter != null) {
-                        List<CollectionItemResponse> items = termListAdapter.getItems();
-                        intent.putExtra("ITEMS_LIST", (Serializable) items);
+                        ArrayList<CollectionItemResponse> items = new ArrayList<>(termListAdapter.getItems());
+                        intent.putParcelableArrayListExtra("ITEMS_LIST", items);
                         Log.d(TAG, "Starting MemoryGameActivity with " + (items != null ? items.size() : 0) + " items");
                     }
                     

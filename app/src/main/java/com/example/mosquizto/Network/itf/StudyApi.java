@@ -12,6 +12,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -22,10 +23,13 @@ public interface StudyApi {
 
 
     @POST("study-session/start")
-    Call<ApiResponse<Long>> startStudySession(@Body StartStudySessionRequest request);
+    Call<ApiResponse<Long>> startStudySession(
+            @Header("Idempotency-Key") String idempotencyKey, // Thêm dòng này
+            @Body StartStudySessionRequest request
+    );
 
 //     sau khi hoàn thành thì gửi kết quả lên server
-    @POST("study-session/{sessionId}/complete-bath")
+    @POST("study-session/{sessionId}/complete-batch")
     Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId, @Body List<StudySessionDetailRequest> request);
 
 //    @POST("study-sessions/{sessionId}/complete")
@@ -34,6 +38,6 @@ public interface StudyApi {
 //            @Body List<StudySessionDetailRequest> details
 //    );
 
-    @GET("study-session/jump-back-in")
+    @GET("study-session/get-jump-back-in")
     Call<ApiResponse<List<StudySessionResponse>>> getJumpBackIn();
 }

@@ -18,12 +18,13 @@ import com.bumptech.glide.Glide;
 public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapter.ViewHolder> {
 
     private Context context;
-    private List<Collection> collectionList;
+    private List<CollectionResponse> collectionList;
 
     private OnItemCollectionClickedListener onCollectionClickListener;
-    public FlashcardSetAdapter(Context context, List<Collection> collectionList , OnItemCollectionClickedListener onCollectionClickListener) {
+    public FlashcardSetAdapter(Context context, List<CollectionResponse> collectionList , OnItemCollectionClickedListener onCollectionClickListener) {
         this.context = context;
         this.collectionList = collectionList;
+        this.onCollectionClickListener = onCollectionClickListener;
     }
 
     @NonNull
@@ -35,23 +36,27 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Collection collection = collectionList.get(position);
+        CollectionResponse collection = collectionList.get(position);
 
         holder.tvTitle.setText(collection.getTitle() != null ? collection.getTitle() : "Untitled");
 
         // Cập nhật số lượng term. Đảm bảo trong Model Collection của bạn có trường itemCount
         int itemCount = collection.getCount();
         holder.tvItemCount.setText(itemCount + (itemCount > 1 ? " terms" : " term"));
-        holder.itemView.setOnClickListener(v -> onCollectionClickListener.OnItemClicked(Collection.toResponse(collection) ));
+        holder.itemView.setOnClickListener(v -> {
+            if (onCollectionClickListener != null) {
+                onCollectionClickListener.OnItemClicked(collection);
+            }
+        });
         // Cập nhật tên User
-        if (collection.getCreatedBy() != null) {
+        if (collection.getUserName() != null) {
             // 1. Gán tên
-            holder.tvUsername.setText(collection.getCreatedBy().getUsername() != null
-                    ? collection.getCreatedBy().getUsername()
+            holder.tvUsername.setText(collection.getUserName() != null
+                    ? collection.getUserName()
                     : "Unknown user");
 
             // 2. Load Avatar từ URL
-            String avatarUrl = collection.getCreatedBy().getAvatarUrl(); // Gọi đúng hàm getAvatarUrl() bạn đã tạo ở Model User
+            String avatarUrl = ""; // Gọi đúng hàm getAvatarUrl() bạn đã tạo ở Model User
 
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                 Glide.with(context)
@@ -74,7 +79,7 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
         return collectionList != null ? collectionList.size() : 0;
     }
 
-    public void setCollectionList(List<Collection> newList) {
+    public void setCollectionList(List<CollectionResponse> newList) {
         this.collectionList = newList;
         notifyDataSetChanged();
     }

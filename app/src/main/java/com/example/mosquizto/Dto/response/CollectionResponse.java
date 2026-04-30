@@ -88,12 +88,13 @@ public class CollectionResponse {
         this.userName = userName;
     }
 
-    public CollectionResponse(Integer id, Integer count, String title, String description, Boolean visibility, Long userId) {
+    public CollectionResponse(Integer id, String title, String description, Boolean visibility, Long userId, String userName, Integer count) {
         this.id = id;
-        this.count = count;
         this.title = title;
         this.description = description;
         this.visibility = visibility;
         this.userId = userId;
+        this.userName = userName;
+        this.count = count;
     }
 }

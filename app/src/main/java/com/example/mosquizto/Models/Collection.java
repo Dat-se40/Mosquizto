@@ -35,7 +35,8 @@ public class Collection {
     }
     public static CollectionResponse toResponse(Collection collection)
     {
-        return new CollectionResponse(collection.getId(),collection.getCount(),collection.getTitle(),null,null,collection.getCreatedBy().getId()    );
+        return new CollectionResponse(collection.getId(), collection.getTitle(),
+                null, null, collection.getCreatedBy().getId(), collection.getCreatedBy().getUsername(), collection.getCount());
     }
 
     public int getId() {

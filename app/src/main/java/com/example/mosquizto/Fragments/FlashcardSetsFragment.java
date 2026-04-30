@@ -39,7 +39,7 @@ public class FlashcardSetsFragment extends Fragment {
     private FlashcardSetAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     @Inject CollectionApi collectionApi;
-    private List<Collection> originalList = new ArrayList<>();
+    private List<CollectionResponse> originalList = new ArrayList<>();
     MainActivity mainActivity ;
 
     @Nullable
@@ -94,14 +94,8 @@ public class FlashcardSetsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
-
-                    // MAP CHỈ VỚI 1 DÒNG
-                    List<Collection> collections = new ArrayList<>();
-                    for (CollectionResponse res : remoteList) {
-                        collections.add(Collection.fromResponse(res));
-                    }
-                    originalList = collections;
-                    adapter.setCollectionList(collections);
+                    originalList = remoteList;
+                    adapter.setCollectionList(remoteList);
                 } else {
                     Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
                     Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
