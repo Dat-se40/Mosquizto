@@ -24,9 +24,15 @@ public interface StudyApi {
     @POST("study-session/start")
     Call<ApiResponse<Long>> startStudySession(@Body StartStudySessionRequest request);
 
-    // sau khi hoàn thành thì gửi kết quả lên server
-    @POST("study-session/{sessionId}/comple-bath")
-    Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId, @Body StudySessionDetailRequest request);
+//     sau khi hoàn thành thì gửi kết quả lên server
+    @POST("study-session/{sessionId}/complete-bath")
+    Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId, @Body List<StudySessionDetailRequest> request);
+
+//    @POST("study-sessions/{sessionId}/complete")
+//    Call<ApiResponse<Void>> completeStudySession(
+//            @Path("sessionId") Long sessionId,
+//            @Body List<StudySessionDetailRequest> details
+//    );
 
     @GET("study-session/jump-back-in")
     Call<ApiResponse<List<StudySessionResponse>>> getJumpBackIn();

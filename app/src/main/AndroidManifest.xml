@@ -55,6 +55,9 @@
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />
 
+        <activity android:name=".Activities.MemoryGameActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto"/>
         <activity
             android:name=".MainActivity"
             android:exported="false">

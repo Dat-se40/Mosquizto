@@ -14,4 +14,8 @@ public class StartStudySessionRequest {
     public void setCollectionId(@NotNull Integer collectionId) {
         this.collectionId = collectionId;
     }
+
+    public StartStudySessionRequest(@NotNull Integer collectionId) {
+        this.collectionId = collectionId;
+    }
 }

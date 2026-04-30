@@ -28,7 +28,10 @@ public class TermListAdapter extends RecyclerView.Adapter<TermListAdapter.ViewHo
         this.items = newItems != null ? newItems : new ArrayList<>();
         notifyDataSetChanged();
     }
-
+    public  List<CollectionItemResponse>getItems()
+    {
+        return items ;
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

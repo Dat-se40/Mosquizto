@@ -1,6 +1,9 @@
 package com.example.mosquizto.Dto.response;
 
-public class CollectionItemResponse {
+import java.io.Serializable;
+
+public class CollectionItemResponse implements Serializable {
+    private Integer id ;
     private String term ;
     private String definition ;
     private String imageUrl ;
@@ -63,5 +66,13 @@ public class CollectionItemResponse {
 
     public void setUpdateAt(String updateAt) {
         this.updateAt = updateAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

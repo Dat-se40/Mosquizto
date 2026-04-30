@@ -33,4 +33,28 @@ public class Collection {
                 user
         );
     }
+    public static CollectionResponse toResponse(Collection collection)
+    {
+        return new CollectionResponse(collection.getId(),collection.getCount(),collection.getTitle(),null,null,collection.getCreatedBy().getId()    );
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 }

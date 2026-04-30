@@ -40,4 +40,11 @@ public class StudySessionDetailRequest {
     public void setSessionId(Long sessionId) {
         this.sessionId = sessionId;
     }
+
+    public StudySessionDetailRequest(Long sessionId, Integer itemId, Boolean isCorrect, Double responseTimeMs) {
+        this.sessionId = sessionId;
+        this.itemId = itemId;
+        this.isCorrect = isCorrect;
+        this.responseTimeMs = responseTimeMs;
+    }
 }

@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
 import java.util.List;
@@ -17,7 +20,8 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
     private Context context;
     private List<Collection> collectionList;
 
-    public FlashcardSetAdapter(Context context, List<Collection> collectionList) {
+    private OnItemCollectionClickedListener onCollectionClickListener;
+    public FlashcardSetAdapter(Context context, List<Collection> collectionList , OnItemCollectionClickedListener onCollectionClickListener) {
         this.context = context;
         this.collectionList = collectionList;
     }
@@ -38,7 +42,7 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
         // Cập nhật số lượng term. Đảm bảo trong Model Collection của bạn có trường itemCount
         int itemCount = collection.getCount();
         holder.tvItemCount.setText(itemCount + (itemCount > 1 ? " terms" : " term"));
-
+        holder.itemView.setOnClickListener(v -> onCollectionClickListener.OnItemClicked(Collection.toResponse(collection) ));
         // Cập nhật tên User
         if (collection.getCreatedBy() != null) {
             // 1. Gán tên
