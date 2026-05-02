@@ -1,10 +1,13 @@
 package com.example.mosquizto.Activities;
 
+import static android.app.ProgressDialog.show;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,11 +43,17 @@ public class WelcomeActivity extends AppCompatActivity {
         viewModel.AfterCreateView();
         viewModel.UserName.observe(this, name ->
         {
-            if (name == null)
+            if(name != null && !name.isEmpty())
             {
-                btnContinue.setVisibility(View.GONE);
-            }else btnContinue.setText("Welcome back " + name);
+                btnContinue.setVisibility(View.VISIBLE);
+                btnContinue.setText("Welcome back " + name + "!");
+            }
+
         }) ;
+        viewModel.errorMessage.observe(this, message ->
+        {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        });
         viewModel.navigateTo.observe(this, destination -> {
             if (destination == null) return;
 

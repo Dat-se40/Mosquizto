@@ -65,7 +65,7 @@ public class WelcomeViewModel extends ViewModel {
                     //Ko có user profile do token hết hạn
                     _errorMessage.postValue("You are not logged in");
                     sessionManager.logout();
-                    userName.postValue("");
+                    userName.setValue("");
                     Log.e("DEBUG_WELCOME", "API Error: " + response.code());
                 }
             }

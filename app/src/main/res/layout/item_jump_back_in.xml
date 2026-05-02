@@ -58,7 +58,7 @@
             android:textStyle="bold"/>
 
         <Button
-            android:id="@+id/btnContinue"
+            android:id="@+id/btnContinueLearn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"

@@ -57,7 +57,8 @@
             android:textColor="#FFFFFF"
             app:backgroundTint="@null"
             android:backgroundTint="#4254ff"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginBottom="14dp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btnSignUpEmail"
