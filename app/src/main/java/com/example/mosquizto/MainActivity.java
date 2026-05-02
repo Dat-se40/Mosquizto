@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void GoToStudySetActivity(Context context , Integer id , String title)
     {
+
         Intent intent = new Intent(context, StudySetDetailActivity.class);
         intent.putExtra("COLLECTION_ID", id != null ? id : -1   );
         intent.putExtra("COLLECTION_TITLE", title);

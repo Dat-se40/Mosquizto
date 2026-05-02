@@ -145,7 +145,8 @@ public class SearchFragment extends Fragment {
         searchResultAdapter = new SearchResultAdapter(new ArrayList<>(), new SearchResultAdapter.OnResultClickListener() {
             @Override
             public void onResultClick(SearchResultItem item) {
-                mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle());
+                if(mainActivity != null)
+                    mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle());
             }
 
             @Override
