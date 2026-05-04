@@ -3,6 +3,7 @@ package com.example.mosquizto.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,15 +17,25 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     private List<CollectionResponse> collections;
     private OnItemCollectionClickedListener listener;
+    private OnItemOptionsClickedListener optionsListener;
 
-    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener) {
+    public interface OnItemOptionsClickedListener {
+        void onOptionsClicked(CollectionResponse item, int position);
+    }
+    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener, OnItemOptionsClickedListener optionsListener) {
         this.collections = collections;
         this.listener = listener;
+        this.optionsListener = optionsListener;
     }
 
     public void setCollections(List<CollectionResponse> collections) {
         this.collections = collections;
         notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        collections.remove(position);
+        notifyItemRemoved(position);
     }
 
     @NonNull
@@ -48,6 +59,12 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
                 listener.OnItemClicked(item);
             }
         });
+
+        holder.ivAction.setOnClickListener(v -> {
+            if (optionsListener != null) {
+                optionsListener.onOptionsClicked(item, position);
+            }
+        });
     }
 
     @Override
@@ -57,11 +74,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDetails;
+        ImageView ivAction;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvCollectionTitle);
             tvDetails = itemView.findViewById(R.id.tvCollectionDetails);
+            ivAction = itemView.findViewById(R.id.ivAction);
         }
     }
 }

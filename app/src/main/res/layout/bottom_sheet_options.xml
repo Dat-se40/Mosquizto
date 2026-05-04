@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingVertical="16dp">
 
     <View
         android:layout_width="40dp"
@@ -12,52 +13,43 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
         android:background="#D1D1D1" />
+
     <TextView
         android:id="@+id/btnAddToClass"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_group"
-        android:text="Add to class"
-        android:textSize="20sp"
-        android:textColor="#60687F"
-        />
+        android:text="Add to class" />
 
     <TextView
         android:id="@+id/btnAddToFolder"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_bookmark"
-        android:text="Add to folder"
-        android:textSize="20sp"
-        android:textColor="#60687F"/>
+        android:text="Add to folder" />
 
     <TextView
         android:id="@+id/btnMakeCopy"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_copy"
-        android:text="Make a copy"
-        android:textSize="20sp"
-        android:textColor="#60687F"/>
+        android:text="Make a copy" />
 
     <TextView
         android:id="@+id/btnShare"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_share"
-        android:text="Share"
-        android:textSize="20sp"
-        android:textColor="#60687F"/>
+        android:text="Share" />
 
     <TextView
         android:id="@+id/btnSetInfo"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_info"
-        android:text="Set info"
-        android:textSize="20sp"
-        android:textColor="#60687F"/>
+        android:text="Set info" />
 
     <TextView
         android:id="@+id/btnReport"
-        style="@style/OptionMenuItem"
+        style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_report"
         android:text="Report this set"
-        android:textSize="20sp"
-        android:textColor="#60687F"/>
+        android:textColor="#D93025"
+        app:drawableTint="#D93025"/>
+
 </LinearLayout>
