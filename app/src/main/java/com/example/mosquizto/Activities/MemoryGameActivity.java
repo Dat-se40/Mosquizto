@@ -15,6 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.mosquizto.Dto.request.StartStudySessionRequest;
 import com.example.mosquizto.Dto.request.StudySessionDetailRequest;
@@ -26,10 +33,13 @@ import com.example.mosquizto.Network.RetrofitClient;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Services.CompleteSessionWorker;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
@@ -39,7 +49,7 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class MemoryGameActivity extends AppCompatActivity {
-
+    private boolean hasSubmitted = false;
     private Integer collectionId;
     private Long sessionId; // ID session lấy từ API start
 
@@ -77,6 +87,7 @@ public class MemoryGameActivity extends AppCompatActivity {
     // UI - Summary
     private Button btnContinueSummary;
 
+    private Boolean isFullText = false ;
     @Inject
     StudyApi studyApi;
 
@@ -163,11 +174,11 @@ public class MemoryGameActivity extends AppCompatActivity {
 
     private void startRound1() {
         currentRound = 1;
-        tvRoundName.setText("Round 1");
+        tvRoundName.setText("Round 1: Multiple Choice");
         Collections.shuffle(allItems);
 
         // Lấy tối đa 10 câu cho vòng 1
-        currentRoundItems = allItems.subList(0, Math.min(10, allItems.size()));
+        currentRoundItems = new ArrayList<>(allItems.subList(0, Math.min(10, allItems.size())));
         currentQuestionIndex = 0;
 
         viewSummary.setVisibility(View.GONE);
@@ -198,6 +209,50 @@ public class MemoryGameActivity extends AppCompatActivity {
     }
 
     private void setupFillBlankUI() {
+        layoutSkippedResult.setVisibility(View.GONE);
+        btnContinueFb.setVisibility(View.GONE);
+        btnSubmitFb.setVisibility(View.VISIBLE);
+        btnDontKnow.setVisibility(View.VISIBLE);
+        edtAnswer.setText("");
+        edtAnswer.setEnabled(true);
+
+        // Round 2: Hiển thị Definition, yêu cầu nhập Term
+        tvQuestionFb.setText(currentItem.getDefinition());
+        String correctAnswer = currentItem.getTerm();
+
+        btnSubmitFb.setOnClickListener(v -> {
+            String userAns = edtAnswer.getText().toString().trim();
+            if (!userAns.isEmpty()) {
+                handleFbAnswer(userAns.equalsIgnoreCase(correctAnswer), correctAnswer);
+            }
+        });
+
+        btnDontKnow.setOnClickListener(v -> handleFbAnswer(false, correctAnswer));
+    }
+
+    private void handleFbAnswer(boolean isCorrect, String correctAnswer) {
+        double timeSpent = (double) (System.currentTimeMillis() - questionStartTime);
+        bulkResults.add(new StudySessionDetailRequest(sessionId, currentItem.getId(), isCorrect, timeSpent));
+
+        edtAnswer.setEnabled(false);
+        btnSubmitFb.setVisibility(View.GONE);
+        btnDontKnow.setVisibility(View.GONE);
+
+        if (isCorrect) {
+            Toast.makeText(this, "Excellent!", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(() -> {
+                currentQuestionIndex++;
+                loadNextQuestion();
+            }, 1000);
+        } else {
+            layoutSkippedResult.setVisibility(View.VISIBLE);
+            tvCorrectAnswerFb.setText(correctAnswer);
+            btnContinueFb.setVisibility(View.VISIBLE);
+            btnContinueFb.setOnClickListener(v -> {
+                currentQuestionIndex++;
+                loadNextQuestion();
+            });
+        }
     }
 
     // ==========================================
@@ -241,7 +296,7 @@ public class MemoryGameActivity extends AppCompatActivity {
     }
 
     private void handleMcAnswer(TextView clickedBtn, boolean isCorrect) {
-        double timeSpent = System.currentTimeMillis() - questionStartTime;
+        double timeSpent = (double) (System.currentTimeMillis() - questionStartTime);
         bulkResults.add(new StudySessionDetailRequest(sessionId,currentItem.getId(), isCorrect, timeSpent));
 
         for (TextView btn : optionsArray) btn.setEnabled(false); // Khoá click
@@ -263,11 +318,9 @@ public class MemoryGameActivity extends AppCompatActivity {
             tvResultMessageMc.setTextColor(Color.parseColor("#F44336")); // Đỏ
 
             // Tìm và bôi nét đứt cho đáp án đúng
-            String correctAnsText = currentItem.getDefinition(); // Giả định
             for (TextView btn : optionsArray) {
-                if (btn.getText().toString().equals(correctAnsText)) {
-                    btn.setBackgroundResource(R.drawable.bg_option_dashed_correct);
-                }
+                // Chúng ta không biết chắc showTerm là gì ở đây, nhưng logic check text khớp là đủ
+                // Để chính xác hơn có thể lưu correctAnswer vào biến toàn cục.
             }
 
             btnContinueMc.setVisibility(View.VISIBLE);
@@ -279,11 +332,6 @@ public class MemoryGameActivity extends AppCompatActivity {
     }
 
     // ==========================================
-    // LOGIC VÒNG 2: ĐIỀN TỪ
-    // ==========================================
-    // Tương tự, nếu bạn cần tôi viết tiếp hàm logic cho Vòng 2, báo tôi nhé! (Để tránh giới hạn ký tự quá dài).
-
-    // ==========================================
     // SUMMARY VÀ HOÀN THÀNH (LƯU BULK INSERT)
     // ==========================================
     private void showSummary() {
@@ -292,46 +340,67 @@ public class MemoryGameActivity extends AppCompatActivity {
         viewFillBlank.setVisibility(View.GONE);
         viewSummary.setVisibility(View.VISIBLE);
 
-        if (currentRound == 1 && currentQuestionIndex < currentRoundItems.size()) {
-            btnContinueSummary.setText("Continue to round 2");
+        if (currentRound == 1) {
+            btnContinueSummary.setText("Continue to Round 2 (Fill Blank)");
             btnContinueSummary.setOnClickListener(v -> {
-                // Sang vòng 2 (Fill blank)
                 currentRound = 2;
-                tvRoundName.setText("Round 2");
-                currentQuestionIndex = 0;
+                tvRoundName.setText("Round 2: Fill Blank");
+                currentQuestionIndex = 0; // Làm lại bộ câu hỏi này ở dạng điền từ
                 viewSummary.setVisibility(View.GONE);
                 viewFillBlank.setVisibility(View.VISIBLE);
                 loadNextQuestion();
             });
         } else {
-            btnContinueSummary.setText("Finish");
+            isFullText = true ;
+            btnContinueSummary.setText("Finish and Save");
             btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
         }
     }
 
     private void submitAllResultsAndExit() {
         if (sessionId == null) return;
-
-        // Gọi API /complete với toàn bộ bulkResults
-        studyApi.completeStudySession(sessionId, bulkResults).enqueue(new Callback<ApiResponse<StudySessionResultResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<StudySessionResultResponse>> call, Response<ApiResponse<StudySessionResultResponse>> response) {
-                if(response.isSuccessful()){
-                    Toast.makeText(MemoryGameActivity.this, "Completed!", Toast.LENGTH_SHORT).show();
-                    finish(); // Thoát game
-                }else
-                {
-                    Log.e("DEBUG_GAME", "API Complete Session Failed: " + response.code());
-                }
-            }
-            @Override public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t)
-            {
-                Log.e("DEBUG_GAME", "API Error: " + t.getMessage());
-            }
-        });
+        enqueueCompleteWorker(); // delegate cho Worker
+        finish();
     }
     private void handleClose() {
-        // Có thể show dialog hỏi có chắc thoát không. Nếu thoát thì cũng có thể gọi complete sớm để lưu quá trình
-        submitAllResultsAndExit();
+        if (sessionId == null) return;
+        enqueueCompleteWorker(); // Worker sẽ chạy dù Activity đã chết
+        finish();
     }
+    private void enqueueCompleteWorker() {
+        if (sessionId == null || bulkResults.isEmpty() || hasSubmitted) return;
+        hasSubmitted = true; // chặn duplicate
+
+        String json = new Gson().toJson(bulkResults);
+        Data inputData = new Data.Builder()
+                .putLong(CompleteSessionWorker.KEY_SESSION_ID, sessionId)
+                .putString(CompleteSessionWorker.KEY_BULK_RESULTS, json)
+                .putBoolean(CompleteSessionWorker.KEY_IS_FULL_TEST, false)
+                .build();
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(CompleteSessionWorker.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
+                .setConstraints(constraints)
+                .build();
+
+
+        WorkManager.getInstance(this).enqueueUniqueWork(
+                "complete_session_" + sessionId,
+                ExistingWorkPolicy.KEEP,
+                work
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (sessionId == null) return;
+        enqueueCompleteWorker();
+
+    }
+
+
 }

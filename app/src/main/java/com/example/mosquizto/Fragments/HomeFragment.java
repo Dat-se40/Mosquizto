@@ -21,6 +21,7 @@ import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.StudySessionResponse;
 import com.example.mosquizto.Dto.response.StudySessionResultResponse;
 import com.example.mosquizto.Event.OnItemCollectionClickedListener;
+import com.example.mosquizto.Event.OnItemJumpBackInListener;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
@@ -104,7 +105,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupEmptyRecyclerViews() {
-        jumpAdapter = new JumpBackInAdapter(null);
+        jumpAdapter = new JumpBackInAdapter(null, new OnItemJumpBackInListener() {
+            @Override
+            public void OnItemClicked(StudySessionResponse item) {
+                if (mainActivity != null) mainActivity.GoToStudySetActivity(getContext(), item.getCollectionId(), item.getCollectionName());
+            }
+        });
         rvJumpBackIn.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvJumpBackIn.setAdapter(jumpAdapter);
 

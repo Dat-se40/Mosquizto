@@ -15,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface StudyApi {
     // Lấy danh sách các bộ thẻ mở gần đây (Recents)
@@ -30,7 +31,9 @@ public interface StudyApi {
 
 //     sau khi hoàn thành thì gửi kết quả lên server
     @POST("study-session/{sessionId}/complete-batch")
-    Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId, @Body List<StudySessionDetailRequest> request);
+    Call<ApiResponse<StudySessionResultResponse>> completeStudySession(@Path("sessionId") Long sessionId,
+                                                                       @Body List<StudySessionDetailRequest> request,
+                                                                        @Query("isFullTest ") Boolean isFullTest);
 
 //    @POST("study-sessions/{sessionId}/complete")
 //    Call<ApiResponse<Void>> completeStudySession(
