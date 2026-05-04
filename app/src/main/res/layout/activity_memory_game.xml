@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ROUND 1"
+            android:text="LEARN"
             android:textSize="23sp"
             android:textColor="@color/black" />
 
@@ -56,13 +56,23 @@
             android:id="@+id/viewMultipleChoice"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="24dp">
+
+                <TextView
+                    android:id="@+id/tvModeLabelMc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MULTIPLE CHOICE"
+                    android:textColor="#757575"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="8dp"/>
 
                 <LinearLayout
                     android:id="@+id/layoutResultMc"
@@ -150,6 +160,16 @@
                 android:padding="24dp">
 
                 <TextView
+                    android:id="@+id/tvModeLabelFb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILL IN THE BLANK"
+                    android:textColor="#757575"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
                     android:id="@+id/tvQuestionFb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -166,11 +186,15 @@
                     android:layout_marginBottom="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Give this one a try later" android:textColor="#F44336" android:textStyle="bold"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Give this one a try later"
+                        android:textColor="#F44336"
+                        android:textStyle="bold"/>
                     <TextView
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="SKIPPED"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CORRECT ANSWER"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="#757575"
@@ -194,6 +218,7 @@
                     android:textSize="18sp" />
 
                 <LinearLayout
+                    android:id="@+id/layoutActionsFb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -233,6 +258,73 @@
         </ScrollView>
 
         <ScrollView
+            android:id="@+id/viewTestMatch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MATCHING"
+                    android:textColor="#757575"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tap a term, then tap its definition."
+                    android:textSize="18sp"
+                    android:layout_marginBottom="24dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false"
+                    android:weightSum="2">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:id="@+id/btnMatchL1"
+                            style="@style/MatchItemStyle"/>
+                        <TextView
+                            android:id="@+id/btnMatchL2"
+                            style="@style/MatchItemStyle"/>
+                        <TextView
+                            android:id="@+id/btnMatchL3"
+                            style="@style/MatchItemStyle"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+                        <TextView
+                            android:id="@+id/btnMatchR1"
+                            style="@style/MatchItemStyle"/>
+                        <TextView
+                            android:id="@+id/btnMatchR2"
+                            style="@style/MatchItemStyle"/>
+                        <TextView
+                            android:id="@+id/btnMatchR3"
+                            style="@style/MatchItemStyle"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
             android:id="@+id/viewSummary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -242,6 +334,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:gravity="center_horizontal"
                 android:padding="24dp">
 
                 <TextView
@@ -265,7 +358,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="32dp"
-                    android:text="Continue to round 2"
+                    android:text="Continue"
                     android:backgroundTint="#4255FF"
                     android:textColor="@color/white" />
             </LinearLayout>
