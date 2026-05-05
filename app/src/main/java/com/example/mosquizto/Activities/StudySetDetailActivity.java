@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,10 @@ import com.example.mosquizto.Adapters.FlashcardCarouselAdapter;
 import com.example.mosquizto.Adapters.TermListAdapter;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
+import com.example.mosquizto.Dto.response.FolderResponse;
+import com.example.mosquizto.Dto.response.FolderSummaryResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
@@ -53,6 +57,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     @Inject
     CollectionApi collectionApi;
+
+    @Inject
+    FolderApi folderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,12 +244,79 @@ public class StudySetDetailActivity extends AppCompatActivity {
             }
             view.findViewById(R.id.btnDone).setOnClickListener(v -> dialog.dismiss());
             dialog.show();
+            loadFoldersForSaveDialog(view, dialog);
         } catch (Exception e) {
             Log.e(TAG, "showSaveToFolderDialog: FAILED", e);
             Toast.makeText(this, "Chưa có layout Save Folder!", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void loadFoldersForSaveDialog(View view, AlertDialog dialog) {
+        LinearLayout layoutFolderList = view.findViewById(R.id.layoutFolderList);
+        layoutFolderList.removeAllViews();
+        addFolderDialogText(layoutFolderList, "Đang tải thư mục...", false, null);
+
+        folderApi.getAllOwnFolders().enqueue(new Callback<ApiResponse<List<FolderSummaryResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<FolderSummaryResponse>>> call, Response<ApiResponse<List<FolderSummaryResponse>>> response) {
+                layoutFolderList.removeAllViews();
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    List<FolderSummaryResponse> folders = response.body().getData();
+                    if (folders.isEmpty()) {
+                        addFolderDialogText(layoutFolderList, "Bạn chưa có thư mục nào", false, null);
+                    } else {
+                        for (FolderSummaryResponse folder : folders) {
+                            addFolderDialogText(layoutFolderList, folder.getName(), true, () -> saveCurrentSetToFolder(folder, dialog));
+                        }
+                    }
+                } else {
+                    addFolderDialogText(layoutFolderList, "Không thể tải danh sách thư mục", false, null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<FolderSummaryResponse>>> call, Throwable t) {
+                layoutFolderList.removeAllViews();
+                addFolderDialogText(layoutFolderList, "Lỗi kết nối", false, null);
+            }
+        });
+    }
+
+    private void addFolderDialogText(LinearLayout parent, String text, boolean clickable, Runnable action) {
+        TextView row = new TextView(this);
+        row.setText(text);
+        row.setTextSize(16);
+        row.setTextColor(android.graphics.Color.parseColor(clickable ? "#282E3E" : "#586380"));
+        row.setPadding(0, 18, 0, 18);
+        if (clickable) {
+            row.setOnClickListener(v -> action.run());
+        }
+        parent.addView(row);
+    }
+
+    private void saveCurrentSetToFolder(FolderSummaryResponse folder, AlertDialog dialog) {
+        if (collectionId == -1) {
+            Toast.makeText(this, "ID bộ thẻ không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        folderApi.addCollectionToFolder(folder.getId(), collectionId).enqueue(new Callback<ApiResponse<FolderResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<FolderResponse>> call, Response<ApiResponse<FolderResponse>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(StudySetDetailActivity.this, "Đã lưu vào " + folder.getName(), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(StudySetDetailActivity.this, "Lưu vào thư mục thất bại", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
+                Toast.makeText(StudySetDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void showLearnModeBottomSheet(){
         try {

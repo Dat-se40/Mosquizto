@@ -19,7 +19,6 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
-import com.example.mosquizto.Network.RetrofitClient;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
@@ -28,10 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class AddStudyMaterialsActivity extends AppCompatActivity {
 
     private Long folderId;
@@ -43,8 +46,11 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
     private SelectCollectionAdapter adapter;
     private List<CollectionResponse> originalList = new ArrayList<>();
 
-    private CollectionApi collectionApi;
-    private FolderApi folderApi;
+    @Inject
+    CollectionApi collectionApi;
+
+    @Inject
+    FolderApi folderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +58,6 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_study_materials);
 
         folderId = getIntent().getLongExtra("FOLDER_ID", -1);
-        collectionApi = RetrofitClient.getInstance().create(CollectionApi.class);
-        folderApi = RetrofitClient.getInstance().create(FolderApi.class);
 
         initViews();
         loadMyCollections();
@@ -71,17 +75,21 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
     }
 
     private void loadMyCollections() {
-        // Lấy danh sách bộ thẻ của người dùng (Có thể cần paging nhưng tạm lấy page 1 size 50)
         collectionApi.getMyCollections(1, 50).enqueue(new Callback<ApiResponse<PageResponse<CollectionResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     originalList = response.body().getData().getContent();
-                    setupAdapter(originalList);
+                    setupAdapter(originalList != null ? originalList : new ArrayList<>());
+                } else {
+                    Toast.makeText(AddStudyMaterialsActivity.this, "Không thể tải học phần", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
-            public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {}
+            public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
+                Toast.makeText(AddStudyMaterialsActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -100,64 +108,72 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
-        // Lọc danh sách khi gõ text
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String keyword = s.toString().toLowerCase();
                 List<CollectionResponse> filtered = new ArrayList<>();
-                for (CollectionResponse c : originalList) {
-                    if (c.getTitle().toLowerCase().contains(s.toString().toLowerCase())) {
-                        filtered.add(c);
+                for (CollectionResponse collection : originalList) {
+                    String title = collection.getTitle() != null ? collection.getTitle().toLowerCase() : "";
+                    if (title.contains(keyword)) {
+                        filtered.add(collection);
                     }
                 }
-                setupAdapter(filtered); // Reload adapter with filtered list
+                setupAdapter(filtered);
             }
+
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        // Xử lý nút Create New
-        btnCreateNew.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CreateCollectionActivity.class);
-            startActivity(intent);
-        });
-
-        // Xử lý khi xác nhận Thêm
-        btnConfirmAdd.setOnClickListener(v -> {
-            Set<Integer> selectedIds = adapter.getSelectedIds();
-            if (selectedIds.isEmpty()) return;
-
-            btnConfirmAdd.setEnabled(false);
-            btnConfirmAdd.setText("Đang thêm...");
-
-            // Do API backend chỉ cho phép add từng cái 1, ta sẽ loop (Vì số lượng ít)
-            int total = selectedIds.size();
-            final int[] successCount = {0};
-
-            for (Integer collectionId : selectedIds) {
-                folderApi.addCollectionToFolder(folderId, collectionId).enqueue(new Callback<ApiResponse<FolderResponse>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<FolderResponse>> call, Response<ApiResponse<FolderResponse>> response) {
-                        successCount[0]++;
-                        checkIfDone(successCount[0], total);
-                    }
-
-                    @Override
-                    public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
-                        successCount[0]++;
-                        checkIfDone(successCount[0], total);
-                    }
-                });
-            }
-        });
+        btnCreateNew.setOnClickListener(v -> startActivity(new Intent(this, CreateCollectionActivity.class)));
+        btnConfirmAdd.setOnClickListener(v -> addSelectedCollections());
     }
 
-    private void checkIfDone(int current, int total) {
-        if (current == total) {
-            Toast.makeText(this, "Đã thêm thành công!", Toast.LENGTH_SHORT).show();
-            finish(); // Quay lại màn hình Folder Detail
+    private void addSelectedCollections() {
+        if (adapter == null) return;
+
+        Set<Integer> selectedIds = adapter.getSelectedIds();
+        if (selectedIds.isEmpty()) return;
+
+        btnConfirmAdd.setEnabled(false);
+        btnConfirmAdd.setText("Đang thêm...");
+
+        int total = selectedIds.size();
+        final int[] completedCount = {0};
+        final int[] successCount = {0};
+
+        for (Integer collectionId : selectedIds) {
+            folderApi.addCollectionToFolder(folderId, collectionId).enqueue(new Callback<ApiResponse<FolderResponse>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<FolderResponse>> call, Response<ApiResponse<FolderResponse>> response) {
+                    if (response.isSuccessful()) {
+                        successCount[0]++;
+                    }
+                    checkIfDone(++completedCount[0], successCount[0], total);
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
+                    checkIfDone(++completedCount[0], successCount[0], total);
+                }
+            });
+        }
+    }
+
+    private void checkIfDone(int completed, int success, int total) {
+        if (completed != total) return;
+
+        if (success > 0) {
+            Toast.makeText(this, "Đã thêm " + success + " học phần", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            btnConfirmAdd.setEnabled(true);
+            btnConfirmAdd.setText("Thêm " + total + " mục");
+            Toast.makeText(this, "Thêm học phần thất bại", Toast.LENGTH_SHORT).show();
         }
     }
 }

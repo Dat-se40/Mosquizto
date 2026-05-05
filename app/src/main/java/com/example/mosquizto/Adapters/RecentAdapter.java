@@ -5,12 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Dto.response.CollectionResponse;
+
 import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder> {
@@ -22,6 +24,11 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     public interface OnItemOptionsClickedListener {
         void onOptionsClicked(CollectionResponse item, int position);
     }
+
+    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener) {
+        this(collections, listener, null);
+    }
+
     public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener, OnItemOptionsClickedListener optionsListener) {
         this.collections = collections;
         this.listener = listener;
@@ -50,9 +57,9 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
         CollectionResponse item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
 
-        String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
-        holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
-
+        String author = item.getUserName() != null ? item.getUserName() : "Quizlet";
+        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
+        holder.tvDetails.setText(count + " thẻ • bởi " + author);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {

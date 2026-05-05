@@ -1,10 +1,12 @@
 package com.example.mosquizto.Adapters;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,19 +46,14 @@ public class SelectCollectionAdapter extends RecyclerView.Adapter<SelectCollecti
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CollectionResponse item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
-        String author = (item.getUserName() != null) ? item.getUserName() : "Me";
-        holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
+
+        String author = item.getUserName() != null ? item.getUserName() : "Me";
+        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
+        holder.tvDetails.setText(count + " thẻ • bởi " + author);
 
         boolean isSelected = selectedIds.contains(item.getId());
-
-        // Đổi UI của nút Action (Từ ic_more sang add/check)
-        if (isSelected) {
-            holder.ivAction.setImageResource(R.drawable.ic_check);
-            holder.ivAction.setColorFilter(android.graphics.Color.parseColor("#4255FF")); // Xanh Quizlet
-        } else {
-            holder.ivAction.setImageResource(R.drawable.ic_add);
-            holder.ivAction.setColorFilter(android.graphics.Color.parseColor("#586380")); // Xám
-        }
+        holder.ivAction.setImageResource(isSelected ? R.drawable.ic_check : R.drawable.ic_add);
+        holder.ivAction.setColorFilter(Color.parseColor(isSelected ? "#4255FF" : "#586380"));
 
         holder.itemView.setOnClickListener(v -> {
             if (isSelected) {
@@ -82,7 +79,7 @@ public class SelectCollectionAdapter extends RecyclerView.Adapter<SelectCollecti
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvCollectionTitle);
             tvDetails = itemView.findViewById(R.id.tvCollectionDetails);
-            ivAction = itemView.findViewById(R.id.ivAction); // Yêu cầu bạn đã gắn ID này
+            ivAction = itemView.findViewById(R.id.ivAction);
         }
     }
 }

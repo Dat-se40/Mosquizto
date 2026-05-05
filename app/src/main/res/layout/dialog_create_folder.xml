@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:background="@drawable/bg_card_edit"
-        android:hint="Mô tả (tùy chọn)"
+        android:hint="Mô tả"
         android:padding="16dp"
         android:textColor="@color/text_color_primary"
         android:textSize="16sp" />

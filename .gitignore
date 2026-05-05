@@ -24,3 +24,8 @@ captures/
 # Thư mục build của code C++ (nếu có dùng NDK)
 .externalNativeBuild
 .cxx/
+
+# Local Android/Gradle state
+.android-user/
+.gradle-user/
+.gradle-build-cache/

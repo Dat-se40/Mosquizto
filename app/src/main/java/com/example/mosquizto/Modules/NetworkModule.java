@@ -6,6 +6,7 @@ import com.example.mosquizto.Services.AuthInterceptor;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.Network.itf.UserApi;
 
 import dagger.Module;
@@ -52,5 +53,11 @@ public class NetworkModule {
     @Singleton
     public StudyApi provideStudyApi(Retrofit retrofit) {
         return retrofit.create(StudyApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public FolderApi provideFolderApi(Retrofit retrofit) {
+        return retrofit.create(FolderApi.class);
     }
 }
