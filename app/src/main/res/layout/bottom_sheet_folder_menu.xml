@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingVertical="16dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:background="#D9DCE3"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tvAddMaterials"
+        style="@style/BottomSheetMenuItem"
+        android:text="Thêm học liệu"
+        android:drawableStart="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/tvEditFolder"
+        style="@style/BottomSheetMenuItem"
+        android:text="Chỉnh sửa thư mục"
+        android:drawableStart="@drawable/ic_edit" />
+
+    <TextView
+        android:id="@+id/tvShareFolder"
+        style="@style/BottomSheetMenuItem"
+        android:text="Chia sẻ thư mục"
+        android:drawableStart="@drawable/ic_share" />
+
+    <TextView
+        android:id="@+id/tvDeleteFolder"
+        style="@style/BottomSheetMenuItem"
+        android:text="Xóa thư mục"
+        android:drawableStart="@drawable/ic_delete"
+        android:textColor="#D93025"
+        app:drawableTint="#D93025"/>
+</LinearLayout>

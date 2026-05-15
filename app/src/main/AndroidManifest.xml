@@ -21,7 +21,6 @@
             android:exported="false"
             android:label="@string/title_activity_login_form"
             android:theme="@style/Theme.Mosquizto">
-
         </activity>
 
         <activity
@@ -32,8 +31,7 @@
         <activity
             android:name=".Activities.ResetPass"
             android:exported="false"
-            android:theme="@style/Theme.Mosquizto"
-            />
+            android:theme="@style/Theme.Mosquizto" />
 
         <activity
             android:name=".Activities.RSPassNoti"
@@ -42,8 +40,7 @@
 
         <activity android:name=".Activities.ProfilePage"
             android:exported="false"
-            android:theme="@style/Theme.Mosquizto"
-            />
+            android:theme="@style/Theme.Mosquizto" />
 
         <activity
             android:name=".Activities.CreateCollectionActivity"
@@ -54,10 +51,18 @@
             android:exported="false" />
 
         <activity
+            android:name=".Activities.StudySetDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto" />
+
+        <activity android:name=".Activities.MemoryGameActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto"/>
+        <activity
             android:name=".MainActivity"
             android:exported="false">
-
         </activity>
+
         <activity android:name=".Activities.WelcomeActivity" android:exported="true"
             android:theme="@style/Theme.Mosquizto">
             <intent-filter>
@@ -65,6 +70,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Activities.FolderDetailActivity"
+            android:exported="false" />
+
+        <activity android:name=".Activities.AddStudyMaterialsActivity"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- Ngăn chặn WorkManager default initializer -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

@@ -16,8 +16,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_gallery"
-            app:tint="#4255FF" />
+            android:src="@drawable/ic_card"
+            app:tint="#0887CA" />
     </FrameLayout>
 
     <LinearLayout
@@ -51,6 +51,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/ivAction"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:src="@drawable/icon_more"

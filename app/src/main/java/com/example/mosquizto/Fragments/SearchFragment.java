@@ -1,6 +1,7 @@
 package com.example.mosquizto.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mosquizto.Activities.StudySetDetailActivity;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Adapters.RecentSearchAdapter;
 import com.example.mosquizto.Adapters.SearchResultAdapter;
@@ -60,6 +63,7 @@ public class SearchFragment extends Fragment {
     private RecentSearchAdapter recentSearchAdapter;
     private SuggestionAdapter suggestionAdapter;
     private SearchResultAdapter searchResultAdapter;
+    private MainActivity mainActivity;
 
     @Nullable
     @Override
@@ -70,7 +74,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         initViews(view);
         initAdapters();
         initViewModel();
@@ -97,6 +101,8 @@ public class SearchFragment extends Fragment {
         rvRecentSearches = view.findViewById(R.id.rvRecentSearches);
         rvSuggestions = view.findViewById(R.id.rvSuggestions);
         rvSearchResults = view.findViewById(R.id.rvSearchResults);
+        if (getActivity() instanceof MainActivity)
+            mainActivity = (MainActivity) getActivity();
     }
 
     private void initAdapters() {
@@ -139,7 +145,8 @@ public class SearchFragment extends Fragment {
         searchResultAdapter = new SearchResultAdapter(new ArrayList<>(), new SearchResultAdapter.OnResultClickListener() {
             @Override
             public void onResultClick(SearchResultItem item) {
-                Toast.makeText(getContext(), "Mở: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                if(mainActivity != null)
+                    mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle());
             }
 
             @Override

@@ -47,7 +47,7 @@
             android:layout_marginBottom="36dp" />
 
         <Button
-            android:id="@+id/btnGoogle"
+            android:id="@+id/btnContinue"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:background="@drawable/custom_btn"
@@ -57,7 +57,8 @@
             android:textColor="#FFFFFF"
             app:backgroundTint="@null"
             android:backgroundTint="#4254ff"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginBottom="14dp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/btnSignUpEmail"

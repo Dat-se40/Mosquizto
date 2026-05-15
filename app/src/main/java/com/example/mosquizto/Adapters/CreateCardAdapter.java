@@ -58,7 +58,6 @@ public class CreateCardAdapter extends RecyclerView.Adapter<CreateCardAdapter.Ca
         holder.etTerm.addTextChangedListener(holder.termWatcher);
         holder.etDefinition.addTextChangedListener(holder.definitionWatcher);
     }
-
     @Override
     public int getItemCount() {
         return items.size();

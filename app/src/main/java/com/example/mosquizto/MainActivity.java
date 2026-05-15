@@ -1,5 +1,6 @@
 package com.example.mosquizto;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.mosquizto.Activities.CreateCollectionActivity;
+import com.example.mosquizto.Activities.StudySetDetailActivity;
 import com.example.mosquizto.Dialogs.CreateFolderDialog;
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -129,5 +132,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+    public void GoToStudySetActivity(Context context , CollectionResponse item)
+    {
+        GoToStudySetActivity(context , item.getId(), item.getTitle());
+    }
+    public void GoToStudySetActivity(Context context , Integer id , String title)
+    {
+
+        Intent intent = new Intent(context, StudySetDetailActivity.class);
+        intent.putExtra("COLLECTION_ID", id != null ? id : -1   );
+        intent.putExtra("COLLECTION_TITLE", title);
+        startActivity(intent);
+
     }
 }

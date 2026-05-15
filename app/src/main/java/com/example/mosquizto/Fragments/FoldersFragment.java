@@ -1,20 +1,152 @@
 package com.example.mosquizto.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mosquizto.Activities.FolderDetailActivity;
+import com.example.mosquizto.Adapters.FolderAdapter;
+import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.FolderSummaryResponse;
+import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@AndroidEntryPoint
 public class FoldersFragment extends Fragment {
+    private RecyclerView rvFolders;
+    private ProgressBar progressBar;
+    private TextView tvEmpty;
+    private FolderAdapter folderAdapter;
+    private Call<ApiResponse<List<FolderSummaryResponse>>> foldersCall;
+
+    @Inject
+    FolderApi folderApi;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // CHÚ THÍCH: Tạm thời bạn có thể trả về null hoặc một layout trống (Ví dụ res/layout/fragment_folders.xml).
-        // Mình tái sử dụng layout trống nếu bạn chưa thiết kế Folders.
-        return new View(getContext());
+        View view = inflater.inflate(R.layout.fragment_folders, container, false);
+        initViews(view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listenForFolderCreated();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (folderApi != null) {
+            // Reload mỗi lần quay lại tab để thấy folder mới tạo/xóa.
+            loadFolders();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (foldersCall != null) {
+            // Hủy request nếu Fragment bị đóng để tránh callback vào UI cũ.
+            foldersCall.cancel();
+        }
+        super.onDestroyView();
+    }
+
+    private void initViews(View view) {
+        rvFolders = view.findViewById(R.id.rvFolders);
+        progressBar = view.findViewById(R.id.progressBar);
+        tvEmpty = view.findViewById(R.id.tvEmpty);
+
+        folderAdapter = new FolderAdapter(new ArrayList<>(), folder -> {
+            // Mở màn chi tiết và truyền id/tên folder đang chọn.
+            Intent intent = new Intent(requireContext(), FolderDetailActivity.class);
+            intent.putExtra("FOLDER_ID", folder.getId());
+            intent.putExtra("FOLDER_TITLE", folder.getName());
+            startActivity(intent);
+        });
+
+        rvFolders.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvFolders.setAdapter(folderAdapter);
+    }
+
+    private void listenForFolderCreated() {
+        // Khi dialog tạo folder báo thành công, reload lại danh sách.
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                "folder_created",
+                getViewLifecycleOwner(),
+                (requestKey, result) -> loadFolders()
+        );
+    }
+
+    private void loadFolders() {
+        if (foldersCall != null) {
+            // Chỉ giữ request mới nhất khi user đổi tab nhanh.
+            foldersCall.cancel();
+        }
+        showLoading(true);
+        foldersCall = folderApi.getAllOwnFolders();
+        foldersCall.enqueue(new Callback<ApiResponse<List<FolderSummaryResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<FolderSummaryResponse>>> call, Response<ApiResponse<List<FolderSummaryResponse>>> response) {
+                if (!isAdded()) return;
+
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    // data rỗng vẫn là thành công, UI sẽ hiện trạng thái chưa có folder.
+                    List<FolderSummaryResponse> folders = response.body().getData();
+                    showFolders(folders != null ? folders : new ArrayList<>());
+                } else {
+                    showFolders(new ArrayList<>());
+                    Toast.makeText(requireContext(), "Không thể tải danh sách thư mục", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<FolderSummaryResponse>>> call, Throwable t) {
+                if (call.isCanceled() || !isAdded()) return;
+
+                showLoading(false);
+                showFolders(new ArrayList<>());
+                Toast.makeText(requireContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showLoading(boolean loading) {
+        // Khi đang tải thì ẩn list và empty text.
+        progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        rvFolders.setVisibility(loading ? View.GONE : View.VISIBLE);
+        tvEmpty.setVisibility(View.GONE);
+    }
+
+    private void showFolders(List<FolderSummaryResponse> folders) {
+        folderAdapter.setFolders(folders);
+        // Nếu list rỗng, hiện thông báo thay vì RecyclerView trống.
+        boolean isEmpty = folders.isEmpty();
+        tvEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        rvFolders.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 }

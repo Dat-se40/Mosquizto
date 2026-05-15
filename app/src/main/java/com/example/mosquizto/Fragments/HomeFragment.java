@@ -16,7 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.Activities.ProfilePage;
+import com.example.mosquizto.Activities.StudySetDetailActivity;
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Dto.response.StudySessionResponse;
+import com.example.mosquizto.Dto.response.StudySessionResultResponse;
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
+import com.example.mosquizto.Event.OnItemJumpBackInListener;
 import com.example.mosquizto.MainActivity;
+import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.Models.User;
@@ -42,10 +49,12 @@ public class HomeFragment extends Fragment {
     private JumpBackInAdapter jumpAdapter;
     private RecentAdapter recentAdapter;
     private BasedOnRecentAdapter basedAdapter;
-
+    private MainActivity mainActivity ;
     @Inject
     StudyApi studyApi;
 
+    @Inject
+    CollectionApi collectionApi ;
     private ImageView imgView ;
     private EditText etSearch ;
     @Nullable
@@ -65,6 +74,9 @@ public class HomeFragment extends Fragment {
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
         imgView = view.findViewById(R.id.iv_avatar) ;
         etSearch = view.findViewById(R.id.etSearch) ;
+        if (getActivity() instanceof MainActivity)
+            mainActivity = (MainActivity) getActivity();
+
         createListener();
 
 
@@ -87,20 +99,27 @@ public class HomeFragment extends Fragment {
         etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getActivity() instanceof MainActivity) {
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    mainActivity.switchToFragment(FragmentTag.search);
-                }
+               mainActivity.switchToFragment(FragmentTag.search);
             }
         }) ;
     }
 
     private void setupEmptyRecyclerViews() {
-        jumpAdapter = new JumpBackInAdapter(null);
+        jumpAdapter = new JumpBackInAdapter(null, new OnItemJumpBackInListener() {
+            @Override
+            public void OnItemClicked(StudySessionResponse item) {
+                if (mainActivity != null) mainActivity.GoToStudySetActivity(getContext(), item.getCollectionId(), item.getCollectionName());
+            }
+        });
         rvJumpBackIn.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvJumpBackIn.setAdapter(jumpAdapter);
 
-        recentAdapter = new RecentAdapter(null);
+        recentAdapter = new RecentAdapter(null, new OnItemCollectionClickedListener() {
+            @Override
+            public void OnItemClicked(CollectionResponse item) {
+                mainActivity.GoToStudySetActivity(getContext(), item);
+            }
+        } ) ;
         rvRecents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         rvRecents.setAdapter(recentAdapter);
 
@@ -112,28 +131,30 @@ public class HomeFragment extends Fragment {
     // --- CÁC HÀM GỌI API ---
 
     private void fetchJumpBackIn() {
-        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<StudySessionResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+            public void onResponse(Call<ApiResponse<List<StudySessionResponse>>> call, Response<ApiResponse<List<StudySessionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Collection> data = response.body().getData();
+                    List<StudySessionResponse> data = response.body().getData();
                     // Cập nhật adapter và refresh giao diện
-                    jumpAdapter.setCollections(data);
-                    jumpAdapter.notifyDataSetChanged();
+                    jumpAdapter.setSessions(data);
+                }else
+                {
+                    Log.e("HomeFragment", "Lỗi JumpBackIn: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<StudySessionResponse>>> call, Throwable t) {
                 Log.e("HomeFragment", "Lỗi JumpBackIn: " + t.getMessage());
             }
         });
     }
 
     private void fetchRecents() {
-        studyApi.getRecents().enqueue(new Callback<ApiResponse<List<Collection>>>() {
+        collectionApi.getRecentOpenedCollections().enqueue(new Callback<ApiResponse<List<CollectionResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<Collection>>> call, Response<ApiResponse<List<Collection>>> response) {
+            public void onResponse(Call<ApiResponse<List<CollectionResponse>>> call, Response<ApiResponse<List<CollectionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     recentAdapter.setCollections(response.body().getData());
                     recentAdapter.notifyDataSetChanged();
@@ -141,7 +162,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<Collection>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<CollectionResponse>>> call, Throwable t) {
                 Log.e("HomeFragment", "Lỗi Recents: " + t.getMessage());
             }
         });

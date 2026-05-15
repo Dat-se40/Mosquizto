@@ -18,6 +18,8 @@ import com.example.mosquizto.Adapters.FlashcardSetAdapter;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.CollectionApi;
@@ -37,7 +39,8 @@ public class FlashcardSetsFragment extends Fragment {
     private FlashcardSetAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     @Inject CollectionApi collectionApi;
-    private List<Collection> originalList = new ArrayList<>();
+    private List<CollectionResponse> originalList = new ArrayList<>();
+    MainActivity mainActivity ;
 
     @Nullable
     @Override
@@ -47,7 +50,14 @@ public class FlashcardSetsFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
         ChipGroup filterChipGroup = v.findViewById(R.id.chip_group_filter);
-        adapter = new FlashcardSetAdapter(getContext(), new ArrayList<>());
+        if (getActivity() instanceof MainActivity)
+            mainActivity = (MainActivity) getActivity();
+        adapter = new FlashcardSetAdapter(getContext(), new ArrayList<>(), new OnItemCollectionClickedListener() {
+            @Override
+            public void OnItemClicked(CollectionResponse item) {
+                if(mainActivity != null) mainActivity.GoToStudySetActivity(getContext(),item);
+            }
+        });
         rv.setAdapter(adapter);
 
         // 1. Xử lý Logic kéo để Refresh
@@ -84,14 +94,8 @@ public class FlashcardSetsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
-
-                    // MAP CHỈ VỚI 1 DÒNG
-                    List<Collection> collections = new ArrayList<>();
-                    for (CollectionResponse res : remoteList) {
-                        collections.add(Collection.fromResponse(res));
-                    }
-                    originalList = collections;
-                    adapter.setCollectionList(collections);
+                    originalList = remoteList;
+                    adapter.setCollectionList(remoteList);
                 } else {
                     Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
                     Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);

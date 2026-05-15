@@ -87,4 +87,14 @@ public class CollectionResponse {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+    public CollectionResponse(Integer id, String title, String description, Boolean visibility, Long userId, String userName, Integer count) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.visibility = visibility;
+        this.userId = userId;
+        this.userName = userName;
+        this.count = count;
+    }
 }

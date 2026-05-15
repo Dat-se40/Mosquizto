@@ -3,24 +3,48 @@ package com.example.mosquizto.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Models.Collection;
+
 import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder> {
 
-    private List<Collection> collections;
+    private List<CollectionResponse> collections;
+    private OnItemCollectionClickedListener listener;
+    private OnItemOptionsClickedListener optionsListener;
 
-    public RecentAdapter(List<Collection> collections) {
-        this.collections = collections;
+    public interface OnItemOptionsClickedListener {
+        void onOptionsClicked(CollectionResponse item, int position);
     }
-    public void setCollections(List<Collection> collections) {
-        this.collections = collections;
-        notifyDataSetChanged(); // Báo cho RecyclerView biết dữ liệu đã thay đổi để vẽ lại UI
+
+    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener) {
+        this(collections, listener, null);
     }
+
+    public RecentAdapter(List<CollectionResponse> collections, OnItemCollectionClickedListener listener, OnItemOptionsClickedListener optionsListener) {
+        this.collections = collections;
+        this.listener = listener;
+        this.optionsListener = optionsListener;
+    }
+
+    public void setCollections(List<CollectionResponse> collections) {
+        this.collections = collections;
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        collections.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,11 +54,24 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Collection item = collections.get(position);
+        CollectionResponse item = collections.get(position);
         holder.tvTitle.setText(item.getTitle());
 
-        String author = (item.getCreatedBy() != null) ? item.getCreatedBy().getUsername() : "Quizlet";
-        holder.tvDetails.setText(item.getCount() + " cards • by " + author);
+        String author = item.getUserName() != null ? item.getUserName() : "Quizlet";
+        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
+        holder.tvDetails.setText(count + " thẻ • bởi " + author);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.OnItemClicked(item);
+            }
+        });
+
+        holder.ivAction.setOnClickListener(v -> {
+            if (optionsListener != null) {
+                optionsListener.onOptionsClicked(item, position);
+            }
+        });
     }
 
     @Override
@@ -44,11 +81,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDetails;
+        ImageView ivAction;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvCollectionTitle);
             tvDetails = itemView.findViewById(R.id.tvCollectionDetails);
+            ivAction = itemView.findViewById(R.id.ivAction);
         }
     }
 }
