@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/background_grey">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:layout_centerInParent="true"
             android:text="LEARN"
             android:textSize="23sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_color_primary" />
 
         <ImageButton
             android:id="@+id/btnSettings"
@@ -45,7 +45,7 @@
         android:layout_height="4dp"
         android:max="100"
         android:progress="0"
-        android:progressTint="#4255FF" />
+        android:progressTint="@color/primary_color" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="MULTIPLE CHOICE"
-                    android:textColor="#757575"
+                    android:textColor="@color/text_color_secondary"
                     android:textStyle="bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="8dp"/>
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="22sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_color_primary"
                     android:layout_marginBottom="32dp" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_option_default" android:padding="20dp"
                     android:textSize="16sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_color_primary"
                     android:layout_marginBottom="12dp" />
 
                 <TextView
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_option_default" android:padding="20dp"
                     android:textSize="16sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_color_primary"
                     android:layout_marginBottom="12dp" />
 
                 <TextView
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_option_default" android:padding="20dp"
                     android:textSize="16sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_color_primary"
                     android:layout_marginBottom="12dp" />
 
                 <TextView
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_option_default" android:padding="20dp"
                     android:textSize="16sp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_color_primary" />
 
                 <Button
                     android:id="@+id/btnContinueMc"
@@ -141,8 +141,8 @@
                     android:layout_height="56dp"
                     android:layout_marginTop="32dp"
                     android:text="Continue"
-                    android:backgroundTint="#4255FF"
-                    android:textColor="@color/white"
+                    android:backgroundTint="@color/primary_color"
+                    android:textColor="@color/app_on_primary"
                     android:visibility="gone" />
             </LinearLayout>
         </ScrollView>
@@ -164,7 +164,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="FILL IN THE BLANK"
-                    android:textColor="#757575"
+                    android:textColor="@color/text_color_secondary"
                     android:textStyle="bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="8dp"/>
@@ -174,7 +174,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="22sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_color_primary"
                     android:layout_marginBottom="32dp" />
 
                 <LinearLayout
@@ -197,7 +197,7 @@
                         android:text="CORRECT ANSWER"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="#757575"
+                        android:textColor="@color/text_color_secondary"
                         android:layout_marginTop="16dp"/>
 
                     <TextView
@@ -215,7 +215,9 @@
                     android:hint="Type the answer"
                     android:background="@drawable/bg_option_default"
                     android:paddingHorizontal="16dp"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:textColor="@color/text_color_primary"
+                    android:textColorHint="@color/search_bar_hint" />
 
                 <LinearLayout
                     android:id="@+id/layoutActionsFb"
@@ -231,7 +233,7 @@
                         android:layout_weight="1"
                         android:text="Don't know"
                         android:gravity="center"
-                        android:textColor="#4255FF"
+                        android:textColor="@color/primary_color"
                         android:textStyle="bold"
                         android:background="?attr/selectableItemBackground" android:layout_marginEnd="8dp"/>
 
@@ -241,8 +243,8 @@
                         android:layout_height="56dp"
                         android:layout_weight="1"
                         android:text="Enter"
-                        android:backgroundTint="#4255FF"
-                        android:textColor="@color/white" />
+                        android:backgroundTint="@color/primary_color"
+                        android:textColor="@color/app_on_primary" />
                 </LinearLayout>
 
                 <Button
@@ -251,8 +253,8 @@
                     android:layout_height="56dp"
                     android:layout_marginTop="16dp"
                     android:text="Continue"
-                    android:backgroundTint="#4255FF"
-                    android:textColor="@color/white"
+                    android:backgroundTint="@color/primary_color"
+                    android:textColor="@color/app_on_primary"
                     android:visibility="gone" />
             </LinearLayout>
         </ScrollView>
@@ -271,7 +273,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="MATCHING"
-                    android:textColor="#757575"
+                    android:textColor="@color/text_color_secondary"
                     android:textStyle="bold"
                     android:textSize="20sp"
                     android:layout_marginBottom="8dp"/>
@@ -344,7 +346,7 @@
                     android:text="You're doing great!"
                     android:textSize="28sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_color_primary" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvLearnedTerms"
@@ -359,8 +361,8 @@
                     android:layout_height="56dp"
                     android:layout_marginTop="32dp"
                     android:text="Continue"
-                    android:backgroundTint="#4255FF"
-                    android:textColor="@color/white" />
+                    android:backgroundTint="@color/primary_color"
+                    android:textColor="@color/app_on_primary" />
             </LinearLayout>
         </ScrollView>
     </FrameLayout>

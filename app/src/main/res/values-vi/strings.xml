@@ -14,12 +14,12 @@
     <string name="textView_ResetPass">Đặt lại mật khẩu</string>
     <string name="textView_NoteResetPass">Chúng tôi sẽ gửi email cho bạn một liên kết để đặt lại mật khẩu.</string>
     <string name="editText_MailReset">Nhập địa chỉ email</string>
-    <string name="btn_SendLink">Gửi liên kết</string>"
-    <string name="textView_ResetNoti">Chúng tôi đã gửi một email đến %1$s</string>"
+    <string name="btn_SendLink">Gửi liên kết</string>
+    <string name="textView_ResetNoti">Chúng tôi đã gửi một email đến %1$s</string>
     <string name="textView_NoteRSNoti">Nhấp vào liên kết trong email. Hãy chắc chắn rằng bạn đã
         kiểm tra hộp thư rác nếu không thấy email trong hộp thư của bạn</string>
-    <string name="btn_Gobacktologin">Quay lại đăng nhập</string>"
-    <string name="imageButton_back">Quay lại</string>"
+    <string name="btn_Gobacktologin">Quay lại đăng nhập</string>
+    <string name="imageButton_back">Quay lại</string>
     <string name="lostConnectionNoti">Mất kết nối</string>
     <string name="textView_FullName">Họ và tên</string>
     <string name="textView_UserName">Tên người dùng</string>
@@ -38,6 +38,10 @@
     <string name="see_all">Xem tất cả</string>
     <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
     <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
+    <string name="title_settings">Cài đặt</string>
+    <string name="setting_appearance">GIAO DIỆN</string>
+    <string name="setting_dark_mode">Chế độ tối</string>
+    <string name="setting_dark_mode_desc">Dùng giao diện tối</string>
 
     <string name="hint_search">Hoc phần, sách giáo khoa...</string>
     <string name="cancel">Hủy</string>
@@ -54,5 +58,5 @@
     <string name="have_an_account">Đã có tài khoản? </string>
     <string name="login">Đăng nhập</string>
     <string name="sign_up">Đăng Kí</string>
-    <string name="continue_with">Tiếp tục với %1$s</string>"
+    <string name="continue_with">Tiếp tục với %1$s</string>
 </resources>

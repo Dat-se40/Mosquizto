@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_color_primary" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPagerFlashcards"
@@ -94,8 +94,8 @@
                     app:cardElevation="2dp"
                     app:cardCornerRadius="12dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#E0E0E0"
-                    app:cardBackgroundColor="@color/white">
+                    app:strokeColor="@color/quizlet_border"
+                    app:cardBackgroundColor="@color/background_white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -115,7 +115,7 @@
                             android:text="Flashcards"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/text_color_primary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -126,8 +126,8 @@
                     app:cardElevation="2dp"
                     app:cardCornerRadius="12dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#E0E0E0"
-                    app:cardBackgroundColor="@color/white">
+                    app:strokeColor="@color/quizlet_border"
+                    app:cardBackgroundColor="@color/background_white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -149,7 +149,7 @@
                             android:text="Learn"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/text_color_primary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -163,7 +163,7 @@
                 android:text="Terms"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_color_primary" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayoutTerms"
@@ -171,9 +171,9 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_tab_layout_rounded"
-                app:tabIndicatorColor="#4255FF"
-                app:tabSelectedTextColor="#4255FF"
-                app:tabTextColor="#757575"
+                app:tabIndicatorColor="@color/primary_color"
+                app:tabSelectedTextColor="@color/primary_color"
+                app:tabTextColor="@color/text_color_secondary"
                 app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 >
 
@@ -205,8 +205,8 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp"
         android:text="Study set"
-        android:textColor="@color/white"
-        app:backgroundTint="#4255FF"
+        android:textColor="@color/app_on_primary"
+        app:backgroundTint="@color/primary_color"
         app:cornerRadius="40dp"
         android:visibility="gone"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

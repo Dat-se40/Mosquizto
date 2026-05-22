@@ -27,7 +27,8 @@
                     android:text="Tạo học phần"
                     android:layout_centerInParent="true"
                     android:textStyle="bold"
-                    android:textSize="22sp"/>
+                    android:textSize="22sp"
+                    android:textColor="@color/text_color_primary"/>
                 <ImageButton
                     android:id="@+id/btn_settings"
                     android:layout_width="wrap_content"
@@ -64,12 +65,14 @@
                 android:layout_height="wrap_content"
                 android:hint="Tiêu đề"
                 android:background="@null"
-                android:textSize="20sp" android:textStyle="bold"/>
+                android:textSize="20sp" android:textStyle="bold"
+                android:textColor="@color/text_color_primary"
+                android:textColorHint="@color/search_bar_hint"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D0D0D0"
+                android:background="@color/app_divider"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"/>
             <EditText android:id="@+id/et_description"
@@ -77,11 +80,13 @@
                 android:layout_height="wrap_content"
                 android:hint="Mô tả"
                 android:background="@null"
-                android:textSize="20sp" android:textStyle="bold"/>
+                android:textSize="20sp" android:textStyle="bold"
+                android:textColor="@color/text_color_primary"
+                android:textColorHint="@color/search_bar_hint"/>
 
             <View android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#D0D0D0"
+                android:background="@color/app_divider"
                 android:layout_marginTop="8dp" android:layout_marginBottom="16dp"/>
 
             <androidx.recyclerview.widget.RecyclerView

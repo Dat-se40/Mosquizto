@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F7FA">
+    android:background="@color/background_grey">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
+        android:background="@color/background_white"
         android:elevation="4dp">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,7 +20,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_arrow_back"
-                app:tint="#586380"/>
+                app:tint="@color/app_icon_tint"/>
             <TextView
                 android:id="@+id/tvToolbarTitle"
                 android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
                 android:text="Tên Folder"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#282E3E"/>
+                android:textColor="@color/text_color_primary"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,14 +42,14 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/ic_add"
-                    app:tint="#586380"
+                    app:tint="@color/app_icon_tint"
                     android:layout_marginEnd="16dp"/>
                 <ImageView
                     android:id="@+id/btnMore"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/icon_more"
-                    app:tint="#586380"/>
+                    app:tint="@color/app_icon_tint"/>
             </LinearLayout>
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
@@ -66,12 +66,12 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/ic_folder"
-            app:tint="#C3C8D4"/>
+            app:tint="@color/quizlet_gray_icon"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thư mục này chưa có học liệu"
-            android:textColor="#586380"
+            android:textColor="@color/text_color_secondary"
             android:layout_marginTop="16dp"
             android:textSize="16sp"/>
         <Button
@@ -79,8 +79,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thêm học liệu"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#4255FF"
+            android:textColor="@color/app_on_primary"
+            android:backgroundTint="@color/primary_color"
             android:layout_marginTop="24dp"
             android:paddingHorizontal="32dp"
             android:textAllCaps="false"/>

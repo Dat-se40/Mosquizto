@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0a0a2c">
+    android:background="@color/background_grey">
 
     <!-- Top Search Bar -->
     <LinearLayout
@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:padding="12dp"
         android:gravity="center_vertical"
-        android:background="#0a0a2c">
+        android:background="@color/background_grey">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -22,7 +22,7 @@
             android:layout_weight="1"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#1a1a3e">
+            app:cardBackgroundColor="@color/search_bar_background">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_search"
-                    app:tint="#8A9BB5"
+                    app:tint="@color/app_icon_tint"
                     android:contentDescription="Search icon"/>
 
                 <EditText
@@ -48,8 +48,8 @@
                     android:layout_marginEnd="8dp"
                     android:background="@null"
                     android:hint="Tìm kiếm học phần..."
-                    android:textColorHint="#5F6A82"
-                    android:textColor="#FFFFFF"
+                    android:textColorHint="@color/search_bar_hint"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="15sp"
                     android:inputType="text"
                     android:imeOptions="actionSearch"
@@ -61,7 +61,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_close"
-                    app:tint="#8A9BB5"
+                    app:tint="@color/app_icon_tint"
                     android:contentDescription="Clear text"
                     android:clickable="true"
                     android:focusable="true"
@@ -72,7 +72,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_photo_camera"
-                    app:tint="#8A9BB5"
+                    app:tint="@color/app_icon_tint"
                     android:contentDescription="Camera search"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="Hủy"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_color_primary"
             android:textSize="15sp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -114,7 +114,7 @@
                 android:layout_height="48dp"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="24dp"
-                app:cardBackgroundColor="#1a1a3e"
+                app:cardBackgroundColor="@color/background_white"
                 app:cardElevation="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -125,13 +125,13 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_scan"
-                        app:tint="#FFFFFF"/>
+                        app:tint="@color/app_icon_tint"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="Quét sách giáo khoa"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/text_color_primary"
                         android:textSize="14sp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -153,7 +153,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Gần đây"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/text_color_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
                     <TextView
@@ -161,7 +161,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Xóa tất cả"
-                        android:textColor="#4D9EFF"
+                        android:textColor="@color/text_link"
                         android:textSize="13sp"/>
                 </LinearLayout>
 
@@ -198,7 +198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Kết quả"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:padding="16dp"/>
@@ -222,7 +222,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Không tìm thấy kết quả"
-                    android:textColor="#5F6A82"
+                    android:textColor="@color/text_color_secondary"
                     android:textSize="15sp"/>
             </LinearLayout>
 

@@ -12,6 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tùy chọn"
+            android:textColor="@color/text_color_primary"
             android:textSize="18sp"
             android:textStyle="bold"/>
     </androidx.appcompat.widget.Toolbar>
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:text="AI CÓ QUYỀN XEM?"
         android:padding="16sp"
+        android:textColor="@color/text_color_secondary"
         android:textSize="12sp"
         android:textStyle="bold"/>
 
@@ -34,11 +36,13 @@
             android:id="@+id/rb_public"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mọi người"/>
+            android:text="Mọi người"
+            android:textColor="@color/text_color_primary"/>
         <RadioButton
             android:id="@+id/rb_private"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chỉ mình tôi"/>
+            android:text="Chỉ mình tôi"
+            android:textColor="@color/text_color_primary"/>
     </RadioGroup>
 </LinearLayout>

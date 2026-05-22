@@ -26,6 +26,13 @@
     <color name="background_white">#FFFFFF</color>
     <color name="background_grey">#F6F7FB</color>
 
+    <color name="app_surface_variant">#EEF2FF</color>
+    <color name="app_on_primary">#FFFFFF</color>
+    <color name="app_icon_tint">#586380</color>
+    <color name="app_divider">#D8DCE8</color>
+    <color name="app_button_secondary_background">#F0F2F8</color>
+    <color name="app_button_secondary_text">#282E3E</color>
+
     <color name="search_bar_background">#FFFFFF</color>
     <color name="search_bar_hint">#586380</color>
     <color name="progress_bar_color">#00C985</color>

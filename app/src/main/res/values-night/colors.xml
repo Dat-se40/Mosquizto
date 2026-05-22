@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark_navy">#0F172A</color>
+
+    <color name="surface_dark">#1E293B</color>
+    <color name="surface_darker">#111827</color>
+
+    <color name="text_white">#F8FAFC</color>
+    <color name="text_hint">#94A3B8</color>
+    <color name="text_link">#8EA0FF</color>
+    <color name="text_light_purple">#DDE3FF</color>
+    <color name="text_gray">#CBD5E1</color>
+
+    <color name="colorPrimary">#8EA0FF</color>
+    <color name="colorPrimaryDark">#0F172A</color>
+    <color name="colorAccent">#FACC15</color>
+
+    <color name="primary_color">#8EA0FF</color>
+    <color name="primary_color_light">#26324E</color>
+    <color name="text_color_primary">#F8FAFC</color>
+    <color name="text_color_secondary">#CBD5E1</color>
+
+    <color name="background_white">#1E293B</color>
+    <color name="background_grey">#0F172A</color>
+
+    <color name="app_surface_variant">#26324E</color>
+    <color name="app_on_primary">#0F172A</color>
+    <color name="app_icon_tint">#CBD5E1</color>
+    <color name="app_divider">#334155</color>
+    <color name="app_button_secondary_background">#26324E</color>
+    <color name="app_button_secondary_text">#F8FAFC</color>
+
+    <color name="search_bar_background">#1E293B</color>
+    <color name="search_bar_hint">#94A3B8</color>
+    <color name="progress_bar_color">#34D399</color>
+    <color name="option_button_stroke">#334155</color>
+    <color name="quizlet_border">#334155</color>
+
+    <color name="quizlet_blue">#8EA0FF</color>
+    <color name="quizlet_gray_icon">#94A3B8</color>
+</resources>

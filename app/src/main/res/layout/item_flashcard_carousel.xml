@@ -14,7 +14,7 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
         android:visibility="invisible"
-        app:cardBackgroundColor="@color/white">
+        app:cardBackgroundColor="@color/background_white">
 
         <TextView
             android:id="@+id/tvDefinition"
@@ -22,7 +22,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="24dp"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:textColor="@color/text_color_primary" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
@@ -31,7 +32,7 @@
         android:layout_height="match_parent"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/white">
+        app:cardBackgroundColor="@color/background_white">
 
         <TextView
             android:id="@+id/tvTerm"
@@ -40,7 +41,8 @@
             android:gravity="center"
             android:padding="24dp"
             android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/text_color_primary" />
     </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>
