@@ -8,7 +8,7 @@
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#1a1a3e"
+    app:cardBackgroundColor="@color/background_white"
     app:cardElevation="0dp"
     android:clickable="true"
     android:focusable="true">
@@ -25,7 +25,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="#2a2a5e"
+            app:cardBackgroundColor="@color/app_surface_variant"
             app:cardElevation="0dp">
 
             <ImageView
@@ -50,7 +50,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:singleLine="true"
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#8A9BB5"
+                android:textColor="@color/text_color_secondary"
                 android:textSize="13sp"
                 android:singleLine="true"
                 android:ellipsize="end"/>
@@ -74,7 +74,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_more_vert"
-            app:tint="#8A9BB5"
+            app:tint="@color/app_icon_tint"
             android:contentDescription="More options"
             android:clickable="true"
             android:focusable="true"

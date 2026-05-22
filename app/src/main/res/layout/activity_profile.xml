@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#0a0a2c"
+    android:background="@color/background_grey"
     android:fillViewport="true"
     tools:context=".Activities.ProfilePage">
 
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/title_profile"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_toEndOf="@id/btnBack"
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="name"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_color_primary"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
@@ -79,13 +79,13 @@
                 android:src="@drawable/ic_settings"
                 android:contentDescription="Cài đặt"
                 android:layout_marginEnd="16dp"
-                app:tint="#FFFFFF" />
+                app:tint="@color/app_icon_tint" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/menu_settings"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -107,13 +107,13 @@
                 android:src="@drawable/ic_notifications"
                 android:contentDescription="Hoạt động"
                 android:layout_marginEnd="16dp"
-                app:tint="#FFFFFF" />
+                app:tint="@color/app_icon_tint" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/menu_activity"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -127,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:text="@string/title_achievements"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_alignParentStart="true"
@@ -138,7 +138,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:text="@string/see_all"
-                android:textColor="#4D8EFF"
+                android:textColor="@color/text_link"
                 android:textSize="14sp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
@@ -166,7 +166,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/streak_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -176,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/streak_desc"
-                android:textColor="#AABBCC"
+                android:textColor="@color/text_color_secondary"
                 android:textSize="14sp"
                 android:gravity="center" />
         </LinearLayout>

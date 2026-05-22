@@ -11,7 +11,7 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:background="#D1D1D1" />
+        android:background="@color/app_divider" />
 
     <LinearLayout
         android:id="@+id/btnModeFlashcards"
@@ -33,7 +33,7 @@
             android:layout_marginStart="16dp"
             android:text="Flashcards"
             android:textSize="20sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_color_primary" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,6 +56,6 @@
             android:layout_marginStart="16dp"
             android:text="Learn"
             android:textSize="20sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_color_primary" />
     </LinearLayout>
 </LinearLayout>

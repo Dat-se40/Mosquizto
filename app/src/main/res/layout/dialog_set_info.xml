@@ -17,7 +17,7 @@
             android:text="Set info"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_color_primary"
             />
 
         <ImageButton
@@ -35,7 +35,7 @@
         android:text="CREATED BY"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#757575"
+        android:textColor="@color/text_color_secondary"
         android:layout_marginBottom="8dp"/>
 
     <LinearLayout
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="ngophuonghien"
-            android:textColor="@color/black"
+            android:textColor="@color/text_color_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -68,7 +68,7 @@
         android:text="VISIBLE TO"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#757575"
+        android:textColor="@color/text_color_secondary"
         android:layout_marginBottom="8dp"/>
 
     <TextView
@@ -79,5 +79,5 @@
         android:drawablePadding="12dp"
         android:text="Everyone"
         android:textSize="16sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/text_color_primary"/>
 </LinearLayout>

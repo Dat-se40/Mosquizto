@@ -10,7 +10,7 @@
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
-        android:background="#D9DCE3"
+        android:background="@color/app_divider"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"/>
 

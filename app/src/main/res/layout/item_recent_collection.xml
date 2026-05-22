@@ -34,7 +34,7 @@
             android:text="Unit 5: The World In..."
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#282E3E"
+            android:textColor="@color/text_color_primary"
             android:maxLines="1"
             android:ellipsize="end"/>
 
@@ -45,7 +45,7 @@
             android:layout_marginTop="4dp"
             android:text="37 cards • by quanghieu"
             android:textSize="14sp"
-            android:textColor="#586380"
+            android:textColor="@color/text_color_secondary"
             android:maxLines="1"
             android:ellipsize="end"/>
     </LinearLayout>
@@ -55,5 +55,5 @@
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:src="@drawable/icon_more"
-        app:tint="#586380"/>
+        app:tint="@color/app_icon_tint"/>
 </LinearLayout>

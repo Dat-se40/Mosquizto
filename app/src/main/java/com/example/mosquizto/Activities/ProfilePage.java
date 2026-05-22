@@ -74,7 +74,7 @@ public class ProfilePage extends AppCompatActivity {
 
     private void initViews() {
         tvUserName = findViewById(R.id.tvUsername);
-        imgProfile = findViewById(R.id.iv_avatar);
+        imgProfile = findViewById(R.id.ivAvatar);
 
         // Hiển thị ngay lập tức tên User từ SessionManager để UI không bị trống khi đợi API
         if (sessionManager.getCurrUser() != null) {
@@ -89,6 +89,9 @@ public class ProfilePage extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> {
             getOnBackPressedDispatcher().onBackPressed();
         });
+
+        findViewById(R.id.menuSettings).setOnClickListener(v ->
+                startActivity(new Intent(ProfilePage.this, SettingsActivity.class)));
     }
 
     // Hàm lấy dữ liệu mới nhất từ nhánh của bạn

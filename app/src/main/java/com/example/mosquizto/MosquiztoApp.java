@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorkerFactory;
 import androidx.work.Configuration;
 
+import com.example.mosquizto.Util.ThemeManager;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.HiltAndroidApp;
@@ -14,6 +16,12 @@ import dagger.hilt.android.HiltAndroidApp;
 public class MosquiztoApp extends Application implements Configuration.Provider{
     @Inject
     HiltWorkerFactory workerFactory;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ThemeManager.applySavedTheme(this);
+    }
 
     @NonNull
     @Override

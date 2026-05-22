@@ -17,7 +17,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:src="@drawable/ic_history"
-        app:tint="#8A9BB5"
+        app:tint="@color/app_icon_tint"
         android:contentDescription="History"/>
 
     <!-- Search text -->
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="14dp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_color_primary"
         android:textSize="15sp"
         android:singleLine="true"
         android:ellipsize="end"/>
@@ -38,7 +38,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:src="@drawable/ic_arrow_up_left"
-        app:tint="#8A9BB5"
+        app:tint="@color/app_icon_tint"
         android:contentDescription="Fill search"
         android:clickable="true"
         android:focusable="true"

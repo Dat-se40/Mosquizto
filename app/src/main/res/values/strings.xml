@@ -19,7 +19,7 @@
     <string name="textView_NoteRSNoti">Click the link in the email. Be sure to check your
         spam folder if you don\'t see the email in your inbox</string>
     <string name="btn_Gobacktologin">Go back to login</string>
-    <string name="imageButton_back">Back</string>"
+    <string name="imageButton_back">Back</string>
     <string name="lostConnectionNoti">Lost Connection</string>
     <string name="textView_FullName">Full name</string>
     <string name="textView_UserName">User name</string>
@@ -38,6 +38,10 @@
     <string name="see_all">See all</string>
     <string name="streak_title">Start a study streak</string>
     <string name="streak_desc">Study streaks help you stay motivated and reach your goals. Start your first streak today!</string>
+    <string name="title_settings">Settings</string>
+    <string name="setting_appearance">APPEARANCE</string>
+    <string name="setting_dark_mode">Dark mode</string>
+    <string name="setting_dark_mode_desc">Use a dark interface</string>
 
     <string name="hint_search">Courses, textbooks, and more...</string>
     <string name="cancel">Cancel</string>
@@ -54,5 +58,5 @@
     <string name="have_an_account">Have an account? </string>
     <string name="login">Login </string>
     <string name="sign_up">Sign Up</string>
-    <string name="continue_with">Continue with %1$s</string>"
+    <string name="continue_with">Continue with %1$s</string>
 </resources>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#0a0a2c"
+    android:background="@color/background_grey"
     android:fillViewport="true">
 
     <LinearLayout
@@ -32,7 +32,7 @@
             android:text="@string/headline"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_color_primary"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:layout_marginBottom="16dp" />
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="@string/welcome_terms_text"
             android:textSize="13sp"
-            android:textColor="#8A9BB5"
+            android:textColor="@color/text_color_secondary"
             android:gravity="center"
             android:layout_marginBottom="36dp" />
 
@@ -54,9 +54,9 @@
             android:text="@string/continue_with"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/app_on_primary"
             app:backgroundTint="@null"
-            android:backgroundTint="#4254ff"
+            android:backgroundTint="@color/primary_color"
             android:layout_marginBottom="14dp"
             android:visibility="gone"/>
 
@@ -66,8 +66,8 @@
             android:layout_height="52dp"
             android:text="@string/sign_up"
             android:textSize="20sp"
-            android:textColor="#555555"
-            android:backgroundTint="#F0F0F0"
+            android:textColor="@color/app_button_secondary_text"
+            android:backgroundTint="@color/app_button_secondary_background"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/have_an_account"
                 android:textSize="15sp"
-                android:textColor="#8A9BB5" />
+                android:textColor="@color/text_color_secondary" />
 
             <TextView
                 android:id="@+id/tvLogin"
@@ -95,7 +95,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/login"
-                android:textColor="#4361EE"
+                android:textColor="@color/text_link"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
