@@ -92,6 +92,24 @@ public class ProfilePage extends AppCompatActivity {
 
         findViewById(R.id.menuSettings).setOnClickListener(v ->
                 startActivity(new Intent(ProfilePage.this, SettingsActivity.class)));
+
+        findViewById(R.id.btn_logout).setOnClickListener(v ->{
+            sessionManager.logout();
+//            userApi.logout().enqueue(new Callback<ApiResponse<String>>() {
+//                @Override
+//                public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+//
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+//
+//                }
+//            });
+            Intent intent = new Intent(ProfilePage.this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        } );
     }
 
     // Hàm lấy dữ liệu mới nhất từ nhánh của bạn

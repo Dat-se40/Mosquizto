@@ -1,7 +1,8 @@
 package com.example.mosquizto.Activities;
 
 import android.os.Bundle;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,16 +27,16 @@ public class Login extends AppCompatActivity {
     @Inject
     public SessionManager sessionManager;
     private LoginViewModel loginViewModel ;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        edtMailOrUsername = findViewById(R.id.editText_MailOrUsername); // ID tùy theo file XML của bạn
+        edtMailOrUsername = findViewById(R.id.editText_MailOrUsername);
         edtPassword = findViewById(R.id.editText_Password);
         btnLogin = findViewById(R.id.btn_login);
 
@@ -49,6 +50,30 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             });
         }
+
+        // Cài đặt trạng thái ban đầu của nút (Vô hiệu hóa và làm mờ)
+        updateLoginButtonState();
+
+        // Tạo TextWatcher để lắng nghe khi người dùng gõ chữ
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Mỗi lần gõ chữ, kiểm tra lại xem đã điền đủ 2 ô chưa
+                updateLoginButtonState();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        // Gắn TextWatcher vào cả 2 ô nhập liệu
+        edtMailOrUsername.addTextChangedListener(textWatcher);
+        edtPassword.addTextChangedListener(textWatcher);
+
+        // --- KẾT THÚC PHẦN THÊM MỚI ---
 
         // 1. Lắng nghe nút bấm
         btnLogin.setOnClickListener(v -> {
@@ -68,7 +93,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        // 3. Lắng nghe lỗi
+         //3. Lắng nghe lỗi
         loginViewModel.errorMessage.observe(this, error -> {
             if (error != null) {
                 Toast.makeText(Login.this, error, Toast.LENGTH_LONG).show();
@@ -76,4 +101,17 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    // Hàm kiểm tra và cập nhật giao diện của nút Đăng nhập
+    private void updateLoginButtonState() {
+        String user = edtMailOrUsername.getText().toString().trim();
+        String pass = edtPassword.getText().toString().trim();
+
+        if (!user.isEmpty() && !pass.isEmpty()) {
+            btnLogin.setEnabled(true);
+            btnLogin.setAlpha(1.0f);
+        } else {
+            btnLogin.setEnabled(false);
+            btnLogin.setAlpha(0.5f);
+        }
+    }
 }

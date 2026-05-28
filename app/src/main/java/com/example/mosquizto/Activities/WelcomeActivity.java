@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mosquizto.MainActivity;
@@ -46,8 +47,8 @@ public class WelcomeActivity extends AppCompatActivity {
             if(name != null && !name.isEmpty())
             {
                 btnContinue.setVisibility(View.VISIBLE);
-                btnContinue.setText("Welcome back " + name + "!");
-            }
+                btnContinue.setText("Welcome back " + name + " !");
+            }else btnContinue.setVisibility(View.GONE);
 
         }) ;
         viewModel.errorMessage.observe(this, message ->
@@ -75,5 +76,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
             viewModel.onNavigationDone();
         });
+
     }
 }

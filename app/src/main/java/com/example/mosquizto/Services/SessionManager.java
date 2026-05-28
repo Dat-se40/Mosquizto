@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 public class SessionManager {
     private static final String PREF_NAME = "MosquiztoSession";
     private static final String KEY_TOKEN = "access_token";
+
+    private static final String KEY_LOGIN = "login_time";
     private static final String KEY_USER = "user_json";
 
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -22,6 +24,7 @@ public class SessionManager {
     private String refreshToken ;
     private User currUser;
     private Gson gson;
+    private long loginTimeExpired = 3600; //
     @Inject
     public SessionManager(@ApplicationContext Context context) {
 
@@ -46,6 +49,7 @@ public class SessionManager {
         editor.putString(KEY_TOKEN, token);
         editor.putString(KEY_USER, gson.toJson(user));
         editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.putLong(KEY_LOGIN, System.currentTimeMillis());
         editor.apply(); // Chạy bất đồng bộ để không block UI
     }
     public String getAccessToken()
@@ -73,6 +77,10 @@ public class SessionManager {
         this.accessToken = accessToken;
     }
 
+    public Boolean isLoginExpired()
+    {
+        return (System.currentTimeMillis() - sharedPreferences.getLong(KEY_LOGIN, 0) )*1000 > loginTimeExpired;
+    }
     public String getRefreshToken() {
         return refreshToken;
     }

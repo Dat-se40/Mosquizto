@@ -58,10 +58,9 @@ public class RSPassNoti extends AppCompatActivity {
     }
 
     private void displayEmail() {
-        String email = getIntent().getStringExtra("user_email");
-        if (email != null && !email.isEmpty()) {
-            String originalText = getString(R.string.textView_ResetNoti);
-            tvResetNoti.setText(originalText + email);
+        String email = getIntent().getStringExtra("user_email");if (email != null && !email.isEmpty()) {
+            String formattedText = getString(R.string.textView_ResetNoti, email);
+            tvResetNoti.setText(formattedText);
         }
     }
 }

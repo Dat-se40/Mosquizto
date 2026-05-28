@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,12 +38,12 @@ public class CreateAccountActivity extends AppCompatActivity {
     private EditText etEmail;
     private EditText etPassword;
     private ImageButton btnTogglePassword;
+    private ImageButton btnToggleConfirmPassword ;
     private Button btnCreateAccount;
 
     private EditText etConfirmPassword;
     private EditText etFullName ;
     private EditText etUserName ;
-    private boolean isPasswordVisible = false;
     private String selectedBirthdate = "";
 
     @Override
@@ -72,28 +73,38 @@ public class CreateAccountActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.etConfirmPassword) ;
         btnTogglePassword = findViewById(R.id.btnTogglePassword);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
+        btnToggleConfirmPassword = findViewById(R.id.btnToggleConfirmPassword) ;
     }
 
     private void setupListeners() {
         // Back
         btnBack.setOnClickListener(v -> finish());
 
-        // DatePicker
-//        etBirthdate.setFocusable(false);
-//        etBirthdate.setClickable(true);
-//        etBirthdate.setOnClickListener(v -> showDatePicker());
-
         // Toggle password
-        btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
+        btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility(this.etPassword,this.btnTogglePassword));
+        btnToggleConfirmPassword.setOnClickListener(v -> togglePasswordVisibility(this.etConfirmPassword,this.btnToggleConfirmPassword));
+        // --- CẬP NHẬT GIAO DIỆN NÚT ĐĂNG KÝ ---
 
-        // Validate on input
+        // 1. Cài đặt trạng thái ban đầu (Làm mờ nút)
+        updateCreateAccountButtonState();
+
+        // 2. TextWatcher lắng nghe mọi thay đổi
         TextWatcher watcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) { validateForm(); }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Mỗi khi có bất kỳ ô nào thay đổi text, kiểm tra lại toàn bộ form
+                updateCreateAccountButtonState();
+            }
+            @Override public void afterTextChanged(Editable s) {}
         };
+
+        // Gắn TextWatcher vào TẤT CẢ các ô nhập liệu
         etEmail.addTextChangedListener(watcher);
         etPassword.addTextChangedListener(watcher);
+        etConfirmPassword.addTextChangedListener(watcher);
+        etFullName.addTextChangedListener(watcher);
+        etUserName.addTextChangedListener(watcher);
+
 
         // Submit
         btnCreateAccount.setOnClickListener(v -> {
@@ -107,6 +118,31 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
+    // Hàm tổng hợp kiểm tra và cập nhật giao diện nút
+    private void updateCreateAccountButtonState() {
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString();
+        String confirmPassword = etConfirmPassword.getText().toString();
+        String fullName = etFullName.getText().toString().trim();
+        String userName = etUserName.getText().toString().trim();
+
+        // Các điều kiện hợp lệ
+        boolean emailOk = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matcher(email).matches();
+        boolean passwordOk = password.length() >= 8;
+        boolean passwordsMatch = password.equals(confirmPassword);
+        boolean allFilled = !fullName.isEmpty() && !userName.isEmpty() && !confirmPassword.isEmpty();
+
+        // Nếu tất cả hợp lệ -> Sáng nút
+        if (emailOk && passwordOk && passwordsMatch && allFilled) {
+            btnCreateAccount.setEnabled(true);
+            btnCreateAccount.setAlpha(1.0f);
+        } else {
+            // Nếu có lỗi/thiếu -> Làm mờ nút
+            btnCreateAccount.setEnabled(false);
+            btnCreateAccount.setAlpha(0.5f);
+        }
+    }
+
     private void observeViewModel() {
         viewModel.getUiState().observe(this, state -> {
             switch (state) {
@@ -115,7 +151,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                     break;
                 case SUCCESS:
                     setLoading(false);
-                    navigateToMain();
+                    new android.os.Handler().postDelayed(this::navigateToNotify   , 3000);
                     break;
                 case ERROR:
                     setLoading(false);
@@ -127,16 +163,22 @@ public class CreateAccountActivity extends AppCompatActivity {
                     break;
             }
         });
-        viewModel.message.observe(this, msg ->
-        {
+        viewModel.message.observe(this, msg -> {
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             // Thông báo gửi otp bên mail
         });
     }
 
     private void setLoading(boolean loading) {
-        btnCreateAccount.setEnabled(!loading && isFormValid());
-        btnCreateAccount.setText(loading ? "Processing…" : getString(R.string.btn_create_account));
+        if (loading) {
+            btnCreateAccount.setEnabled(false);
+            btnCreateAccount.setAlpha(0.5f);
+            btnCreateAccount.setText("Processing…");
+        } else {
+            btnCreateAccount.setText(getString(R.string.btn_create_account));
+            // Khi load xong, tính toán lại trạng thái nút dựa trên text hiện tại
+            updateCreateAccountButtonState();
+        }
     }
 
     private void showDatePicker() {
@@ -145,8 +187,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                 this,
                 (view, year, month, day) -> {
                     selectedBirthdate = String.format("%02d/%02d/%04d", day, month + 1, year);
-                //    etBirthdate.setText(selectedBirthdate);
-                    validateForm();
+                    // etBirthdate.setText(selectedBirthdate);
+                    updateCreateAccountButtonState(); // Cập nhật lại nút khi chọn xong ngày
                 },
                 cal.get(Calendar.YEAR) - 18,
                 cal.get(Calendar.MONTH),
@@ -156,36 +198,24 @@ public class CreateAccountActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void togglePasswordVisibility() {
-        isPasswordVisible = !isPasswordVisible;
-        etPassword.setTransformationMethod(
-                isPasswordVisible
-                        ? HideReturnsTransformationMethod.getInstance()
-                        : PasswordTransformationMethod.getInstance()
-        );
-        btnTogglePassword.setImageResource(
-                isPasswordVisible ? R.drawable.ic_visibility_on : R.drawable.ic_visibility_off
-        );
-        etPassword.setSelection(etPassword.getText().length());
+    private void togglePasswordVisibility(EditText targetEdt, ImageButton btnToggle) {
+        // Kiểm tra xem hiện tại nội dung đang ẩn hay hiện dựa vào TransformationMethod
+        boolean isCurrentlyHidden = targetEdt.getTransformationMethod() instanceof PasswordTransformationMethod;
+
+        if (isCurrentlyHidden) {
+            targetEdt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            btnToggle.setImageResource(R.drawable.ic_visibility_on);
+        } else {
+            targetEdt.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            btnToggle.setImageResource(R.drawable.ic_visibility_off);
+        }
+        targetEdt.setSelection(targetEdt.getText().length());
     }
 
-    private boolean isFormValid() {
-        boolean emailOk = Pattern
-                .compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
-                .matcher(etEmail.getText().toString().trim())
-                .matches();
-        boolean passwordOk = etPassword.getText().toString().length() >= 8;
-        return emailOk && passwordOk && !selectedBirthdate.isEmpty();
-    }
-
-    private void validateForm() {
-        btnCreateAccount.setEnabled(isFormValid());
-    }
-
-    private void navigateToMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    private void navigateToNotify()
+    {
+        Intent intent = new Intent(this, RSPassNoti.class);
+        intent.putExtra("user_email",etEmail.getText().toString());
         startActivity(intent);
-        finish();
     }
 }

@@ -1,5 +1,7 @@
 package com.example.mosquizto.ViewModels;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -11,13 +13,17 @@ import com.example.mosquizto.Models.RecentSearchItem;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
 import com.example.mosquizto.Dto.response.SearchResultItem;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +32,11 @@ import retrofit2.Response;
 public class SearchViewModel extends ViewModel {
 
     private final CollectionApi collectionApi;
+    private final SharedPreferences sharedPreferences;
+    private final Gson gson;
+
+    private static final String PREF_NAME = "SearchPreferences";
+    private static final String KEY_RECENT_SEARCHES = "RecentSearchesList";
 
     private final MutableLiveData<List<String>> _suggestions = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<String>> suggestions = _suggestions;
@@ -45,6 +56,7 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<SearchState> _searchState = new MutableLiveData<>(SearchState.IDLE);
     public LiveData<SearchState> searchState = _searchState;
 
+
     public enum SearchState {
         IDLE, TYPING, LOADING, HAS_RESULTS, EMPTY
     }
@@ -54,9 +66,34 @@ public class SearchViewModel extends ViewModel {
     private static final long DEBOUNCE_DELAY_MS = 300;
 
     @Inject
-    public SearchViewModel(CollectionApi collectionApi) {
+    public SearchViewModel(CollectionApi collectionApi, @ApplicationContext Context context) {
         this.collectionApi = collectionApi;
+        // Khởi tạo SharedPreferences và Gson
+        this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        this.gson = new Gson();
+
+        // Load lại lịch sử từ bộ nhớ khi mở màn hình Search
+        loadRecentSearchesFromPrefs();
     }
+
+    // --- CÁC HÀM XỬ LÝ LƯU TRỮ (PERSISTENCE) ---
+    private void loadRecentSearchesFromPrefs() {
+        String json = sharedPreferences.getString(KEY_RECENT_SEARCHES, null);
+        if (json != null) {
+            Type type = new TypeToken<List<RecentSearchItem>>(){}.getType();
+            List<RecentSearchItem> savedList = gson.fromJson(json, type);
+            if (savedList != null) {
+                _recentSearches.setValue(savedList);
+            }
+        }
+    }
+
+    private void saveRecentSearchesToPrefs(List<RecentSearchItem> currentList) {
+        String json = gson.toJson(currentList);
+        sharedPreferences.edit().putString(KEY_RECENT_SEARCHES, json).apply();
+        _recentSearches.setValue(currentList);
+    }
+    // -------------------------------------------
 
     public void onQueryChanged(String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -93,11 +130,14 @@ public class SearchViewModel extends ViewModel {
         if (current == null) return;
         List<RecentSearchItem> updated = new ArrayList<>(current);
         updated.removeIf(item -> item.getText().equals(text));
-        _recentSearches.setValue(updated);
+
+        // Gọi hàm lưu để ghi đè vào bộ nhớ
+        saveRecentSearchesToPrefs(updated);
     }
 
     public void clearAllRecentSearches() {
-        _recentSearches.setValue(new ArrayList<>());
+        // Gọi hàm lưu list rỗng để xóa sạch trong bộ nhớ
+        saveRecentSearchesToPrefs(new ArrayList<>());
     }
 
     private void fetchSuggestions(String query) {
@@ -164,7 +204,8 @@ public class SearchViewModel extends ViewModel {
             updated = updated.subList(0, 10);
         }
 
-        _recentSearches.setValue(updated);
+        // Gọi hàm lưu để ghi vào bộ nhớ
+        saveRecentSearchesToPrefs(updated);
     }
 
     @Override

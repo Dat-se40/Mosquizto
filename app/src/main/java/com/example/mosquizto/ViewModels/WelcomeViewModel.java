@@ -78,9 +78,14 @@ public class WelcomeViewModel extends ViewModel {
     }
     public void AfterCreateView()
     {
-        if(sessionManager != null && sessionManager.getCurrUser() != null)
+        if(!sessionManager.isLoggedIn())
         {
-            userName.postValue(sessionManager.getCurrUser().getUsername());
+           // _errorMessage.postValue("You are not logged in");
+            sessionManager.logout();
+            userName.setValue("");
+        }else if(sessionManager != null && sessionManager.getCurrUser() != null)
+        {
+            userName.setValue(sessionManager.getCurrUser().getUsername());
         }
     }
 }

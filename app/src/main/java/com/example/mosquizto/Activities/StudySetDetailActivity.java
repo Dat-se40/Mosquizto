@@ -32,6 +32,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,13 @@ public class StudySetDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: START");
-        
+        try {
+            Class<?> valueAnimatorClass = Class.forName("android.animation.ValueAnimator");
+            Method setDurationScaleMethod = valueAnimatorClass.getDeclaredMethod("setDurationScale", float.class);
+            setDurationScaleMethod.invoke(null, 1.0f);
+        } catch (Exception e) {
+            e.printStackTrace(); // Có thể bị chặn trên các bản Android rất mới do hạn chế Reflection
+        }
         try {
             setContentView(R.layout.activity_study_set_detail);
             Log.d(TAG, "onCreate: setContentView DONE");
@@ -124,10 +131,12 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
             viewPagerFlashcards = findViewById(R.id.viewPagerFlashcards);
             rvTerms = findViewById(R.id.rvTerms);
+            rvTerms.setItemAnimator(null);
             if (rvTerms != null) {
                 rvTerms.setLayoutManager(new LinearLayoutManager(this));
                 termListAdapter = new TermListAdapter(new ArrayList<>());
                 rvTerms.setAdapter(termListAdapter);
+
             } else {
                 Log.w(TAG, "initViews: rvTerms is NULL");
             }
@@ -327,11 +336,11 @@ public class StudySetDetailActivity extends AppCompatActivity {
             MaterialCardView cardMemory = view.findViewById(R.id.cardModeMemory);
             Button btnStartLearn = view.findViewById(R.id.btnStartLearn);
 
-            final String[] selectedMode = {"MEMORY"};
+            final String[] selectedMode = {"LEARN"};
 
             Runnable updateSelectionUI = () -> {
                 try {
-                    if (selectedMode[0].equals("MEMORY")) {
+                    if (selectedMode[0].equals("LEARN")) {
                         cardMemory.setStrokeColor(android.graphics.Color.parseColor("#4255FF"));
                         cardMemory.setStrokeWidth(4);
                         cardMemory.getChildAt(0).setBackgroundColor(android.graphics.Color.parseColor("#E8EAFF"));
@@ -359,16 +368,16 @@ public class StudySetDetailActivity extends AppCompatActivity {
             });
 
             cardMemory.setOnClickListener(v -> {
-                selectedMode[0] = "MEMORY";
+                selectedMode[0] = "LEARN";
                 updateSelectionUI.run();
             });
 
             btnStartLearn.setOnClickListener(v -> {
                 dialog.dismiss();
-                if (selectedMode[0].equals("MEMORY")) {
+                if (selectedMode[0] != null || !selectedMode[0].isEmpty()) {
                     Intent intent = new Intent(this, MemoryGameActivity.class);
                     intent.putExtra("COLLECTION_ID", collectionId);
-                    
+                    intent.putExtra("GAME_MODE", selectedMode[0]);
                     // Lấy List từ adapter và truyền đi
                     if (termListAdapter != null) {
                         ArrayList<CollectionItemResponse> items = new ArrayList<>(termListAdapter.getItems());

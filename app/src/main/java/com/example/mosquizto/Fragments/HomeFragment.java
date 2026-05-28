@@ -126,6 +126,11 @@ public class HomeFragment extends Fragment {
         basedAdapter = new BasedOnRecentAdapter(null);
         rvBasedOnRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvBasedOnRecent.setAdapter(basedAdapter);
+
+        // Tắt animation để đỡ lag
+        rvJumpBackIn.setItemAnimator(null);
+        rvRecents.setItemAnimator(null);
+        rvBasedOnRecent.setItemAnimator(null);
     }
 
     // --- CÁC HÀM GỌI API ---
@@ -166,5 +171,11 @@ public class HomeFragment extends Fragment {
                 Log.e("HomeFragment", "Lỗi Recents: " + t.getMessage());
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchJumpBackIn();
+        fetchRecents();
     }
 }

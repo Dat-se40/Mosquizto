@@ -43,6 +43,7 @@ public class LoginViewModel extends ViewModel {
 
     private String password = "";
 
+
     @Inject
     public LoginViewModel(UserApi userApi, SessionManager sessionManager) {
         this.userApi = userApi;

@@ -23,6 +23,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import com.example.mosquizto.Fragments.SearchFragment;
 import com.example.mosquizto.Util.FragmentTag;
 
+import java.lang.reflect.Method;
+
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +36,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        try {
+            Class<?> valueAnimatorClass = Class.forName("android.animation.ValueAnimator");
+            Method setDurationScaleMethod = valueAnimatorClass.getDeclaredMethod("setDurationScale", float.class);
+            setDurationScaleMethod.invoke(null, 1.0f);
+        } catch (Exception e) {
+            e.printStackTrace(); // Có thể bị chặn trên các bản Android rất mới do hạn chế Reflection
+        }
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

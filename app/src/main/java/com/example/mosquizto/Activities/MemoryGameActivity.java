@@ -1,6 +1,5 @@
 package com.example.mosquizto.Activities;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,18 +27,21 @@ import com.example.mosquizto.Dto.request.StartStudySessionRequest;
 import com.example.mosquizto.Dto.request.StudySessionDetailRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
-import com.example.mosquizto.Dto.response.StudySessionResponse;
 import com.example.mosquizto.Dto.response.StudySessionResultResponse;
-import com.example.mosquizto.Network.RetrofitClient;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.CompleteSessionWorker;
+import com.example.mosquizto.Util.GameMode;
+import com.example.mosquizto.Util.QuestionType;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -49,66 +52,94 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class MemoryGameActivity extends AppCompatActivity {
+    // === ENUMS ===
+
+    // === DATA STATE ===
     private boolean hasSubmitted = false;
     private Integer collectionId;
-    private Long sessionId; // ID session lấy từ API start
+    private Long sessionId;
+    private GameMode currentGameMode = GameMode.LEARN;
 
-    // Data list
     private List<CollectionItemResponse> allItems = new ArrayList<>();
-    private List<CollectionItemResponse> currentRoundItems = new ArrayList<>();
     private List<StudySessionDetailRequest> bulkResults = new ArrayList<>();
-
-    // State Variables
-    private int currentRound = 1; // 1: Multiple Choice, 2: Fill Blank
+    private List<QuestionWrapper> questionQueue = new ArrayList<>();
     private int currentQuestionIndex = 0;
     private long questionStartTime;
-    private CollectionItemResponse currentItem;
 
-    // UI - General
+    // Điểm cho phần TEST
+    private int totalCorrectTest = 0;
+    private int totalTestQuestions = 0;
+
+    // === UI COMPONENTS ===
     private TextView tvRoundName;
     private ProgressBar progressGame;
-    private View viewMultipleChoice, viewFillBlank, viewSummary;
+    private View viewMultipleChoice, viewFillBlank, viewMatch, viewSummary;
+    private TextView tvSummaryTitle;
+    private Button btnContinueSummary;
 
-    // UI - MC
-    private TextView tvQuestionMc, btnOption1, btnOption2, btnOption3, btnOption4;
+    // UI MC
+    private TextView tvModeLabelMc, tvQuestionMc, btnOption1, btnOption2, btnOption3, btnOption4;
+    private TextView[] optionsArray;
     private View layoutResultMc;
-    private ImageView imgResultIconMc;
     private TextView tvResultMessageMc;
     private Button btnContinueMc;
-    private TextView[] optionsArray;
 
-    // UI - Fill Blank
-    private TextView tvQuestionFb, tvCorrectAnswerFb;
+    // UI FB
+    private TextView tvModeLabelFb, tvQuestionFb, tvCorrectAnswerFb;
     private EditText edtAnswer;
-    private View layoutSkippedResult;
+    private View layoutSkippedResult, layoutActionsFb;
     private TextView btnDontKnow;
     private Button btnSubmitFb, btnContinueFb;
 
-    // UI - Summary
-    private Button btnContinueSummary;
+    // UI MATCH
+    private TextView[] matchLeftViews;
+    private TextView[] matchRightViews;
 
-    private Boolean isFullText = false ;
-    @Inject
-    StudyApi studyApi;
+    @Inject StudyApi studyApi;
 
-    @Inject
-    CollectionApi collectionApi ;
+    // ==========================================
+    // 1. ARCHITECTURE: STRATEGY PATTERN (Inner Interfaces)
+    // ==========================================
+    private interface QuestionStrategy {
+        void execute(QuestionWrapper question);
+    }
+
+    // Class gói dữ liệu 1 câu hỏi
+    private static class QuestionWrapper {
+        QuestionType type;
+        List<CollectionItemResponse> items; // MC/FB cần 1 item, Match cần 3 item
+
+        QuestionWrapper(QuestionType type, List<CollectionItemResponse> items) {
+            this.type = type;
+            this.items = items;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory_game);
+        try {
+            Class<?> valueAnimatorClass = Class.forName("android.animation.ValueAnimator");
+            Method setDurationScaleMethod = valueAnimatorClass.getDeclaredMethod("setDurationScale", float.class);
+            setDurationScaleMethod.invoke(null, 1.0f);
+        } catch (Exception e) {
+            e.printStackTrace(); // Có thể bị chặn trên các bản Android rất mới do hạn chế Reflection
+        }
+        // Đọc Intent xem đây là Mode gì
+        String modeStr = getIntent().getStringExtra("GAME_MODE");
+        if (modeStr != null && modeStr.equals("TEST")) {
+            currentGameMode = GameMode.TEST;
+        }
 
-        collectionId = getIntent().getIntExtra("COLLECTION_ID",-1);
+        collectionId = getIntent().getIntExtra("COLLECTION_ID", -1);
         ArrayList<CollectionItemResponse> items = getIntent().getParcelableArrayListExtra("ITEMS_LIST");
         if (items != null) {
             this.allItems = items;
         }
 
         initViews();
-        getWindow().getDecorView().post(() -> {
-            fetchDataAndStartSession();
-        });
+        getWindow().getDecorView().post(this::fetchDataAndStartSession);
     }
 
     private void initViews() {
@@ -116,10 +147,15 @@ public class MemoryGameActivity extends AppCompatActivity {
         progressGame = findViewById(R.id.progressGame);
         viewMultipleChoice = findViewById(R.id.viewMultipleChoice);
         viewFillBlank = findViewById(R.id.viewFillBlank);
+        viewMatch = findViewById(R.id.viewTestMatch);
         viewSummary = findViewById(R.id.viewSummary);
+        tvSummaryTitle = findViewById(R.id.tvSummaryTitle);
+        btnContinueSummary = findViewById(R.id.btnContinueSummary);
+
         findViewById(R.id.btnCloseGame).setOnClickListener(v -> handleClose());
 
-        // Setup MC
+        // MC Setup
+        tvModeLabelMc = findViewById(R.id.tvModeLabelMc);
         tvQuestionMc = findViewById(R.id.tvQuestionMc);
         btnOption1 = findViewById(R.id.btnOption1);
         btnOption2 = findViewById(R.id.btnOption2);
@@ -127,42 +163,37 @@ public class MemoryGameActivity extends AppCompatActivity {
         btnOption4 = findViewById(R.id.btnOption4);
         optionsArray = new TextView[]{btnOption1, btnOption2, btnOption3, btnOption4};
         layoutResultMc = findViewById(R.id.layoutResultMc);
-        imgResultIconMc = findViewById(R.id.imgResultIconMc);
         tvResultMessageMc = findViewById(R.id.tvResultMessageMc);
         btnContinueMc = findViewById(R.id.btnContinueMc);
 
-        // Setup FB
+        // FB Setup
+        tvModeLabelFb = findViewById(R.id.tvModeLabelFb);
         tvQuestionFb = findViewById(R.id.tvQuestionFb);
         edtAnswer = findViewById(R.id.edtAnswer);
         layoutSkippedResult = findViewById(R.id.layoutSkippedResult);
         tvCorrectAnswerFb = findViewById(R.id.tvCorrectAnswerFb);
+        layoutActionsFb = findViewById(R.id.layoutActionsFb);
         btnDontKnow = findViewById(R.id.btnDontKnow);
         btnSubmitFb = findViewById(R.id.btnSubmitFb);
         btnContinueFb = findViewById(R.id.btnContinueFb);
 
-        // Setup Summary
-        btnContinueSummary = findViewById(R.id.btnContinueSummary);
+        // Match Setup
+        matchLeftViews = new TextView[]{findViewById(R.id.btnMatchL1), findViewById(R.id.btnMatchL2), findViewById(R.id.btnMatchL3)};
+        matchRightViews = new TextView[]{findViewById(R.id.btnMatchR1), findViewById(R.id.btnMatchR2), findViewById(R.id.btnMatchR3)};
     }
 
     private void fetchDataAndStartSession() {
-
         String uniqueKey = java.util.UUID.randomUUID().toString();
-        Log.d("DEBUG_GAME", "collectionId: " + collectionId + ", uniqueKey: " + uniqueKey);
-        // 2. Start Session
         StartStudySessionRequest request = new StartStudySessionRequest(collectionId);
-        studyApi.startStudySession(uniqueKey,request).enqueue(new Callback<ApiResponse<Long>>() {
+        studyApi.startStudySession(uniqueKey, request).enqueue(new Callback<ApiResponse<Long>>() {
             @Override
             public void onResponse(Call<ApiResponse<Long>> call, Response<ApiResponse<Long>> response) {
-                if(response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     sessionId = response.body().getData();
-                    Log.d("DEBUG_GAME", "API Start Session Success: " + sessionId);
-                    if (sessionId != null)
-                    {
-                        startRound1();
+                    if (sessionId != null) {
+                        generateGamePlan();
+                        loadNextQuestion();
                     }
-
-                } else {
-                    Log.e("DEBUG_GAME", "API Start Session Failed: " + response.code());
                 }
             }
             @Override
@@ -172,220 +203,423 @@ public class MemoryGameActivity extends AppCompatActivity {
         });
     }
 
-    private void startRound1() {
-        currentRound = 1;
-        tvRoundName.setText("Round 1: Multiple Choice");
-        Collections.shuffle(allItems);
-
-        // Lấy tối đa 10 câu cho vòng 1
-        currentRoundItems = new ArrayList<>(allItems.subList(0, Math.min(10, allItems.size())));
+    // ==========================================
+    // 2. GENERATE GAME PLAN (LEARN vs TEST)
+    // ==========================================
+    private void generateGamePlan() {
+        questionQueue.clear();
         currentQuestionIndex = 0;
+        List<CollectionItemResponse> shuffledDeck = new ArrayList<>(allItems);
+        Collections.shuffle(shuffledDeck);
 
-        viewSummary.setVisibility(View.GONE);
-        viewFillBlank.setVisibility(View.GONE);
-        viewMultipleChoice.setVisibility(View.VISIBLE);
-
-        loadNextQuestion();
+        if (currentGameMode == GameMode.LEARN) {
+            tvRoundName.setText("LEARN MODE");
+            // Learn: 10 câu MC, sau đó đổi mode sang FB (Giả lập logic cũ nhưng dùng chung mảng)
+            int limit = Math.min(10, shuffledDeck.size());
+            for (int i = 0; i < limit; i++) {
+                questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(shuffledDeck.get(i))));
+            }
+            totalTestQuestions = limit;
+        } else {
+            tvRoundName.setText("TEST MODE");
+            // Test: Mix MC, FB, Match. Max 20 questions
+            int limit = Math.min(20, shuffledDeck.size());
+            int i = 0;
+            while (i < limit) {
+                double rand = Math.random();
+                // Nếu còn đủ 3 câu cho Match
+                if (rand < 0.33 && i + 2 < limit) {
+                    List<CollectionItemResponse> matchGroup = new ArrayList<>();
+                    matchGroup.add(shuffledDeck.get(i));
+                    matchGroup.add(shuffledDeck.get(i+1));
+                    matchGroup.add(shuffledDeck.get(i+2));
+                    questionQueue.add(new QuestionWrapper(QuestionType.MATCHING, matchGroup));
+                    i += 3;
+                } else if (rand < 0.66) {
+                    questionQueue.add(new QuestionWrapper(QuestionType.FILL_BLANK, Collections.singletonList(shuffledDeck.get(i))));
+                    i++;
+                } else {
+                    questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(shuffledDeck.get(i))));
+                    i++;
+                }
+            }
+            totalTestQuestions = i; // Tổng số items tham gia test
+        }
     }
 
+    // ==========================================
+    // 3. ENGINE ROUTER
+    // ==========================================
     private void loadNextQuestion() {
-        if (currentQuestionIndex >= currentRoundItems.size()) {
-            showSummary();
+        // 1. CHUYỂN ĐOẠN ẨN VIEW LÊN TRÊN CÙNG
+        // Ẩn hết View trước khi quyết định hiển thị màn hình nào tiếp theo
+        viewMultipleChoice.setVisibility(View.GONE);
+        viewFillBlank.setVisibility(View.GONE);
+        viewMatch.setVisibility(View.GONE);
+        viewSummary.setVisibility(View.GONE);
+
+        // 2. KIỂM TRA ĐIỀU KIỆN KẾT THÚC
+        if (currentQuestionIndex >= questionQueue.size()) {
+            if (currentGameMode == GameMode.LEARN && isFirstRoundLearn()) {
+                showLearnMidwaySummary();
+            } else {
+                showFinalSummary();
+            }
             return;
         }
 
-        currentItem = currentRoundItems.get(currentQuestionIndex);
-        questionStartTime = System.currentTimeMillis();
-
-        // Tính % cho Progress Bar
-        int progress = (int) (((float) currentQuestionIndex / currentRoundItems.size()) * 100);
+        // 3. XỬ LÝ CÂU HỎI TIẾP THEO (NẾU CHƯA KẾT THÚC)
+        // Tính Progress dựa trên item đã làm
+        int progress = (int) (((float) currentQuestionIndex / questionQueue.size()) * 100);
         progressGame.setProgress(progress);
 
-        if (currentRound == 1) {
-            setupMultipleChoiceUI();
-        } else {
-            setupFillBlankUI();
+        QuestionWrapper nextQuestion = questionQueue.get(currentQuestionIndex);
+        questionStartTime = System.currentTimeMillis();
+
+        // Chạy Strategy tương ứng
+        switch (nextQuestion.type) {
+            case MULTIPLE_CHOICE:
+                new MultipleChoiceStrategy().execute(nextQuestion);
+                break;
+            case FILL_BLANK:
+                new FillBlankStrategy().execute(nextQuestion);
+                break;
+            case MATCHING:
+                new MatchingStrategy().execute(nextQuestion);
+                break;
         }
     }
 
-    private void setupFillBlankUI() {
-        layoutSkippedResult.setVisibility(View.GONE);
-        btnContinueFb.setVisibility(View.GONE);
-        btnSubmitFb.setVisibility(View.VISIBLE);
-        btnDontKnow.setVisibility(View.VISIBLE);
-        edtAnswer.setText("");
-        edtAnswer.setEnabled(true);
-
-        // Round 2: Hiển thị Definition, yêu cầu nhập Term
-        tvQuestionFb.setText(currentItem.getDefinition());
-        String correctAnswer = currentItem.getTerm();
-
-        btnSubmitFb.setOnClickListener(v -> {
-            String userAns = edtAnswer.getText().toString().trim();
-            if (!userAns.isEmpty()) {
-                handleFbAnswer(userAns.equalsIgnoreCase(correctAnswer), correctAnswer);
-            }
-        });
-
-        btnDontKnow.setOnClickListener(v -> handleFbAnswer(false, correctAnswer));
+    private void moveToNext() {
+        currentQuestionIndex++;
+        loadNextQuestion();
     }
 
-    private void handleFbAnswer(boolean isCorrect, String correctAnswer) {
-        double timeSpent = (double) (System.currentTimeMillis() - questionStartTime);
-        bulkResults.add(new StudySessionDetailRequest(sessionId, currentItem.getId(), isCorrect, timeSpent));
+    // ==========================================
+    // 4. STRATEGY IMPLEMENTATIONS
+    // ==========================================
 
-        edtAnswer.setEnabled(false);
-        btnSubmitFb.setVisibility(View.GONE);
-        btnDontKnow.setVisibility(View.GONE);
+    /**
+     * MULTIPLE CHOICE STRATEGY
+     */
+    private class MultipleChoiceStrategy implements QuestionStrategy {
+        @Override
+        public void execute(QuestionWrapper question) {
+            viewMultipleChoice.setVisibility(View.VISIBLE);
+            tvModeLabelMc.setVisibility(currentGameMode == GameMode.TEST ? View.VISIBLE : View.GONE);
+            layoutResultMc.setVisibility(View.GONE);
+            btnContinueMc.setVisibility(View.GONE);
 
-        if (isCorrect) {
-            Toast.makeText(this, "Excellent!", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(() -> {
-                currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1000);
-        } else {
-            layoutSkippedResult.setVisibility(View.VISIBLE);
-            tvCorrectAnswerFb.setText(correctAnswer);
-            btnContinueFb.setVisibility(View.VISIBLE);
-            btnContinueFb.setOnClickListener(v -> {
-                currentQuestionIndex++;
-                loadNextQuestion();
+            CollectionItemResponse item = question.items.get(0);
+            boolean showTerm = Math.random() > 0.5;
+            tvQuestionMc.setText(showTerm ? item.getTerm() : item.getDefinition());
+            String correctAnswer = showTerm ? item.getDefinition() : item.getTerm();
+
+            List<String> choices = new ArrayList<>();
+            choices.add(correctAnswer);
+
+            List<CollectionItemResponse> temp = new ArrayList<>(allItems);
+            Collections.shuffle(temp);
+            int wrongCount = 0;
+            for (CollectionItemResponse t : temp) {
+                String wrongAnswer = showTerm ? t.getDefinition() : t.getTerm();
+                if (!wrongAnswer.equals(correctAnswer) && wrongCount < 3) {
+                    choices.add(wrongAnswer);
+                    wrongCount++;
+                }
+            }
+            Collections.shuffle(choices);
+
+            for (int i = 0; i < 4; i++) {
+                TextView btn = optionsArray[i];
+                if (i < choices.size()) {
+                    btn.setVisibility(View.VISIBLE);
+                    btn.setText(choices.get(i));
+                    btn.setBackgroundResource(R.drawable.bg_option_default);
+                    btn.setEnabled(true);
+                    btn.setOnClickListener(v -> handleAnswer(btn, btn.getText().toString().equals(correctAnswer), item));
+                } else {
+                    btn.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        private void handleAnswer(TextView clickedBtn, boolean isCorrect, CollectionItemResponse item) {
+            recordResult(item.getId(), isCorrect);
+            for (TextView btn : optionsArray) btn.setEnabled(false);
+
+            layoutResultMc.setVisibility(View.VISIBLE);
+            if (isCorrect) {
+                clickedBtn.setBackgroundResource(R.drawable.bg_option_correct);
+                tvResultMessageMc.setText("Correct!");
+                tvResultMessageMc.setTextColor(Color.parseColor("#4CAF50"));
+                new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
+            } else {
+                clickedBtn.setBackgroundResource(R.drawable.bg_option_wrong);
+                tvResultMessageMc.setText("Not quite!");
+                tvResultMessageMc.setTextColor(Color.parseColor("#F44336"));
+                btnContinueMc.setVisibility(View.VISIBLE);
+                btnContinueMc.setOnClickListener(v -> moveToNext());
+            }
+        }
+    }
+
+    /**
+     * FILL BLANK STRATEGY
+     */
+    private class FillBlankStrategy implements QuestionStrategy {
+        @Override
+        public void execute(QuestionWrapper question) {
+            viewFillBlank.setVisibility(View.VISIBLE);
+            tvModeLabelFb.setVisibility(currentGameMode == GameMode.TEST ? View.VISIBLE : View.GONE);
+            layoutSkippedResult.setVisibility(View.GONE);
+            btnContinueFb.setVisibility(View.GONE);
+            layoutActionsFb.setVisibility(View.VISIBLE);
+
+            CollectionItemResponse item = question.items.get(0);
+            edtAnswer.setText("");
+            edtAnswer.setEnabled(true);
+            tvQuestionFb.setText(item.getDefinition());
+
+            String correctAnswer = item.getTerm();
+
+            btnSubmitFb.setOnClickListener(v -> {
+                String userAns = edtAnswer.getText().toString().trim();
+                if (!userAns.isEmpty()) {
+                    handleAnswer(userAns.equalsIgnoreCase(correctAnswer), correctAnswer, item);
+                }
             });
+            btnDontKnow.setOnClickListener(v -> handleAnswer(false, correctAnswer, item));
         }
-    }
 
-    // ==========================================
-    // LOGIC VÒNG 1: TRẮC NGHIỆM
-    // ==========================================
-    private void setupMultipleChoiceUI() {
-        layoutResultMc.setVisibility(View.GONE);
-        btnContinueMc.setVisibility(View.GONE);
+        private void handleAnswer(boolean isCorrect, String correctAnswer, CollectionItemResponse item) {
+            recordResult(item.getId(), isCorrect);
+            edtAnswer.setEnabled(false);
+            layoutActionsFb.setVisibility(View.GONE);
 
-        // Random xem hiện Term hay Def làm câu hỏi
-        boolean showTerm = Math.random() > 0.5;
-        tvQuestionMc.setText(showTerm ? currentItem.getTerm() : currentItem.getDefinition());
-        String correctAnswer = showTerm ? currentItem.getDefinition() : currentItem.getTerm();
-
-        // Tạo list 4 đáp án
-        List<String> choices = new ArrayList<>();
-        choices.add(correctAnswer);
-
-        // Lấy 3 đáp án sai random từ allItems
-        List<CollectionItemResponse> temp = new ArrayList<>(allItems);
-        Collections.shuffle(temp);
-        int wrongCount = 0;
-        for (CollectionItemResponse item : temp) {
-            String wrongAnswer = showTerm ? item.getDefinition() : item.getTerm();
-            if (!wrongAnswer.equals(correctAnswer) && wrongCount < 3) {
-                choices.add(wrongAnswer);
-                wrongCount++;
+            if (isCorrect) {
+                Toast.makeText(MemoryGameActivity.this, "Excellent!", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
+            } else {
+                layoutSkippedResult.setVisibility(View.VISIBLE);
+                tvCorrectAnswerFb.setText(correctAnswer);
+                btnContinueFb.setVisibility(View.VISIBLE);
+                btnContinueFb.setOnClickListener(v -> moveToNext());
             }
         }
-        Collections.shuffle(choices);
+    }
 
-        // Gắn vào 4 nút
-        for (int i = 0; i < 4; i++) {
-            TextView btn = optionsArray[i];
-            btn.setText(choices.get(i));
-            btn.setBackgroundResource(R.drawable.bg_option_default); // Reset style
-            btn.setEnabled(true);
+    /**
+     * MATCHING STRATEGY
+     */
+    private class MatchingStrategy implements QuestionStrategy {
+        private TextView selectedLeft = null;
+        private TextView selectedRight = null;
+        private Map<TextView, CollectionItemResponse> viewToItemMap = new HashMap<>();
+        private int matchCompletedCount = 0;
 
-            btn.setOnClickListener(v -> handleMcAnswer(btn, btn.getText().toString().equals(correctAnswer)));
+        @Override
+        public void execute(QuestionWrapper question) {
+            viewMatch.setVisibility(View.VISIBLE);
+            matchCompletedCount = 0;
+            viewToItemMap.clear();
+
+            List<CollectionItemResponse> group = question.items; // size 3
+
+            // Xáo trộn Term (Cột trái) và Def (Cột phải)
+            List<CollectionItemResponse> leftGroup = new ArrayList<>(group);
+            List<CollectionItemResponse> rightGroup = new ArrayList<>(group);
+            Collections.shuffle(leftGroup);
+            Collections.shuffle(rightGroup);
+
+            for (int i = 0; i < 3; i++) {
+                // Setup cột trái
+                TextView leftBtn = matchLeftViews[i];
+                leftBtn.setText(leftGroup.get(i).getTerm());
+                leftBtn.setVisibility(View.VISIBLE);
+                leftBtn.setBackgroundResource(R.drawable.bg_option_default);
+                leftBtn.setEnabled(true);
+                viewToItemMap.put(leftBtn, leftGroup.get(i));
+
+                // Setup cột phải
+                TextView rightBtn = matchRightViews[i];
+                rightBtn.setText(rightGroup.get(i).getDefinition());
+                rightBtn.setVisibility(View.VISIBLE);
+                rightBtn.setBackgroundResource(R.drawable.bg_option_default);
+                rightBtn.setEnabled(true);
+                viewToItemMap.put(rightBtn, rightGroup.get(i));
+
+                // Click logic
+                leftBtn.setOnClickListener(v -> handleSelect(leftBtn, true));
+                rightBtn.setOnClickListener(v -> handleSelect(rightBtn, false));
+            }
+        }
+
+        private void handleSelect(TextView view, boolean isLeft) {
+            view.setBackgroundResource(R.drawable.bg_match_selected);
+
+            if (isLeft) {
+                if (selectedLeft != null && selectedLeft != view) selectedLeft.setBackgroundResource(R.drawable.bg_option_default);
+                selectedLeft = view;
+            } else {
+                if (selectedRight != null && selectedRight != view) selectedRight.setBackgroundResource(R.drawable.bg_option_default);
+                selectedRight = view;
+            }
+
+            if (selectedLeft != null && selectedRight != null) {
+                checkMatch();
+            }
+        }
+
+        private void checkMatch() {
+            CollectionItemResponse leftItem = viewToItemMap.get(selectedLeft);
+            CollectionItemResponse rightItem = viewToItemMap.get(selectedRight);
+
+            boolean isCorrect = leftItem.getId().equals(rightItem.getId());
+            recordResult(leftItem.getId(), isCorrect);
+
+            if (isCorrect) {
+                selectedLeft.setBackgroundResource(R.drawable.bg_option_correct);
+                selectedRight.setBackgroundResource(R.drawable.bg_option_correct);
+                selectedLeft.setEnabled(false);
+                selectedRight.setEnabled(false);
+
+                TextView savedLeft = selectedLeft;
+                TextView savedRight = selectedRight;
+
+                new Handler().postDelayed(() -> {
+                    savedLeft.setVisibility(View.INVISIBLE);
+                    savedRight.setVisibility(View.INVISIBLE);
+                }, 500);
+
+                matchCompletedCount++;
+                selectedLeft = null;
+                selectedRight = null;
+
+                if (matchCompletedCount == 3) {
+                    new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
+                }
+            } else {
+                selectedLeft.setBackgroundResource(R.drawable.bg_option_wrong);
+                selectedRight.setBackgroundResource(R.drawable.bg_option_wrong);
+
+                TextView savedLeft = selectedLeft;
+                TextView savedRight = selectedRight;
+
+                new Handler().postDelayed(() -> {
+                    if (savedLeft.isEnabled()) savedLeft.setBackgroundResource(R.drawable.bg_option_default);
+                    if (savedRight.isEnabled()) savedRight.setBackgroundResource(R.drawable.bg_option_default);
+                }, 500);
+
+                selectedLeft = null;
+                selectedRight = null;
+            }
         }
     }
 
-    private void handleMcAnswer(TextView clickedBtn, boolean isCorrect) {
+    // ==========================================
+    // 5. HELPER & SUMMARY
+    // ==========================================
+
+    private void recordResult(Integer itemId, boolean isCorrect) {
         double timeSpent = (double) (System.currentTimeMillis() - questionStartTime);
-        bulkResults.add(new StudySessionDetailRequest(sessionId,currentItem.getId(), isCorrect, timeSpent));
-
-        for (TextView btn : optionsArray) btn.setEnabled(false); // Khoá click
-
-        layoutResultMc.setVisibility(View.VISIBLE);
-
-        if (isCorrect) {
-            clickedBtn.setBackgroundResource(R.drawable.bg_option_correct);
-            tvResultMessageMc.setText("You've got this!");
-            tvResultMessageMc.setTextColor(Color.parseColor("#4CAF50")); // Xanh
-            // Tự động chuyển câu sau 1 giây
-            new Handler().postDelayed(() -> {
-                currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1000);
-        } else {
-            clickedBtn.setBackgroundResource(R.drawable.bg_option_wrong);
-            tvResultMessageMc.setText("Not quite, you're still learning");
-            tvResultMessageMc.setTextColor(Color.parseColor("#F44336")); // Đỏ
-
-            // Tìm và bôi nét đứt cho đáp án đúng
-            for (TextView btn : optionsArray) {
-                // Chúng ta không biết chắc showTerm là gì ở đây, nhưng logic check text khớp là đủ
-                // Để chính xác hơn có thể lưu correctAnswer vào biến toàn cục.
-            }
-
-            btnContinueMc.setVisibility(View.VISIBLE);
-            btnContinueMc.setOnClickListener(v -> {
-                currentQuestionIndex++;
-                loadNextQuestion();
-            });
-        }
+        bulkResults.add(new StudySessionDetailRequest(sessionId, itemId, isCorrect, timeSpent));
+        if(isCorrect) totalCorrectTest++;
+        questionStartTime = System.currentTimeMillis(); // Reset timer cho item kế tiếp (đặc biệt cho Match)
     }
 
-    // ==========================================
-    // SUMMARY VÀ HOÀN THÀNH (LƯU BULK INSERT)
-    // ==========================================
-    private void showSummary() {
+    private boolean isFirstRoundLearn() {
+        // Nếu toàn MC tức là đang ở vòng 1 Learn
+        return !questionQueue.isEmpty() && questionQueue.get(0).type == QuestionType.MULTIPLE_CHOICE;
+    }
+
+    private void showLearnMidwaySummary() {
         progressGame.setProgress(100);
-        viewMultipleChoice.setVisibility(View.GONE);
-        viewFillBlank.setVisibility(View.GONE);
+        viewSummary.setVisibility(View.VISIBLE);
+        tvSummaryTitle.setText("Round 1 Done!");
+        btnContinueSummary.setText("Continue to Round 2 (Fill Blank)");
+
+        btnContinueSummary.setOnClickListener(v -> {
+            // Biến MC queue thành FB queue để làm vòng 2
+            for (QuestionWrapper q : questionQueue) {
+                q.type = QuestionType.FILL_BLANK;
+            }
+            currentQuestionIndex = 0;
+            loadNextQuestion();
+        });
+    }
+
+    private void showFinalSummary() {
+        progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
 
-        if (currentRound == 1) {
-            btnContinueSummary.setText("Continue to Round 2 (Fill Blank)");
-            btnContinueSummary.setOnClickListener(v -> {
-                currentRound = 2;
-                tvRoundName.setText("Round 2: Fill Blank");
-                currentQuestionIndex = 0; // Làm lại bộ câu hỏi này ở dạng điền từ
-                viewSummary.setVisibility(View.GONE);
-                viewFillBlank.setVisibility(View.VISIBLE);
-                loadNextQuestion();
-            });
+        if (currentGameMode == GameMode.TEST) {
+            int percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
+            tvSummaryTitle.setText("Test Finished!\nScore: " + percentage + "%");
         } else {
-            isFullText = true ;
-            btnContinueSummary.setText("Finish and Save");
-            btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
+            tvSummaryTitle.setText("You've mastered this set!");
         }
+
+        btnContinueSummary.setText("Finish and Save");
+        btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
     }
 
     private void submitAllResultsAndExit() {
         if (sessionId == null) return;
-        enqueueCompleteWorker(); // delegate cho Worker
-        finish();
+
+        // Hiển thị một thông báo nhẹ hoặc loading nếu muốn
+        Toast.makeText(this, "Saving your progress...", Toast.LENGTH_SHORT).show();
+
+        boolean isFullTest = (currentGameMode == GameMode.TEST);
+
+        // Gọi trực tiếp API completeSession qua studyApi đã được Inject sẵn
+        studyApi.completeStudySession(sessionId, bulkResults, isFullTest).enqueue(new Callback<ApiResponse<StudySessionResultResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<StudySessionResultResponse>> call, Response<ApiResponse<StudySessionResultResponse>> response) {
+                // Đánh dấu đã submit thành công để luồng onStop() ko gọi WorkManager trùng lặp nữa
+                hasSubmitted = true;
+
+                // Lưu xong xuôi mới đóng màn hình chơi game để về lại Home
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t) {
+                Log.e("DEBUG_GAME", "Direct save failed, fallback to WorkManager: " + t.getMessage());
+                // Nếu lỗi mạng/lỗi kết nối trực tiếp, dùng WorkManager làm cứu cánh để sync sau
+                enqueueCompleteWorker();
+                finish();
+            }
+        });
     }
+
     private void handleClose() {
-        if (sessionId == null) return;
-        enqueueCompleteWorker(); // Worker sẽ chạy dù Activity đã chết
+        if (sessionId != null) enqueueCompleteWorker();
         finish();
     }
+
     private void enqueueCompleteWorker() {
         if (sessionId == null || bulkResults.isEmpty() || hasSubmitted) return;
-        hasSubmitted = true; // chặn duplicate
+        hasSubmitted = true;
 
         String json = new Gson().toJson(bulkResults);
+        boolean isFullTest = (currentGameMode == GameMode.TEST);
+
         Data inputData = new Data.Builder()
                 .putLong(CompleteSessionWorker.KEY_SESSION_ID, sessionId)
                 .putString(CompleteSessionWorker.KEY_BULK_RESULTS, json)
-                .putBoolean(CompleteSessionWorker.KEY_IS_FULL_TEST, false)
+                .putBoolean(CompleteSessionWorker.KEY_IS_FULL_TEST, isFullTest)
                 .build();
+
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+
         OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(CompleteSessionWorker.class)
                 .setInputData(inputData)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.SECONDS)
                 .setConstraints(constraints)
                 .build();
-
 
         WorkManager.getInstance(this).enqueueUniqueWork(
                 "complete_session_" + sessionId,
@@ -397,10 +631,6 @@ public class MemoryGameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (sessionId == null) return;
-        enqueueCompleteWorker();
-
+        if (sessionId != null) enqueueCompleteWorker();
     }
-
-
 }
