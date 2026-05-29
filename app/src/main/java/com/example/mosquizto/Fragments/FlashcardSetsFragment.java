@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mosquizto.Adapters.FlashcardSetAdapter;
+import com.example.mosquizto.Services.SessionManager;
+import com.google.android.material.tabs.TabLayout;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
@@ -23,7 +25,6 @@ import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.CollectionApi;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,8 @@ public class FlashcardSetsFragment extends Fragment {
     private FlashcardSetAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     @Inject CollectionApi collectionApi;
+    @Inject
+    SessionManager sessionManager;
     private List<CollectionResponse> originalList = new ArrayList<>();
     MainActivity mainActivity ;
 
@@ -49,7 +52,6 @@ public class FlashcardSetsFragment extends Fragment {
         rv = v.findViewById(R.id.recycler_flashcard_sets);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
-        ChipGroup filterChipGroup = v.findViewById(R.id.chip_group_filter);
         if (getActivity() instanceof MainActivity)
             mainActivity = (MainActivity) getActivity();
         adapter = new FlashcardSetAdapter(getContext(), new ArrayList<>(), new OnItemCollectionClickedListener() {
@@ -60,23 +62,47 @@ public class FlashcardSetsFragment extends Fragment {
         });
         rv.setAdapter(adapter);
 
+        TabLayout tabLayout = v.findViewById(R.id.tabLayoutTerms);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0) {
+                    // Tab "All" (Vị trí 0)
+                    adapter.setCollectionList(originalList);
+                } else if (position == 1) {
+                    // Tab "Created" (Vị trí 1)
+                    List<CollectionResponse> filteredList = new ArrayList<>();
+                    if (sessionManager.getCurrUser() != null) {
+                        Long currentUserId = Long.valueOf(sessionManager.getCurrUser().getId().toString());
+
+                        // Lặp qua list gốc để lọc
+                        for (CollectionResponse item : originalList) {
+                            if (item.getUserId() != null && item.getUserId().equals(currentUserId)) {
+                                filteredList.add(item);
+                            }
+                        }
+                    }
+                    adapter.setCollectionList(originalList);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Không cần xử lý
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Không cần xử lý
+            }
+        });
+
         // 1. Xử lý Logic kéo để Refresh
         swipeRefreshLayout.setOnRefreshListener(this::fetchMyCollections);
 
         // 2. Xử lý Logic lọc (Filters)
-        filterChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) return;
-            int selectedId = checkedIds.get(0);
-
-            if (selectedId == R.id.chip_created) {
-                // CHÚ THÍCH: Tạm thời Demo lọc list. Bạn có thể sửa logic lọc theo Owner ID thực tế.
-                adapter.setCollectionList(originalList);
-            } else if (selectedId == R.id.chip_all) {
-                adapter.setCollectionList(originalList);
-            } else {
-                adapter.setCollectionList(originalList);
-            }
-        });
 
         // Tự động load API lần đầu tiên
         fetchMyCollections();
