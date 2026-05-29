@@ -55,4 +55,34 @@
     <string name="login">Login </string>
     <string name="sign_up">Sign Up</string>
     <string name="continue_with">Continue with %1$s</string>"
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_sec_personal_info">Personal information</string>
+    <string name="settings_sec_offline_learning">Offline learning</string>
+    <string name="settings_sec_preferences">Preferences</string>
+    <string name="settings_sec_about">About</string>
+
+    <string name="settings_username">Username</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_create_password">Create password</string>
+
+    <string name="settings_offline_save_title">Save study sets for offline learning</string>
+    <string name="settings_offline_save_desc">Your 8 most recently studied sets will be automatically downloaded</string>
+    <string name="settings_manage_storage">Manage storage</string>
+
+    <string name="settings_push_notifications">Push notifications</string>
+    <string name="settings_sound_effects">Sound effects</string>
+    <string name="settings_haptic_feedback">Haptic feedback</string>
+    <string name="settings_privacy_cookie_choices">Privacy and cookie choices</string>
+
+    <string name="settings_privacy_policy">Privacy policy</string>
+    <string name="settings_california_privacy">California privacy notice</string>
+    <string name="settings_terms_of_service">Terms of service</string>
+    <string name="settings_open_source_licenses">Open source licenses</string>
+    <string name="settings_support_center">Help center</string>
+
+    <string name="settings_logout">Log out</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_version">v10.35</string>
+    <string name="settings_back_description">Back</string>
 </resources>
