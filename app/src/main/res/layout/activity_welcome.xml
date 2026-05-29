@@ -65,8 +65,8 @@
             android:layout_height="52dp"
             android:text="@string/sign_up"
             android:textSize="20sp"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/primary_color"
+            android:textColor="@color/text_color_primary"
+            android:backgroundTint="@color/app_button_secondary_background"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:layout_marginBottom="32dp" />

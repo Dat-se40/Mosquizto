@@ -18,12 +18,13 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_white"
+        android:background="@color/white"
         app:elevation="8dp"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        app:itemActiveIndicatorStyle="false"
+        app:itemActiveIndicatorStyle="@null"
+        app:itemRippleColor="@android:color/transparent"
         app:itemIconTint="@color/bottom_nav_selector"
         app:itemTextColor="@color/bottom_nav_selector"/>
 

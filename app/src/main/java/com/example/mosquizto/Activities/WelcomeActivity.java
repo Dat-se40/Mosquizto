@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModel;
@@ -48,7 +50,19 @@ public class WelcomeActivity extends AppCompatActivity {
             {
                 btnContinue.setVisibility(View.VISIBLE);
                 btnContinue.setText("Welcome back " + name + " !");
-            }else btnContinue.setVisibility(View.GONE);
+                btnSignUpEmail.setAlpha(0.5f);
+
+                btnSignUpEmail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F0F2F8")));
+                btnSignUpEmail.setTextColor(Color.parseColor("#282E3E"));
+            }else {
+                btnContinue.setVisibility(View.GONE);
+
+                // Nút Sign Up nổi bật lên (Màu xanh, alpha 1.0)
+                btnSignUpEmail.setEnabled(true);
+                btnSignUpEmail.setAlpha(1.0f);
+                btnSignUpEmail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4255FF")));
+                btnSignUpEmail.setTextColor(Color.parseColor("#ffffff"));
+            }
 
         }) ;
         viewModel.errorMessage.observe(this, message ->
