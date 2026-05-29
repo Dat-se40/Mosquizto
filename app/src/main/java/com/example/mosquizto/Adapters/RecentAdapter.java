@@ -1,5 +1,7 @@
 package com.example.mosquizto.Adapters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +60,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
         holder.tvTitle.setText(item.getTitle());
 
         String author = item.getUserName() != null ? item.getUserName() : "Quizlet";
-        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
+        int count = item.getCount() != null ? item.getCount() : 0;
+        if (count == 0)
+        {
+            SharedPreferences sharedPref = holder.itemView.getContext().getSharedPreferences("MosquiztoCache", Context.MODE_PRIVATE);
+            String key = "COLLECTION_COUNT_" + item.getId();
+            count = sharedPref.getInt(key, 0);
+        }
         holder.tvDetails.setText(count + " thẻ • bởi " + author);
 
         holder.itemView.setOnClickListener(v -> {

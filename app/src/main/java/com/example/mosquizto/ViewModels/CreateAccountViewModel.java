@@ -1,5 +1,7 @@
 package com.example.mosquizto.ViewModels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -56,14 +58,15 @@ public class CreateAccountViewModel extends ViewModel {
                     _message.postValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
                 } else {
-                    _message.postValue("Đăng kí thất bại");
+                    _message.postValue(response.message());
+                    Log.e("CreateAccountViewModel", "Đăng kí thất bại: " + response.code()+ "message: " + response.message());
                     uiState.postValue(UiState.ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                _message.postValue("Đăng kí thất bại");
+                _message.postValue("[CreateAccountViewModel] Lỗi kết nối mạng");
                 uiState.setValue(UiState.ERROR);
             }
         });
