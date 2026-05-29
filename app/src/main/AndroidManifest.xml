@@ -43,6 +43,11 @@
             android:theme="@style/Theme.Mosquizto" />
 
         <activity
+            android:name=".Activities.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto" />
+
+        <activity
             android:name=".Activities.CreateCollectionActivity"
             android:exported="false" />
 
