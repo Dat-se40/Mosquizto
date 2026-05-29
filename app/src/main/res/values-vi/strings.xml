@@ -60,4 +60,5 @@
     <string name="sign_up">Đăng Kí</string>
     <string name="continue_with">Tiếp tục với %1$s</string>
     <string name="logout">Đăng xuất</string>
+    <string name="delete">Xóa</string>
 </resources>

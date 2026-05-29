@@ -1,12 +1,16 @@
 package com.example.mosquizto.Adapters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.Dto.response.CollectionResponse;
@@ -20,7 +24,14 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     private List<CollectionResponse> collections;
     private OnItemCollectionClickedListener listener;
     private OnItemOptionsClickedListener optionsListener;
+    private OnCollectionActionListener actionListener;
 
+    // Cập nhật Interface: Chia thành các hành động cụ thể
+    public interface OnCollectionActionListener {
+        void onEdit(CollectionResponse item, int position);
+        void onShare(CollectionResponse item, int position);
+        void onDelete(CollectionResponse item, int position);
+    }
     public interface OnItemOptionsClickedListener {
         void onOptionsClicked(CollectionResponse item, int position);
     }
@@ -58,7 +69,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
         holder.tvTitle.setText(item.getTitle());
 
         String author = item.getUserName() != null ? item.getUserName() : "Quizlet";
-        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
+        int count = item.getCount() != null ? item.getCount() : 0;
+        if (count == 0)
+        {
+            SharedPreferences sharedPref = holder.itemView.getContext().getSharedPreferences("MosquiztoCache", Context.MODE_PRIVATE);
+            String key = "COLLECTION_COUNT_" + item.getId();
+            count = sharedPref.getInt(key, 0);
+        }
         holder.tvDetails.setText(count + " thẻ • bởi " + author);
 
         holder.itemView.setOnClickListener(v -> {
@@ -68,12 +85,36 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
         });
 
         holder.ivAction.setOnClickListener(v -> {
-            if (optionsListener != null) {
-                optionsListener.onOptionsClicked(item, position);
+            if (actionListener != null) {
+                // Khởi tạo PopupMenu
+                PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.ivAction);
+                popupMenu.inflate(R.menu.menu_collection_options); // Trỏ tới file XML menu bạn đã tạo
+
+                // Lắng nghe sự kiện chọn menu
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    int itemId = menuItem.getItemId();
+                    if (itemId == R.id.action_edit) {
+                        actionListener.onEdit(item, position);
+                        return true;
+                    } else if (itemId == R.id.action_share) {
+                        actionListener.onShare(item, position);
+                        return true;
+                    } else if (itemId == R.id.action_delete) {
+                        actionListener.onDelete(item, position);
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Hiển thị menu
+                popupMenu.show();
             }
         });
     }
-
+    public void SetOnCloclickListener(OnCollectionActionListener listener)
+    {
+        this.actionListener = listener;
+    }
     @Override
     public int getItemCount() {
         return collections == null ? 0 : collections.size();
@@ -81,7 +122,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDetails;
-        ImageView ivAction;
+        ImageButton ivAction;
 
         ViewHolder(View itemView) {
             super(itemView);

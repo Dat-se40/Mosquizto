@@ -176,6 +176,24 @@ public class FolderDetailActivity extends AppCompatActivity {
                     removeDialog.show(getSupportFragmentManager(), removeDialog.getTag());
                 }
         );
+        // gắn mấy cái sự ki
+        adapter.SetOnCloclickListener(new RecentAdapter.OnCollectionActionListener() {
+            @Override
+            public void onEdit(CollectionResponse item, int position) {
+                // Mở màn hình Edit
+            }
+
+            @Override
+            public void onShare(CollectionResponse item, int position) {
+                // Gọi Intent Share
+            }
+
+            @Override
+            public void onDelete(CollectionResponse item, int position) {
+                // Hiện Dialog xác nhận -> Xóa API -> Xóa khỏi UI
+                // recentAdapter.removeItem(position);
+            }
+        });
         rvFolderCollections.setAdapter(adapter);
     }
 
