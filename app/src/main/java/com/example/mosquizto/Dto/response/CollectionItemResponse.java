@@ -3,11 +3,6 @@ package com.example.mosquizto.Dto.response;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
-import java.io.Serializable;
-
-
 public class CollectionItemResponse implements Parcelable {
     private Integer id ;
     private String term ;
@@ -17,6 +12,20 @@ public class CollectionItemResponse implements Parcelable {
     private Integer collectionId ;
     private String createAt ;
     private String updateAt ;
+
+    public CollectionItemResponse() {
+    }
+
+    public CollectionItemResponse(Integer id, String term, String definition, String imageUrl, Integer orderIndex, Integer collectionId, String createAt, String updateAt) {
+        this.id = id;
+        this.term = term;
+        this.definition = definition;
+        this.imageUrl = imageUrl;
+        this.orderIndex = orderIndex;
+        this.collectionId = collectionId;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+    }
 
     public String getTerm() {
         return term;
@@ -81,12 +90,21 @@ public class CollectionItemResponse implements Parcelable {
     public void setId(Integer id) {
         this.id = id;
     }
+
     protected CollectionItemResponse(Parcel in) {
         if (in.readByte() == 0) id = null;
         else id = in.readInt();
         term = in.readString();
         definition = in.readString();
+        imageUrl = in.readString();
+        if (in.readByte() == 0) orderIndex = null;
+        else orderIndex = in.readInt();
+        if (in.readByte() == 0) collectionId = null;
+        else collectionId = in.readInt();
+        createAt = in.readString();
+        updateAt = in.readString();
     }
+
     public static final Creator<CollectionItemResponse> CREATOR = new Creator<CollectionItemResponse>() {
         @Override
         public CollectionItemResponse createFromParcel(Parcel in) {
@@ -108,6 +126,19 @@ public class CollectionItemResponse implements Parcelable {
         }
         dest.writeString(term);
         dest.writeString(definition);
+        dest.writeString(imageUrl);
+        if (orderIndex == null) dest.writeByte((byte) 0);
+        else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(orderIndex);
+        }
+        if (collectionId == null) dest.writeByte((byte) 0);
+        else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(collectionId);
+        }
+        dest.writeString(createAt);
+        dest.writeString(updateAt);
     }
 
     @Override

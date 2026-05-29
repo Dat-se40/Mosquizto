@@ -168,6 +168,7 @@ public class FolderDetailActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, StudySetDetailActivity.class);
                     intent.putExtra("COLLECTION_ID", item.getId());
                     intent.putExtra("COLLECTION_TITLE", item.getTitle());
+                    intent.putExtra("AUTHOR", item.getUserName()); // Truyền author sang màn hình chi tiết
                     startActivity(intent);
                 },
                 (item, position) -> {

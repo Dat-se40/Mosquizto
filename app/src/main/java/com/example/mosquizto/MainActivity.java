@@ -141,17 +141,23 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
     public void GoToStudySetActivity(Context context , CollectionResponse item)
     {
-        GoToStudySetActivity(context , item.getId(), item.getTitle());
+        GoToStudySetActivity(context , item.getId(), item.getTitle(), item.getUserName());
     }
+
     public void GoToStudySetActivity(Context context , Integer id , String title)
     {
+        GoToStudySetActivity(context, id, title, null);
+    }
 
+    public void GoToStudySetActivity(Context context , Integer id , String title, String author)
+    {
         Intent intent = new Intent(context, StudySetDetailActivity.class);
-        intent.putExtra("COLLECTION_ID", id != null ? id : -1   );
+        intent.putExtra("COLLECTION_ID", id != null ? id : -1);
         intent.putExtra("COLLECTION_TITLE", title);
+        intent.putExtra("AUTHOR", author);
         startActivity(intent);
-
     }
 }

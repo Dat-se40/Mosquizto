@@ -41,7 +41,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_bookmark" />
+                    android:src="@drawable/ic_bookmark"
+                    android:visibility="gone"/>
                 <ImageButton
                     android:id="@+id/btnOptions"
                     android:layout_width="40dp"

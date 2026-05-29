@@ -1,7 +1,5 @@
 package com.example.mosquizto.Fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -106,9 +104,18 @@ public class FlashcardSetsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
+                    
+                    // Tà đạo: Lưu count vào SessionManager để dùng sau
+                    if (remoteList != null) {
+                        for (CollectionResponse col : remoteList) {
+                            if (col.getId() != null) {
+                                sessionManager.saveCollectionCount(col.getId(), col.getCount() != null ? col.getCount() : 0);
+                            }
+                        }
+                    }
+
                     originalList = remoteList;
                     adapter.setCollectionList(remoteList);
-                    cacheCollectionCounts(getContext(), remoteList);
                 } else {
                     Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
                     Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
@@ -122,21 +129,5 @@ public class FlashcardSetsFragment extends Fragment {
                 Log.e("API_ERROR", t.getMessage(), t);
             }
         });
-    }
-    public void cacheCollectionCounts(Context context, List<CollectionResponse> collections) {
-        if (context == null || collections == null) return;
-
-        SharedPreferences sharedPref = context.getSharedPreferences("MosquiztoCache", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        for (CollectionResponse collection : collections) {
-            // Giả sử collection.getId() trả về String hoặc UUID. Mình nối chuỗi làm Key.
-            String key = "COLLECTION_COUNT_" + collection.getId();
-            int count = collection.getCount(); // Lấy count từ response
-
-            editor.putInt(key, count);
-        }
-
-        editor.apply(); // Lưu bất đồng bộ
     }
 }

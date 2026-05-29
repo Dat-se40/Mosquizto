@@ -11,7 +11,9 @@ import com.example.mosquizto.Models.Collection;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Body;
@@ -29,7 +31,7 @@ public interface CollectionApi {
 
     // Lấy chi tiết 1 thông tin bộ thẻ theo ID
     @GET("collection/{id}")
-    Call<ApiResponse<Collection>> getCollectionById(@Path("id") int id);
+    Call<ApiResponse<CollectionResponse>> getCollectionById(@Path("id") int id);
 
     // Lấy ra danh sách các item của 1 bộ thẻ
     @GET("collection/item/{id}")
@@ -59,4 +61,15 @@ public interface CollectionApi {
             @Query("size") int size,
             @Query("author") String author
     );
+    @PUT("collection/{id}") // Thay đổi endpoint cho khớp với BE
+    Call<ApiResponse<Integer>> updateCollection(@Path("id") int id, @Body CollectionRequest request);
+
+    // Cập nhật từng Item trong Collection
+    @PUT("collection/item/{id}") // Thay đổi endpoint cho khớp với BE
+    Call<ApiResponse<CollectionItemResponse>> updateCollectionItem(@Path("id") int id, @Body CollectionItemRequest request);
+
+    @DELETE("collection/{id}")
+    Call<ApiResponse<Void>> deleteCollection(@Path("id") int id);
+    @DELETE("collection/item/{id}")
+    Call<ApiResponse<CollectionItemResponse>> deleteCollectionItem(@Path("id") int id);
 }

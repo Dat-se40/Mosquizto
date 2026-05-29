@@ -15,6 +15,13 @@
         android:background="@color/app_divider" />
 
     <TextView
+        android:id="@+id/btnEdit"
+        style="@style/BottomSheetMenuItem"
+        android:drawableStart="@drawable/ic_edit"
+        android:text="Edit"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/btnAddToClass"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_group"

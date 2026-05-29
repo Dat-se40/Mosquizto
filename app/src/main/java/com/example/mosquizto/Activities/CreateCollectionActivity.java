@@ -42,6 +42,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
     private Integer createdCollectionId = null;
     private Boolean currentVisibility = true;
     private ProgressDialog progressDialog;
+    private final List<Integer> deletedItemIds = new ArrayList<>(); // Chứa ID của thẻ bị xoá
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
