@@ -128,8 +128,14 @@ public class MemoryGameActivity extends AppCompatActivity {
         }
         // Đọc Intent xem đây là Mode gì
         String modeStr = getIntent().getStringExtra("GAME_MODE");
-        if (modeStr != null && modeStr.equals("TEST")) {
-            currentGameMode = GameMode.TEST;
+        if (modeStr != null) {
+            try {
+                // Java tự động dò chuỗi modeStr và ép kiểu về đúng Enum tương ứng
+                currentGameMode = GameMode.valueOf(modeStr);
+            } catch (IllegalArgumentException e) {
+                // Nếu String truyền qua bị sai chính tả hoặc rỗng -> Fallback về LEARN
+                currentGameMode = GameMode.LEARN;
+            }
         }
 
         collectionId = getIntent().getIntExtra("COLLECTION_ID", -1);
@@ -220,8 +226,8 @@ public class MemoryGameActivity extends AppCompatActivity {
                 questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(shuffledDeck.get(i))));
             }
             totalTestQuestions = limit;
-        } else {
-            tvRoundName.setText("TEST MODE");
+        } else if (currentGameMode == GameMode.TEST) {
+            tvRoundName.setText(R.string.test);
             // Test: Mix MC, FB, Match. Max 20 questions
             int limit = Math.min(20, shuffledDeck.size());
             int i = 0;
@@ -244,6 +250,37 @@ public class MemoryGameActivity extends AppCompatActivity {
                 }
             }
             totalTestQuestions = i; // Tổng số items tham gia test
+        }else if (currentGameMode == GameMode.ONLY_MCQ) {
+            tvRoundName.setText(R.string.multiple_choice);
+            for (CollectionItemResponse item : shuffledDeck) {
+                // CHỈ add chiến lược Trắc nghiệm
+                questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(item)));
+            }
+            totalTestQuestions = shuffledDeck.size();
+        }
+        else if (currentGameMode == GameMode.ONLY_FB) {
+            tvRoundName.setText(R.string.fill_blank);
+            for (CollectionItemResponse item : shuffledDeck) {
+                // CHỈ add chiến lược Điền từ
+                questionQueue.add(new QuestionWrapper(QuestionType.FILL_BLANK, Collections.singletonList(item)));
+            }
+            totalTestQuestions = shuffledDeck.size();
+        }
+        else if (currentGameMode == GameMode.ONLY_MATCH) {
+            tvRoundName.setText(R.string.matching);
+            int i = 0;
+            // Gom mỗi 3 thẻ thành 1 group để làm 1 câu Matching
+            while (i + 2 < shuffledDeck.size()) {
+                List<CollectionItemResponse> matchGroup = new ArrayList<>();
+                matchGroup.add(shuffledDeck.get(i));
+                matchGroup.add(shuffledDeck.get(i + 1));
+                matchGroup.add(shuffledDeck.get(i + 2));
+
+                // CHỈ add chiến lược Matching
+                questionQueue.add(new QuestionWrapper(QuestionType.MATCHING, matchGroup));
+                i += 3;
+            }
+            totalTestQuestions = i;
         }
     }
 
@@ -536,8 +573,8 @@ public class MemoryGameActivity extends AppCompatActivity {
     private void showLearnMidwaySummary() {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
-        tvSummaryTitle.setText("Round 1 Done!");
-        btnContinueSummary.setText("Continue to Round 2 (Fill Blank)");
+        tvSummaryTitle.setText(R.string.round_1_done);
+        btnContinueSummary.setText(R.string.continue_to_round_2_fill_blank);
 
         btnContinueSummary.setOnClickListener(v -> {
             // Biến MC queue thành FB queue để làm vòng 2
@@ -553,17 +590,20 @@ public class MemoryGameActivity extends AppCompatActivity {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
 
-        if (currentGameMode == GameMode.TEST) {
-            int percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
-            tvSummaryTitle.setText("Test Finished!\nScore: " + percentage + "%");
+        // Sửa chỗ này: Bất cứ mode nào khác LEARN thì đều hiện điểm %
+        if (currentGameMode != GameMode.LEARN) {
+            int percentage = 0;
+            if (!bulkResults.isEmpty()) {
+                percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
+            }
+            tvSummaryTitle.setText("Finished!\nScore: " + percentage + "%");
         } else {
-            tvSummaryTitle.setText("You've mastered this set!");
+            tvSummaryTitle.setText(R.string.you_ve_mastered_this_set);
         }
 
-        btnContinueSummary.setText("Finish and Save");
+        btnContinueSummary.setText(R.string.finish_and_save);
         btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
     }
-
     private void submitAllResultsAndExit() {
         if (sessionId == null) return;
 
