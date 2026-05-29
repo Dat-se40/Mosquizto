@@ -84,4 +84,12 @@ public class SessionManager {
     public void setCurrUser(User currUser) {
         this.currUser = currUser;
     }
+
+    public void clearSession() {
+        // xóa token
+        setAccessToken(null);
+        setRefreshToken(null);
+        // xóa user
+        setCurrUser(null);
+    }
 }
