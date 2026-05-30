@@ -50,10 +50,10 @@
             android:ellipsize="end"/>
     </LinearLayout>
 
-    <ImageView
+    <ImageButton
         android:id="@+id/ivAction"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:src="@drawable/icon_more"
-        app:tint="@color/app_icon_tint"/>
+        android:background="?android:attr/selectableItemBackgroundBorderless"/>
 </LinearLayout>

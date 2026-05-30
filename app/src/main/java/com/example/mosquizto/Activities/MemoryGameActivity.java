@@ -23,7 +23,6 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.mosquizto.Adapters.TermListAdapter;
 import com.example.mosquizto.Dto.request.StartStudySessionRequest;
 import com.example.mosquizto.Dto.request.StudySessionDetailRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
@@ -91,7 +90,6 @@ public class MemoryGameActivity extends AppCompatActivity {
     private View layoutSkippedResult, layoutActionsFb;
     private TextView btnDontKnow;
     private Button btnSubmitFb, btnContinueFb;
-    private androidx.recyclerview.widget.RecyclerView rvLearnedTerms;
 
     // UI MATCH
     private TextView[] matchLeftViews;
@@ -130,8 +128,14 @@ public class MemoryGameActivity extends AppCompatActivity {
         }
         // Đọc Intent xem đây là Mode gì
         String modeStr = getIntent().getStringExtra("GAME_MODE");
-        if (modeStr != null && modeStr.equals("TEST")) {
-            currentGameMode = GameMode.TEST;
+        if (modeStr != null) {
+            try {
+                // Java tự động dò chuỗi modeStr và ép kiểu về đúng Enum tương ứng
+                currentGameMode = GameMode.valueOf(modeStr);
+            } catch (IllegalArgumentException e) {
+                // Nếu String truyền qua bị sai chính tả hoặc rỗng -> Fallback về LEARN
+                currentGameMode = GameMode.LEARN;
+            }
         }
 
         collectionId = getIntent().getIntExtra("COLLECTION_ID", -1);
@@ -153,8 +157,6 @@ public class MemoryGameActivity extends AppCompatActivity {
         viewSummary = findViewById(R.id.viewSummary);
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle);
         btnContinueSummary = findViewById(R.id.btnContinueSummary);
-        rvLearnedTerms = findViewById(R.id.rvLearnedTerms);
-        rvLearnedTerms.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
 
         findViewById(R.id.btnCloseGame).setOnClickListener(v -> handleClose());
 
@@ -217,15 +219,15 @@ public class MemoryGameActivity extends AppCompatActivity {
         Collections.shuffle(shuffledDeck);
 
         if (currentGameMode == GameMode.LEARN) {
-            tvRoundName.setText(getString(R.string.tvRound1));
+            tvRoundName.setText("LEARN MODE");
             // Learn: 10 câu MC, sau đó đổi mode sang FB (Giả lập logic cũ nhưng dùng chung mảng)
             int limit = Math.min(10, shuffledDeck.size());
             for (int i = 0; i < limit; i++) {
                 questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(shuffledDeck.get(i))));
             }
             totalTestQuestions = limit;
-        } else {
-            tvRoundName.setText(getString(R.string.tvRound2));
+        } else if (currentGameMode == GameMode.TEST) {
+            tvRoundName.setText(R.string.test);
             // Test: Mix MC, FB, Match. Max 20 questions
             int limit = Math.min(20, shuffledDeck.size());
             int i = 0;
@@ -248,6 +250,37 @@ public class MemoryGameActivity extends AppCompatActivity {
                 }
             }
             totalTestQuestions = i; // Tổng số items tham gia test
+        }else if (currentGameMode == GameMode.ONLY_MCQ) {
+            tvRoundName.setText(R.string.multiple_choice);
+            for (CollectionItemResponse item : shuffledDeck) {
+                // CHỈ add chiến lược Trắc nghiệm
+                questionQueue.add(new QuestionWrapper(QuestionType.MULTIPLE_CHOICE, Collections.singletonList(item)));
+            }
+            totalTestQuestions = shuffledDeck.size();
+        }
+        else if (currentGameMode == GameMode.ONLY_FB) {
+            tvRoundName.setText(R.string.fill_blank);
+            for (CollectionItemResponse item : shuffledDeck) {
+                // CHỈ add chiến lược Điền từ
+                questionQueue.add(new QuestionWrapper(QuestionType.FILL_BLANK, Collections.singletonList(item)));
+            }
+            totalTestQuestions = shuffledDeck.size();
+        }
+        else if (currentGameMode == GameMode.ONLY_MATCH) {
+            tvRoundName.setText(R.string.matching);
+            int i = 0;
+            // Gom mỗi 3 thẻ thành 1 group để làm 1 câu Matching
+            while (i + 2 < shuffledDeck.size()) {
+                List<CollectionItemResponse> matchGroup = new ArrayList<>();
+                matchGroup.add(shuffledDeck.get(i));
+                matchGroup.add(shuffledDeck.get(i + 1));
+                matchGroup.add(shuffledDeck.get(i + 2));
+
+                // CHỈ add chiến lược Matching
+                questionQueue.add(new QuestionWrapper(QuestionType.MATCHING, matchGroup));
+                i += 3;
+            }
+            totalTestQuestions = i;
         }
     }
 
@@ -355,12 +388,12 @@ public class MemoryGameActivity extends AppCompatActivity {
             layoutResultMc.setVisibility(View.VISIBLE);
             if (isCorrect) {
                 clickedBtn.setBackgroundResource(R.drawable.bg_option_correct);
-                tvResultMessageMc.setText(getString(R.string.tvCorrectAnswer));
+                tvResultMessageMc.setText("Correct!");
                 tvResultMessageMc.setTextColor(Color.parseColor("#4CAF50"));
                 new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
             } else {
                 clickedBtn.setBackgroundResource(R.drawable.bg_option_wrong);
-                tvResultMessageMc.setText(getString(R.string.tvNotQuiteAnswer));
+                tvResultMessageMc.setText("Not quite!");
                 tvResultMessageMc.setTextColor(Color.parseColor("#F44336"));
                 btnContinueMc.setVisibility(View.VISIBLE);
                 btnContinueMc.setOnClickListener(v -> moveToNext());
@@ -402,7 +435,7 @@ public class MemoryGameActivity extends AppCompatActivity {
             layoutActionsFb.setVisibility(View.GONE);
 
             if (isCorrect) {
-                Toast.makeText(MemoryGameActivity.this, getString(R.string.tvExcellentAnswer), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MemoryGameActivity.this, "Excellent!", Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
             } else {
                 layoutSkippedResult.setVisibility(View.VISIBLE);
@@ -541,7 +574,7 @@ public class MemoryGameActivity extends AppCompatActivity {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
         tvSummaryTitle.setText(R.string.round_1_done);
-        btnContinueSummary.setText(R.string.tvContinueRound2);
+        btnContinueSummary.setText(R.string.continue_to_round_2_fill_blank);
 
         btnContinueSummary.setOnClickListener(v -> {
             // Biến MC queue thành FB queue để làm vòng 2
@@ -557,28 +590,25 @@ public class MemoryGameActivity extends AppCompatActivity {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
 
+        // Sửa chỗ này: Bất cứ mode nào khác LEARN thì đều hiện điểm %
         if (currentGameMode != GameMode.LEARN) {
             int percentage = 0;
             if (!bulkResults.isEmpty()) {
                 percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
             }
-            tvSummaryTitle.setText(getString(R.string.tvTestFinished) + percentage + "%");
+            tvSummaryTitle.setText("Finished!\nScore: " + percentage + "%");
         } else {
-            tvSummaryTitle.setText(R.string.tvYouMaster);
+            tvSummaryTitle.setText(R.string.you_ve_mastered_this_set);
         }
 
-        TermListAdapter adapter = new TermListAdapter(allItems);
-        rvLearnedTerms.setAdapter(adapter);
-
-        btnContinueSummary.setText(R.string.tvfinish_and_save);
+        btnContinueSummary.setText(R.string.finish_and_save);
         btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
     }
-
     private void submitAllResultsAndExit() {
         if (sessionId == null) return;
 
         // Hiển thị một thông báo nhẹ hoặc loading nếu muốn
-        Toast.makeText(this, getString(R.string.tvSavingProgress), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Saving your progress...", Toast.LENGTH_SHORT).show();
 
         boolean isFullTest = (currentGameMode == GameMode.TEST);
 
@@ -595,7 +625,7 @@ public class MemoryGameActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t) {
-                Log.e("DEBUG_GAME", getString(R.string.nt_direct_save_failed_fallback_to_workmanager) + t.getMessage());
+                Log.e("DEBUG_GAME", "Direct save failed, fallback to WorkManager: " + t.getMessage());
                 // Nếu lỗi mạng/lỗi kết nối trực tiếp, dùng WorkManager làm cứu cánh để sync sau
                 enqueueCompleteWorker();
                 finish();
@@ -632,7 +662,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                 .build();
 
         WorkManager.getInstance(this).enqueueUniqueWork(
-                getString(R.string.ntCompleteSession) + sessionId,
+                "complete_session_" + sessionId,
                 ExistingWorkPolicy.KEEP,
                 work
         );

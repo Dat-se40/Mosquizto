@@ -129,4 +129,36 @@
     <string name="gameLearn">Learn</string>
     <string name="tvTermsTitle">Terms</string>
     <string name="fabStudy">Study set</string>
+    <string name="delete">Delete</string>
+
+    <string name="Complete">Complete</string>
+    <string name="Congratulation"> Congratulation!</string>
+    <string name="Reload">Reload</string>
+
+    <string name="multiple_choice">Multiple Choice</string>
+    <string name="fill_blank">Fill in the Blank</string>
+    <string name="matching">Matching</string>
+    <string name="test">Test</string>
+    <string name="finish_and_save">Finish and Save</string>
+    <string name="round_1_done">Round 1 Done!</string>
+    <string name="continue_to_round_2_fill_blank">Continue to Round 2 (Fill Blank)</string>
+    <string name="you_ve_mastered_this_set">You\'ve mastered this set!</string>
+    <string name="learn_questions">Learn questions</string>
+    <string name="random_mcq">Random multiple choice questions</string>
+    <string name="recommendation">Recommendation</string>
+    <string name="switch_it_up_with_a_game">Switch it up with a game</string>
+
+    <!-- Game Mode Strings -->
+    <string name="game_desc_learn">Master the material step by step</string>
+    <string name="game_btn_learn">Play Learn</string>
+    <string name="game_desc_test">Test your knowledge with mixed questions</string>
+    <string name="game_btn_test">Play Test</string>
+    <string name="game_desc_mcq">Quickly choose the right answers</string>
+    <string name="game_btn_mcq">Play MCQ</string>
+    <string name="game_desc_fb">Type out the exact terms</string>
+    <string name="game_btn_fb">Play Fill Blank</string>
+    <string name="game_desc_match">Match terms to definitions</string>
+    <string name="game_btn_match">Play Match</string>
+    <string name="all">All</string>
+    <string name="starred">Starred</string>
 </resources>

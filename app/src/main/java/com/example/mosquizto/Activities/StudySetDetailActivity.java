@@ -25,14 +25,17 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
+import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
+// Nhớ import file Model mới tạo
+import com.example.mosquizto.Models.TermItemUIModel;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +58,12 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private ExtendedFloatingActionButton fabStudy;
     private NestedScrollView nestedScrollView;
     private TextView tvSetTitle;
+
     private TermListAdapter termListAdapter;
+
+    // Tách riêng 2 list: 1 list gốc để truyền đi nơi khác, 1 list UI để hiện lên RecyclerView
+    private List<CollectionItemResponse> originalItems = new ArrayList<>();
+    private List<TermItemUIModel> uiItems = new ArrayList<>();
 
     @Inject
     CollectionApi collectionApi;
@@ -72,44 +80,36 @@ public class StudySetDetailActivity extends AppCompatActivity {
             Method setDurationScaleMethod = valueAnimatorClass.getDeclaredMethod("setDurationScale", float.class);
             setDurationScaleMethod.invoke(null, 1.0f);
         } catch (Exception e) {
-            e.printStackTrace(); // Có thể bị chặn trên các bản Android rất mới do hạn chế Reflection
+            e.printStackTrace();
         }
         try {
             setContentView(R.layout.activity_study_set_detail);
-            Log.d(TAG, "onCreate: setContentView DONE");
         } catch (Exception e) {
-            Log.e(TAG, "onCreate: setContentView FAILED: " + e.getMessage(), e);
             Toast.makeText(this, "Lỗi hiển thị giao diện!", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         try {
-            // Lấy ID an toàn
             if (getIntent() != null) {
                 collectionId = getIntent().getIntExtra("COLLECTION_ID", -1);
                 String title = getIntent().getStringExtra("COLLECTION_TITLE");
-                Log.d(TAG, "onCreate: Intent data [ID: " + collectionId + ", Title: " + title + "]");
-                
+
                 initViews();
-                
+
                 if (title != null && tvSetTitle != null) {
                     tvSetTitle.setText(title);
                 }
-                
+
                 setupListeners();
-                
+
                 if (collectionId != -1) {
                     getWindow().getDecorView().post(() -> {
-                        fetchCollectionData();
+                        fetchCollectionData(); // Gọi hàm gốc, nó sẽ tự chain sang lấy Star
                     });
-
                 } else {
-                    Log.w(TAG, "onCreate: collectionId is -1");
                     Toast.makeText(this, "ID bộ thẻ không hợp lệ!", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Log.w(TAG, "onCreate: Intent is null");
             }
         } catch (Exception e) {
             Log.e(TAG, "onCreate: CRITICAL ERROR: " + e.getMessage(), e);
@@ -118,7 +118,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        Log.d(TAG, "initViews: START");
         try {
             Toolbar toolbar = findViewById(R.id.toolbar);
             if (toolbar != null) {
@@ -140,22 +139,17 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 rvTerms.setLayoutManager(new LinearLayoutManager(this));
                 termListAdapter = new TermListAdapter(new ArrayList<>());
                 rvTerms.setAdapter(termListAdapter);
-
-            } else {
-                Log.w(TAG, "initViews: rvTerms is NULL");
             }
 
             fabStudy = findViewById(R.id.fabStudy);
             nestedScrollView = findViewById(R.id.nestedScrollView);
             tvSetTitle = findViewById(R.id.tvSetTitle);
-            Log.d(TAG, "initViews: DONE");
         } catch (Exception e) {
             Log.e(TAG, "initViews: FAILED: " + e.getMessage(), e);
         }
     }
 
     private void setupListeners() {
-        Log.d(TAG, "setupListeners: START");
         try {
             if (nestedScrollView != null && viewPagerFlashcards != null && fabStudy != null) {
                 nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -168,72 +162,171 @@ public class StudySetDetailActivity extends AppCompatActivity {
             }
 
             if (fabStudy != null) fabStudy.setOnClickListener(v -> showLearnModeBottomSheet());
-            
+
             View btnSave = findViewById(R.id.btnSave);
             if (btnSave != null) btnSave.setOnClickListener(v -> showSaveToFolderDialog());
-            
+
             View btnOptions = findViewById(R.id.btnOptions);
             if (btnOptions != null) btnOptions.setOnClickListener(v -> showOptionsBottomSheet());
-            Log.d(TAG, "setupListeners: DONE");
-        } catch (Exception e) {
-            Log.e(TAG, "setupListeners: FAILED: " + e.getMessage(), e);
-        }
-    }
 
-    private void fetchCollectionData() {
-        Log.d(TAG, "fetchCollectionData: START for ID " + collectionId);
-        if (collectionApi == null) {
-            Log.e(TAG, "fetchCollectionData: collectionApi is NULL (Injection failed?)");
-            return;
-        }
-        
-        try {
-            collectionApi.getCollectionItemById(collectionId).enqueue(new Callback<ApiResponse<List<CollectionItemResponse>>>() {
+            TabLayout tabLayout = findViewById(R.id.tabLayoutTerms);
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
-                public void onResponse(Call<ApiResponse<List<CollectionItemResponse>>> call, Response<ApiResponse<List<CollectionItemResponse>>> response) {
-                    Log.d(TAG, "fetchCollectionData: onResponse code " + response.code());
-                    if (response.isSuccessful() && response.body() != null) {
-                        List<CollectionItemResponse> items = response.body().getData();
-                        if (items != null) {
-                            Log.d(TAG, "fetchCollectionData: Received " + items.size() + " items");
-                            setupAdapters(items);
-                        } else {
-                            Log.w(TAG, "fetchCollectionData: Response data is NULL");
+                public void onTabSelected(TabLayout.Tab tab) {
+                    int position = tab.getPosition();
+                    if (uiItems != null)
+                    {
+                        if (position == 0 )
+                        {
+                            termListAdapter.updateData(uiItems);
+                        }else if  (position == 1)
+                        {
+                            List<TermItemUIModel> starredItems = new ArrayList<>();
+                            for (TermItemUIModel item : uiItems) {
+                                if (item.isStarred()) {
+                                    starredItems.add(item);
+                                }
+                            }
+                            termListAdapter.updateData(starredItems);
                         }
-                    } else {
-                        Log.e(TAG, "fetchCollectionData: Response not successful or body null");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {
-                    Log.e(TAG, "fetchCollectionData: onFailure: " + t.getMessage(), t);
-                    Toast.makeText(StudySetDetailActivity.this, "Lỗi kết nối dữ liệu!", Toast.LENGTH_SHORT).show();
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
                 }
             });
-        } catch (Exception e) {
-            Log.e(TAG, "fetchCollectionData: EXCEPTION: " + e.getMessage(), e);
+
+        }catch (Exception e) {
+            Log.e(TAG, "setupListeners: FAILED: " + e.getMessage(), e);
         }
     }
 
-    private void setupAdapters(List<CollectionItemResponse> items) {
-        Log.d(TAG, "setupAdapters: START");
-        try {
-            if (viewPagerFlashcards != null) {
-                FlashcardCarouselAdapter pagerAdapter = new FlashcardCarouselAdapter(this, items);
-                viewPagerFlashcards.setAdapter(pagerAdapter);
-                Log.d(TAG, "setupAdapters: ViewPager2 adapter set");
+    // BƯỚC 1: LẤY DATA THẺ TỪ SERVER
+    private void fetchCollectionData() {
+        if (collectionApi == null) return;
+
+        collectionApi.getCollectionItemById(collectionId).enqueue(new Callback<ApiResponse<List<CollectionItemResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<CollectionItemResponse>>> call, Response<ApiResponse<List<CollectionItemResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    originalItems = response.body().getData();
+                    if (originalItems == null) originalItems = new ArrayList<>();
+
+                    // Lấy xong thẻ thì gọi tiếp API lấy sao
+                    fetchStarredItemInCollection();
+                }
             }
-            if (termListAdapter != null) {
-                termListAdapter.updateData(items);
-                Log.d(TAG, "setupAdapters: RecyclerView adapter updated");
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {
+                Toast.makeText(StudySetDetailActivity.this, "Lỗi kết nối dữ liệu!", Toast.LENGTH_SHORT).show();
             }
-            Log.d(TAG, "setupAdapters: DONE");
-        } catch (Exception e) {
-            Log.e(TAG, "setupAdapters: FAILED: " + e.getMessage(), e);
-        }
+        });
     }
 
+    // BƯỚC 2: LẤY DATA SAO VÀ GỘP LẠI
+    private void fetchStarredItemInCollection() {
+        if (collectionApi == null) return;
+
+        collectionApi.getStarredCollections().enqueue(new Callback<ApiResponse<List<StarredCollectionItemResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<StarredCollectionItemResponse>>> call, Response<ApiResponse<List<StarredCollectionItemResponse>>> response) {
+                List<StarredCollectionItemResponse> starredItems = new ArrayList<>();
+                if (response.isSuccessful() && response.body() != null) {
+                    starredItems = response.body().getData();
+                }
+                // Nếu thành công thì mang đi map data
+                mapDataAndSetupUI(starredItems);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<StarredCollectionItemResponse>>> call, Throwable t) {
+                // Nếu lỗi lấy sao thì coi như không có thẻ nào được sao
+                mapDataAndSetupUI(new ArrayList<>());
+            }
+        });
+    }
+
+    // BƯỚC 3: XỬ LÝ DỮ LIỆU ĐỔ RA GIAO DIỆN
+    private void mapDataAndSetupUI(List<StarredCollectionItemResponse> starredItems) {
+        uiItems.clear();
+
+        // Khớp ID để tạo ra UI Model
+        for (CollectionItemResponse item : originalItems) {
+            boolean isStarred = false;
+            if (starredItems != null) {
+                for (StarredCollectionItemResponse starred : starredItems) {
+                    if (item.getId().equals(starred.getItemId())) {
+                        isStarred = true;
+                        break;
+                    }
+                }
+            }
+            uiItems.add(new TermItemUIModel(item, isStarred));
+        }
+
+        // Cài đặt ViewPager (Vẫn xài list gốc không sao)
+        if (viewPagerFlashcards != null) {
+            FlashcardCarouselAdapter pagerAdapter = new FlashcardCarouselAdapter(this, originalItems);
+            viewPagerFlashcards.setAdapter(pagerAdapter);
+        }
+
+        // Cài đặt RecyclerView (Xài list UI Model)
+        if (termListAdapter != null) {
+            termListAdapter.updateData(uiItems);
+
+            // Lắng nghe sự kiện click sao
+            termListAdapter.SetOnDetailItemClickedListener(event -> {
+                CollectionItemResponse clickedItem = event.item;
+                boolean newStarState = !termListAdapter.isItemStarred(clickedItem.getId());
+
+
+                try {
+                    if (newStarState) StarItem(clickedItem.getId());
+                    else UStarItem(clickedItem.getId());
+                }catch (Exception e)
+                {
+                    Toast.makeText(StudySetDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                }
+                termListAdapter.updateStarState(clickedItem.getId(), newStarState);
+
+                Toast.makeText(StudySetDetailActivity.this, newStarState ? "Đã đánh dấu sao" : "Đã bỏ đánh dấu", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+    public void StarItem(Integer itemId) {
+        collectionApi.starCollectionItem(itemId).enqueue(new Callback<ApiResponse<StarredCollectionItemResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<StarredCollectionItemResponse>> call, Response<ApiResponse<StarredCollectionItemResponse>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<StarredCollectionItemResponse>> call, Throwable t) {
+
+            }
+        });
+    }
+    public void UStarItem(Integer itemId) {
+        collectionApi.unstarCollectionItem(itemId).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+
+            }
+        }) ;
+    }
     private void showOptionsBottomSheet() {
         try {
             BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -241,7 +334,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
             dialog.setContentView(view);
             dialog.show();
         } catch (Exception e) {
-            Log.e(TAG, "showOptionsBottomSheet: FAILED", e);
             Toast.makeText(this, "Chưa có layout Options!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -259,7 +351,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
             dialog.show();
             loadFoldersForSaveDialog(view, dialog);
         } catch (Exception e) {
-            Log.e(TAG, "showSaveToFolderDialog: FAILED", e);
             Toast.makeText(this, "Chưa có layout Save Folder!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -308,10 +399,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     }
 
     private void saveCurrentSetToFolder(FolderSummaryResponse folder, AlertDialog dialog) {
-        if (collectionId == -1) {
-            Toast.makeText(this, "ID bộ thẻ không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (collectionId == -1) return;
 
         folderApi.addCollectionToFolder(folder.getId(), collectionId).enqueue(new Callback<ApiResponse<FolderResponse>>() {
             @Override
@@ -331,7 +419,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void showLearnModeBottomSheet(){
+    private void showLearnModeBottomSheet() {
         try {
             BottomSheetDialog dialog = new BottomSheetDialog(this);
             View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_learn_mode, null);
@@ -382,13 +470,12 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, MemoryGameActivity.class);
                     intent.putExtra("COLLECTION_ID", collectionId);
                     intent.putExtra("GAME_MODE", selectedMode[0]);
-                    // Lấy List từ adapter và truyền đi
-                    if (termListAdapter != null) {
-                        ArrayList<CollectionItemResponse> items = new ArrayList<>(termListAdapter.getItems());
-                        intent.putParcelableArrayListExtra("ITEMS_LIST", items);
-                        Log.d(TAG, "Starting MemoryGameActivity with " + (items != null ? items.size() : 0) + " items");
-                    }
-                    
+
+                    // Truyền thẳng originalItems sang Activity Game
+                    ArrayList<CollectionItemResponse> items = new ArrayList<>(originalItems);
+                    intent.putParcelableArrayListExtra("ITEMS_LIST", items);
+                    Log.d(TAG, "Starting MemoryGameActivity with " + items.size() + " items");
+
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "Test Mode đang phát triển", Toast.LENGTH_SHORT).show();
@@ -398,7 +485,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
             dialog.setContentView(view);
             dialog.show();
         } catch (Exception e) {
-            Log.e(TAG, "showLearnModeBottomSheet: FAILED", e);
             Toast.makeText(this, "Lỗi hiển thị Learn Mode!", Toast.LENGTH_SHORT).show();
         }
     }

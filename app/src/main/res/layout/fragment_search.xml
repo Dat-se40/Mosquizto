@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/background_grey">
 
-    <!-- Top Search Bar -->
     <LinearLayout
         android:id="@+id/searchBarContainer"
         android:layout_width="match_parent"
@@ -47,7 +46,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:background="@null"
-                    android:hint="Tìm kiếm học phần..."
+                    android:hint="Tìm kiếm học phần, người dùng..."
                     android:textColorHint="@color/search_bar_hint"
                     android:textColor="@color/text_color_primary"
                     android:textSize="15sp"
@@ -94,7 +93,6 @@
             android:focusable="true"/>
     </LinearLayout>
 
-    <!-- Content Sections -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="match_parent"
@@ -107,36 +105,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Scan Button (Move inside scroll if preferred, or keep as sticky below bar) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btnScan"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_margin="16dp"
-                app:cardCornerRadius="24dp"
-                app:cardBackgroundColor="@color/background_white"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_scan"
-                        app:tint="@color/app_icon_tint"/>
-                    <TextView
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgSearchType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:checkedChip="@+id/chipStudySet">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipStudySet"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Quét sách giáo khoa"
-                        android:textColor="@color/text_color_primary"
-                        android:textSize="14sp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        android:text="Học phần" />
 
-            <!-- RECENT SECTION -->
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipUser"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Người dùng" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
             <LinearLayout
                 android:id="@+id/recentSection"
                 android:layout_width="match_parent"
@@ -173,59 +174,18 @@
                     android:paddingTop="8dp"/>
             </LinearLayout>
 
-            <!-- SUGGESTION SECTION -->
-            <LinearLayout
-                android:id="@+id/suggestionSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvSuggestions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+            <LinearLayout android:id="@+id/suggestionSection" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvSuggestions" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
             </LinearLayout>
 
-            <!-- RESULTS SECTION -->
-            <LinearLayout
-                android:id="@+id/resultsSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kết quả"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:padding="16dp"/>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvSearchResults"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+            <LinearLayout android:id="@+id/resultsSection" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kết quả" android:textColor="@color/text_color_primary" android:textSize="18sp" android:textStyle="bold" android:padding="16dp"/>
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvSearchResults" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
             </LinearLayout>
 
-            <!-- Empty State -->
-            <LinearLayout
-                android:id="@+id/emptyState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="60dp"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Không tìm thấy kết quả"
-                    android:textColor="@color/text_color_secondary"
-                    android:textSize="15sp"/>
+            <LinearLayout android:id="@+id/emptyState" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:paddingTop="60dp" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Không tìm thấy kết quả" android:textColor="@color/text_color_secondary" android:textSize="15sp"/>
             </LinearLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -1,6 +1,9 @@
 package com.example.mosquizto.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,36 +70,42 @@ public class FlashcardSetsFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position == 0) {
-                    // Tab "All" (Vị trí 0)
-                    adapter.setCollectionList(originalList);
-                } else if (position == 1) {
-                    // Tab "Created" (Vị trí 1)
-                    List<CollectionResponse> filteredList = new ArrayList<>();
-                    if (sessionManager.getCurrUser() != null) {
-                        Long currentUserId = Long.valueOf(sessionManager.getCurrUser().getId().toString());
+                try {
+                    int position = tab.getPosition();
 
-                        // Lặp qua list gốc để lọc
-                        for (CollectionResponse item : originalList) {
-                            if (item.getUserId() != null && item.getUserId().equals(currentUserId)) {
-                                filteredList.add(item);
-                            }
-                        }
+                    // Đảm bảo originalList không bị null trước khi xử lý
+                    if (originalList == null) {
+                        originalList = new ArrayList<>();
                     }
-                    adapter.setCollectionList(originalList);
+
+                    if (position == 0) {
+                        // Tab "All"
+                        adapter.setCollectionList(originalList);
+                    } else if (position == 1) {
+                        // Tab "Created"
+                        List<CollectionResponse> filteredList = new ArrayList<>();
+
+                        if (sessionManager != null && sessionManager.getCurrUser() != null) {
+                            // Lặp qua list gốc để lọc
+                            for (CollectionResponse item : originalList) {
+                                if (item != null && item.getUserName() != null && item.getUserName().equals(sessionManager.getCurrUser().getUsername())) {
+                                    filteredList.add(item);
+                                }
+                            }
+
+                        }
+                        adapter.setCollectionList(filteredList);
+                    }
+                } catch (Exception e) {
+                    Log.e("FlashcardSetsFragment", "Lỗi khi chuyển tab", e);
                 }
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // Không cần xử lý
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Không cần xử lý
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
 
         // 1. Xử lý Logic kéo để Refresh
@@ -120,8 +129,12 @@ public class FlashcardSetsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
+                    if (remoteList == null) {
+                        remoteList = new ArrayList<>();
+                    }
                     originalList = remoteList;
                     adapter.setCollectionList(remoteList);
+                    cacheCollectionCounts(getContext(), remoteList);
                 } else {
                     Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
                     Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
@@ -135,5 +148,21 @@ public class FlashcardSetsFragment extends Fragment {
                 Log.e("API_ERROR", t.getMessage(), t);
             }
         });
+    }
+    public void cacheCollectionCounts(Context context, List<CollectionResponse> collections) {
+        if (context == null || collections == null) return;
+
+        SharedPreferences sharedPref = context.getSharedPreferences("MosquiztoCache", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        for (CollectionResponse collection : collections) {
+            // Giả sử collection.getId() trả về String hoặc UUID. Mình nối chuỗi làm Key.
+            String key = "COLLECTION_COUNT_" + collection.getId();
+            int count = collection.getCount(); // Lấy count từ response
+
+            editor.putInt(key, count);
+        }
+
+        editor.apply(); // Lưu bất đồng bộ
     }
 }
