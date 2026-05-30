@@ -90,4 +90,6 @@
     <string name="game_btn_fb">Play Fill Blank</string>
     <string name="game_desc_match">Match terms to definitions</string>
     <string name="game_btn_match">Play Match</string>
+    <string name="all">All</string>
+    <string name="starred">Starred</string>
 </resources>

@@ -89,4 +89,6 @@
     <string name="game_btn_fb">Chơi Điền từ</string>
     <string name="game_desc_match">Ghép cặp thuật ngữ và định nghĩa</string>
     <string name="game_btn_match">Chơi Ghép thẻ</string>
+    <string name="all"> Tất cả </string>
+    <string name="starred">Đánh dấu sao</string>
 </resources>

@@ -6,12 +6,15 @@ import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
+import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
 import com.example.mosquizto.Models.Collection;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Body;
@@ -59,4 +62,10 @@ public interface CollectionApi {
             @Query("size") int size,
             @Query("author") String author
     );
+    @GET("collection/item/starred")
+    Call<ApiResponse<List<StarredCollectionItemResponse>>> getStarredCollections();
+    @PUT("collection/item/{id}/star")
+    Call<ApiResponse<StarredCollectionItemResponse>> starCollectionItem(@Path("id") int id);
+    @DELETE("collection/item/{id}/star")
+    Call<ApiResponse<Void>> unstarCollectionItem(@Path("id") int id);
 }
