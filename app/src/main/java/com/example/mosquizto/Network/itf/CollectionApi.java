@@ -1,8 +1,10 @@
 package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.request.CollectionItemRequest;
+import com.example.mosquizto.Dto.request.CollectionReportRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
+import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
@@ -79,4 +81,7 @@ public interface CollectionApi {
     Call<ApiResponse<StarredCollectionItemResponse>> starCollectionItem(@Path("id") int id);
     @DELETE("collection/item/{id}/star")
     Call<ApiResponse<Void>> unstarCollectionItem(@Path("id") int id);
+
+    @POST("reports/collections/{collectionId}")
+    Call<ApiResponse<CollectionReportResponse>> reportCollection(@Path("collectionId") int collectionId, @Body CollectionReportRequest request);
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    android:layout_margin="16dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_collection_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#282E3E"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_reason_title"
+            android:textSize="14sp"
+            android:textColor="#586380"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/rgReportReasons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/rbReason1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_inaccurate"
+                android:buttonTint="#4255FF" />
+
+            <RadioButton
+                android:id="@+id/rbReason2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_offensive"
+                android:buttonTint="#4255FF" />
+
+            <RadioButton
+                android:id="@+id/rbReason3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_spam"
+                android:buttonTint="#4255FF" />
+
+            <RadioButton
+                android:id="@+id/rbReason4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_other"
+                android:buttonTint="#4255FF" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_details_title"
+            android:textSize="14sp"
+            android:textColor="#586380"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edtReportDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:background="@drawable/custom_edittext_border"
+            android:padding="12dp"
+            android:hint="@string/report_details_hint"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancelReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="#586380"
+                android:backgroundTint="@android:color/transparent"
+                style="?attr/borderlessButtonStyle"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnSubmitReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/report_submit_button"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#D93025" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

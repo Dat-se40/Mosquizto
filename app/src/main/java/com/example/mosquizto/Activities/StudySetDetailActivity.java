@@ -20,8 +20,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mosquizto.Adapters.FlashcardCarouselAdapter;
 import com.example.mosquizto.Adapters.TermListAdapter;
+import com.example.mosquizto.Dto.request.CollectionReportRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
+import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
@@ -305,7 +307,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
         View btnEdit = view.findViewById(R.id.btnEdit);
         View btnAddToFolder = view.findViewById(R.id.btnAddToFolder);
         View btnCopy = view.findViewById(R.id.btnMakeCopy);
-
+        View btnReport = view.findViewById(R.id.btnReport);
         if (author != null && sessionManager.getCurrUser() != null) {
             boolean isOwner = author.equals(sessionManager.getCurrUser().getUsername());
             if (btnEdit != null) btnEdit.setVisibility(isOwner ? View.VISIBLE : View.GONE);
@@ -335,9 +337,84 @@ public class StudySetDetailActivity extends AppCompatActivity {
             dialog.dismiss();
             showSaveToFolderDialog();
         });
-
+        if (btnReport != null) 
+        {
+            btnReport.setOnClickListener(v -> {
+                dialog.dismiss();
+                showReportDialog();
+            });
+        }
         dialog.setContentView(view);
         dialog.show();
+    }
+
+    private void showReportDialog() {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_report_collection, null);
+            builder.setView(view);
+            AlertDialog reportDialog = builder.create();
+
+            if (reportDialog.getWindow() != null) {
+                reportDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+
+            // Khởi tạo các view trong dialog
+            android.widget.RadioGroup rgReasons = view.findViewById(R.id.rgReportReasons);
+            android.widget.EditText edtDescription = view.findViewById(R.id.edtReportDescription);
+            android.widget.Button btnCancel = view.findViewById(R.id.btnCancelReport);
+            android.widget.Button btnSubmit = view.findViewById(R.id.btnSubmitReport);
+
+            btnCancel.setOnClickListener(v -> reportDialog.dismiss());
+
+            btnSubmit.setOnClickListener(v -> {
+                // Lấy reason từ RadioGroup
+                int selectedId = rgReasons.getCheckedRadioButtonId();
+                if (selectedId == -1) {
+                    Toast.makeText(this, "Vui lòng chọn lý do báo cáo!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                android.widget.RadioButton selectedRadioButton = view.findViewById(selectedId);
+                String reason = selectedRadioButton.getText().toString();
+                String description = edtDescription.getText().toString().trim();
+
+                // Tạo request
+                com.example.mosquizto.Dto.request.CollectionReportRequest request =
+                        new com.example.mosquizto.Dto.request.CollectionReportRequest(reason, description);
+
+                // Gọi API
+                sendReport(request, reportDialog);
+            });
+
+            reportDialog.show();
+        } catch (Exception e) {
+            Log.e(TAG, "showReportDialog: FAILED", e);
+        }
+    }
+
+    private void sendReport(CollectionReportRequest request, AlertDialog reportDialog) {
+        if (collectionId == -1) return;
+        collectionApi.reportCollection(collectionId, request).enqueue(new Callback<ApiResponse<CollectionReportResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<CollectionReportResponse>> call, Response<ApiResponse<CollectionReportResponse>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(StudySetDetailActivity.this, "Đã gửi báo cáo thành công. Cảm ơn bạn!", Toast.LENGTH_SHORT).show();
+                    reportDialog.dismiss();
+                } else {
+                    Log.e(TAG, "reportCollection onFailure: ", new Exception(response.message()));
+                    Toast.makeText(StudySetDetailActivity.this, "Gửi báo cáo thất bại, thử lại sau.", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<CollectionReportResponse>> call, Throwable t) {
+                Log.e(TAG, "reportCollection onFailure: ", t);
+                Toast.makeText(StudySetDetailActivity.this, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
     private void showSaveToFolderDialog() {
