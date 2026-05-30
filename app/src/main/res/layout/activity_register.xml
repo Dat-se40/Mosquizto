@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_grey"
     android:fillViewport="true">
 
@@ -157,10 +157,10 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="@string/btn_create_account"
-            android:textColorHint="@color/search_bar_hint"
             android:textColor="@color/app_on_primary"
             android:textSize="16sp"
             android:background="@drawable/custom_btn"
+            app:backgroundTint="@null"
             android:enabled="false" />
 
     </LinearLayout>

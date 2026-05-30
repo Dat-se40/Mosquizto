@@ -82,13 +82,9 @@ public class ResetPass extends AppCompatActivity {
                 if (!email.isEmpty()) {
                     btnSendLink.setEnabled(true);
                     btnSendLink.setAlpha(1.0f);
-                    btnSendLink.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4254ff")));
-                    btnSendLink.setTextColor(Color.parseColor("#f4f2f8"));
                 } else {
                     btnSendLink.setEnabled(false);
                     btnSendLink.setAlpha(0.5f);
-                    btnSendLink.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4254ff")));
-                    btnSendLink.setTextColor(Color.parseColor("#f4f2f8"));
                 }
             }
 

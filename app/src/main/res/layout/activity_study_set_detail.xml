@@ -104,7 +104,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:padding="16dp"
-                        android:background="?attr/selectableItemBackground">
+                        android:background="@color/white">
                         <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
@@ -136,7 +136,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:padding="16dp"
-                        android:background="?attr/selectableItemBackground">
+                        android:background="@color/white">
 
                         <ImageView
                             android:layout_width="28dp"
@@ -175,25 +175,26 @@
                 app:tabIndicatorColor="@color/primary_color"
                 app:tabSelectedTextColor="@color/primary_color"
                 app:tabTextColor="@color/text_color_secondary"
-                app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                >
+                app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2">
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All" />
+                    android:text="@string/all"
+                    android:id="@+id/btnAllFilter"/>
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Starred" />
+                    android:text="@string/starred"
+                    android:id="@+id/btnStarFilter"/>
             </com.google.android.material.tabs.TabLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTerms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

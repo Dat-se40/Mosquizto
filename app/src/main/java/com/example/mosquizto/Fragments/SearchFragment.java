@@ -48,7 +48,6 @@ public class SearchFragment extends Fragment {
     private ImageView ivCamera;
     private TextView tvCancel;
     private TextView tvClearAll;
-    private View btnScan;
 
     private LinearLayout recentSection;
     private LinearLayout suggestionSection;
@@ -64,6 +63,7 @@ public class SearchFragment extends Fragment {
     private SuggestionAdapter suggestionAdapter;
     private SearchResultAdapter searchResultAdapter;
     private MainActivity mainActivity;
+    private com.google.android.material.chip.ChipGroup cgSearchType;
 
     @Nullable
     @Override
@@ -90,8 +90,7 @@ public class SearchFragment extends Fragment {
         ivCamera = view.findViewById(R.id.ivCamera);
         tvCancel = view.findViewById(R.id.tvCancel);
         tvClearAll = view.findViewById(R.id.tvClearAll);
-        btnScan = view.findViewById(R.id.btnScan);
-
+        cgSearchType = view.findViewById(R.id.cgSearchType);
         recentSection = view.findViewById(R.id.recentSection);
         suggestionSection = view.findViewById(R.id.suggestionSection);
         resultsSection = view.findViewById(R.id.resultsSection);
@@ -222,10 +221,18 @@ public class SearchFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        cgSearchType.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            int checkedId = checkedIds.get(0);
 
+            if (checkedId == R.id.chipStudySet) {
+                viewModel.setSearchType(SearchViewModel.SearchType.COLLECTION);
+            } else if (checkedId == R.id.chipUser) {
+                viewModel.setSearchType(SearchViewModel.SearchType.USER);
+            }
+        });
         tvClearAll.setOnClickListener(v -> viewModel.clearAllRecentSearches());
-        
-        btnScan.setOnClickListener(v -> Toast.makeText(getContext(), "Tính năng đang phát triển", Toast.LENGTH_SHORT).show());
+
     }
 
     private void updateUIByState(SearchViewModel.SearchState state) {

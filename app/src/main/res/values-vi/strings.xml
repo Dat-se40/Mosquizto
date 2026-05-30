@@ -60,4 +60,35 @@
     <string name="sign_up">Đăng Kí</string>
     <string name="continue_with">Tiếp tục với %1$s</string>
     <string name="logout">Đăng xuất</string>
+    <string name="delete">Xóa</string>
+    <string name="Complete">Hoàn thành</string>
+    <string name="Congratulation"> Bạn đã hoàn thành tất cả!</string>
+    <string name="Reload">Tải lại</string>
+
+    <string name="multiple_choice">Trắc nghiệm</string>
+    <string name="fill_blank">Điền vào chỗ trống</string>
+    <string name="matching">Nối khớp</string>
+    <string name="test">Bài kiểm tra</string>
+    <string name="finish_and_save">Hoàn thành và lưu</string>
+    <string name="round_1_done">Hoàn thành vòng 1</string>
+    <string name="continue_to_round_2_fill_blank">Tiếp tục với vòng 2: Điền vòng ô trống</string>
+    <string name="you_ve_mastered_this_set">Bạn đã thành thạo bộ này</string>
+    <string name="learn_questions">Học các câu hỏi</string>
+    <string name="recommendation">Đề xuất</string>
+    <string name="random_mcq">Trắc nghiệm ngẫu nhiên</string>
+    <string name="switch_it_up_with_a_game">Đổi gió chút với game</string>
+
+    <!-- Game Mode Strings -->
+    <string name="game_desc_learn">Nắm vững kiến thức từng bước một</string>
+    <string name="game_btn_learn">Chế độ Học</string>
+    <string name="game_desc_test">Kiểm tra kiến thức với câu hỏi hỗn hợp</string>
+    <string name="game_btn_test">Làm Kiểm tra</string>
+    <string name="game_desc_mcq">Nhanh chóng chọn câu trả lời đúng</string>
+    <string name="game_btn_mcq">Chơi Trắc nghiệm</string>
+    <string name="game_desc_fb">Tự nhập chính xác các thuật ngữ</string>
+    <string name="game_btn_fb">Chơi Điền từ</string>
+    <string name="game_desc_match">Ghép cặp thuật ngữ và định nghĩa</string>
+    <string name="game_btn_match">Chơi Ghép thẻ</string>
+    <string name="all"> Tất cả </string>
+    <string name="starred">Đánh dấu sao</string>
 </resources>

@@ -32,11 +32,23 @@ import retrofit2.Response;
 public class SearchViewModel extends ViewModel {
 
     private final CollectionApi collectionApi;
+    // private final UserApi userApi; // Thêm API lấy người dùng vào đây sau này
+
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
 
     private static final String PREF_NAME = "SearchPreferences";
     private static final String KEY_RECENT_SEARCHES = "RecentSearchesList";
+
+    // --- ENUM VÀ STATE TÌM KIẾM ---
+    public enum SearchType { COLLECTION, USER }
+    public enum SearchState { IDLE, TYPING, LOADING, HAS_RESULTS, EMPTY }
+
+    private final MutableLiveData<SearchType> _searchType = new MutableLiveData<>(SearchType.COLLECTION);
+    public LiveData<SearchType> searchType = _searchType;
+
+    private String currentQuery = ""; // Lưu lại chuỗi đang search
+    // ------------------------------
 
     private final MutableLiveData<List<String>> _suggestions = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<String>> suggestions = _suggestions;
@@ -56,14 +68,11 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<SearchState> _searchState = new MutableLiveData<>(SearchState.IDLE);
     public LiveData<SearchState> searchState = _searchState;
 
-
-    public enum SearchState {
-        IDLE, TYPING, LOADING, HAS_RESULTS, EMPTY
-    }
-
     private final Handler debounceHandler = new Handler(Looper.getMainLooper());
     private Runnable debounceRunnable;
     private static final long DEBOUNCE_DELAY_MS = 300;
+
+
 
     @Inject
     public SearchViewModel(CollectionApi collectionApi, @ApplicationContext Context context) {
@@ -76,6 +85,15 @@ public class SearchViewModel extends ViewModel {
         loadRecentSearchesFromPrefs();
     }
 
+    public void setSearchType(SearchType type) {
+        if (_searchType.getValue() != type) {
+            _searchType.setValue(type);
+            // Nếu đổi tab trong lúc đang có chữ -> search lại ngay lập tức
+            if (currentQuery != null && !currentQuery.isEmpty()) {
+                performSearch(currentQuery);
+            }
+        }
+    }
     // --- CÁC HÀM XỬ LÝ LƯU TRỮ (PERSISTENCE) ---
     private void loadRecentSearchesFromPrefs() {
         String json = sharedPreferences.getString(KEY_RECENT_SEARCHES, null);
@@ -96,10 +114,10 @@ public class SearchViewModel extends ViewModel {
     // -------------------------------------------
 
     public void onQueryChanged(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            if (debounceRunnable != null) {
-                debounceHandler.removeCallbacks(debounceRunnable);
-            }
+        this.currentQuery = query != null ? query.trim() : "";
+
+        if (currentQuery.isEmpty()) {
+            if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
             _suggestions.setValue(new ArrayList<>());
             _searchState.setValue(SearchState.IDLE);
             return;
@@ -107,23 +125,22 @@ public class SearchViewModel extends ViewModel {
 
         _searchState.setValue(SearchState.TYPING);
 
-        if (debounceRunnable != null) {
-            debounceHandler.removeCallbacks(debounceRunnable);
-        }
-        debounceRunnable = () -> fetchSuggestions(query.trim());
+        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+        debounceRunnable = () -> fetchSuggestions(currentQuery);
         debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_DELAY_MS);
     }
 
     public void onSearchSubmitted(String query) {
         if (query == null || query.trim().isEmpty()) return;
+        this.currentQuery = query.trim();
 
-        if (debounceRunnable != null) {
-            debounceHandler.removeCallbacks(debounceRunnable);
-        }
+        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
 
-        saveRecentSearch(query.trim());
-        performSearch(query.trim());
+        saveRecentSearch(currentQuery);
+        performSearch(currentQuery);
     }
+
+
 
     public void removeRecentSearch(String text) {
         List<RecentSearchItem> current = _recentSearches.getValue();
@@ -163,34 +180,45 @@ public class SearchViewModel extends ViewModel {
         _isLoading.setValue(true);
         _searchState.setValue(SearchState.LOADING);
 
-        collectionApi.searchCollections(query, 1, 10, null).enqueue(new Callback<SearchApiResponse>() {
-            @Override
-            public void onResponse(Call<SearchApiResponse> call, Response<SearchApiResponse> response) {
-                _isLoading.setValue(false);
+        SearchType currentType = _searchType.getValue();
 
-                if (response.isSuccessful() && response.body() != null) {
-                    SearchApiResponse.SearchPaginatedData data = response.body().getData();
-
-                    if (data != null && data.getHits() != null && !data.getHits().isEmpty()) {
-                        _searchResults.setValue(data.getHits());
-                        _searchState.setValue(SearchState.HAS_RESULTS);
+        if (currentType == SearchType.COLLECTION) {
+            // TÌM KIẾM HỌC PHẦN
+            collectionApi.searchCollections(query, 1, 10, null).enqueue(new Callback<SearchApiResponse>() {
+                @Override
+                public void onResponse(Call<SearchApiResponse> call, Response<SearchApiResponse> response) {
+                    _isLoading.setValue(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        SearchApiResponse.SearchPaginatedData data = response.body().getData();
+                        if (data != null && data.getHits() != null && !data.getHits().isEmpty()) {
+                            _searchResults.setValue(data.getHits());
+                            _searchState.setValue(SearchState.HAS_RESULTS);
+                        } else {
+                            _searchResults.setValue(new ArrayList<>());
+                            _searchState.setValue(SearchState.EMPTY);
+                        }
                     } else {
-                        _searchResults.setValue(new ArrayList<>());
                         _searchState.setValue(SearchState.EMPTY);
                     }
-                } else {
-                    _searchState.setValue(SearchState.EMPTY);
-                    _errorMessage.setValue("Lỗi server: " + response.code());
                 }
-            }
+                @Override
+                public void onFailure(Call<SearchApiResponse> call, Throwable t) {
+                    _isLoading.setValue(false);
+                    _searchState.setValue(SearchState.EMPTY);
+                    _errorMessage.setValue("Lỗi kết nối");
+                }
+            });
 
-            @Override
-            public void onFailure(Call<SearchApiResponse> call, Throwable t) {
-                _isLoading.setValue(false);
-                _searchState.setValue(SearchState.EMPTY);
-                _errorMessage.setValue("Không kết nối được server: " + t.getMessage());
-            }
-        });
+        } else {
+            // TÌM KIẾM NGƯỜI DÙNG
+            // TODO: Ở đây bạn sẽ thay bằng hàm gọi API lấy danh sách User
+            // Ví dụ: userApi.searchUsers(query).enqueue(...)
+
+            // Tạm thời báo rỗng để test
+            _isLoading.setValue(false);
+            _searchResults.setValue(new ArrayList<>());
+            _searchState.setValue(SearchState.EMPTY);
+        }
     }
 
     private void saveRecentSearch(String query) {

@@ -31,5 +31,6 @@ public class CollectionSettingsActivity extends AppCompatActivity {
             resultIntent.putExtra("visibility", selected);
             setResult(RESULT_OK, resultIntent);
         });
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 }

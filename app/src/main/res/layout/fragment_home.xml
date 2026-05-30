@@ -101,11 +101,13 @@
                 android:gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp">
-                <ImageView
+                <ImageButton
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@android:drawable/ic_popup_sync"
-                    app:tint="@color/primary_color"/>
+                    app:tint="@color/primary_color"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/btnReloadMcq"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -114,93 +116,26 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Learn questions"
+                        android:text="@string/learn_questions"
                         android:textColor="@color/text_color_secondary"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Quizlet basics"
+                        android:text="@string/random_mcq"
                         android:textColor="@color/text_color_primary"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1 / 1"
-                        android:textColor="@color/text_color_secondary"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Study Guides instantly turn your notes into out..."
-                        android:textSize="22sp"
-                        android:textColor="@color/text_color_primary"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="24dp"
-                        android:background="@drawable/bg_outline_button"
-                        android:text="Anticipation Guides"
-                        android:gravity="center_vertical"
-                        android:paddingStart="16dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color_primary"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_outline_button"
-                        android:text="Textbooks"
-                        android:gravity="center_vertical"
-                        android:paddingStart="16dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color_primary"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_outline_button"
-                        android:text="Study Guides"
-                        android:gravity="center_vertical"
-                        android:paddingStart="16dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color_primary"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_outline_button"
-                        android:text="References"
-                        android:gravity="center_vertical"
-                        android:paddingStart="16dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color_primary"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <include layout="@layout/layout_quick_mcq" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Based on your recent studying"
+                android:text="@string/recommendation"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_color_secondary"
@@ -226,62 +161,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Switch it up with a game"
+                android:text="@string/switch_it_up_with_a_game"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_color_secondary"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"/>
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@android:drawable/ic_menu_send"
-                        app:tint="@color/primary_color"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Unit 5: The World In Our Hands"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_color_primary"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Blast correct answers before time's up"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color_secondary"/>
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:layout_marginTop="16dp"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/bg_image_placeholder" /> <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Play Blast"
-                    android:textAllCaps="false"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary_color"
-                    android:background="@drawable/bg_button_light_purple"
-                    app:backgroundTint="@null"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <include layout="@layout/layout_switch_up" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -303,12 +189,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:background="@color/white">
                     <FrameLayout
                         android:layout_width="40dp"
                         android:layout_height="40dp">
-                        <View android:layout_width="28dp" android:layout_height="28dp" android:layout_marginTop="12dp" android:layout_marginStart="12dp" android:background="#4FBBFF" />
-                        <View android:layout_width="28dp" android:layout_height="28dp" android:background="@color/primary_color" />
+                        <View android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="12dp"
+                            android:background="#4FBBFF" />
+                        <View android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@color/primary_color" />
                     </FrameLayout>
                     <TextView
                         android:layout_width="wrap_content"

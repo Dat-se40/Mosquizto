@@ -6,6 +6,7 @@ import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
+import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
 import com.example.mosquizto.Models.Collection;
 
 import java.util.List;
@@ -72,4 +73,10 @@ public interface CollectionApi {
     Call<ApiResponse<Void>> deleteCollection(@Path("id") int id);
     @DELETE("collection/item/{id}")
     Call<ApiResponse<CollectionItemResponse>> deleteCollectionItem(@Path("id") int id);
+    @GET("collection/item/starred")
+    Call<ApiResponse<List<StarredCollectionItemResponse>>> getStarredCollections();
+    @PUT("collection/item/{id}/star")
+    Call<ApiResponse<StarredCollectionItemResponse>> starCollectionItem(@Path("id") int id);
+    @DELETE("collection/item/{id}/star")
+    Call<ApiResponse<Void>> unstarCollectionItem(@Path("id") int id);
 }
