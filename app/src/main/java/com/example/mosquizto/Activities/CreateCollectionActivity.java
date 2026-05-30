@@ -42,24 +42,56 @@ public class CreateCollectionActivity extends AppCompatActivity {
     private Integer createdCollectionId = null;
     private Boolean currentVisibility = true;
     private ProgressDialog progressDialog;
+    
+    private EditText etTitle, etDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_collection);
 
+        initViews();
+        handleIncomingData(); // Nhận dữ liệu nếu đây là thao tác Copy
+        setupListeners();
+    }
+
+    private void initViews() {
+        etTitle = findViewById(R.id.et_title);
+        etDescription = findViewById(R.id.et_description);
+        RecyclerView rvItems = findViewById(R.id.rv_items);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang lưu học phần...");
         progressDialog.setCancelable(false);
 
-        itemList.add(new CollectionItemRequest("", ""));
-        itemList.add(new CollectionItemRequest("", ""));
-
-        RecyclerView rvItems = findViewById(R.id.rv_items);
         adapter = new CreateCardAdapter(itemList);
         rvItems.setLayoutManager(new LinearLayoutManager(this));
         rvItems.setAdapter(adapter);
+    }
 
+    private void handleIncomingData() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("COPY_ITEMS")) {
+            // Trường hợp COPY: Điền dữ liệu từ bộ thẻ gốc
+            String title = intent.getStringExtra("COPY_TITLE");
+            if (title != null) etTitle.setText("Bản sao của " + title);
+            
+            ArrayList<CollectionItemResponse> incomingItems = intent.getParcelableArrayListExtra("COPY_ITEMS");
+            if (incomingItems != null) {
+                for (CollectionItemResponse item : incomingItems) {
+                    itemList.add(new CollectionItemRequest(item.getTerm(), item.getDefinition()));
+                }
+                adapter.notifyDataSetChanged();
+            }
+        } else {
+            // Trường hợp TẠO MỚI thông thường: Add 2 thẻ trống
+            itemList.add(new CollectionItemRequest("", ""));
+            itemList.add(new CollectionItemRequest("", ""));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void setupListeners() {
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         findViewById(R.id.btn_settings).setOnClickListener(v -> {
@@ -71,6 +103,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         findViewById(R.id.btn_add_card).setOnClickListener(v -> {
             itemList.add(new CollectionItemRequest("", ""));
             adapter.notifyItemInserted(itemList.size() - 1);
+            RecyclerView rvItems = findViewById(R.id.rv_items);
             rvItems.smoothScrollToPosition(itemList.size() - 1);
         });
 
@@ -78,8 +111,8 @@ public class CreateCollectionActivity extends AppCompatActivity {
     }
 
     private void handleSave() {
-        String title = ((EditText) findViewById(R.id.et_title)).getText().toString().trim();
-        String description = ((EditText) findViewById(R.id.et_description)).getText().toString().trim();
+        String title = etTitle.getText().toString().trim();
+        String description = etDescription.getText().toString().trim();
         
         if (title.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
@@ -95,11 +128,10 @@ public class CreateCollectionActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<ApiResponse<Integer>> call, @NonNull Response<ApiResponse<Integer>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     createdCollectionId = response.body().getData();
-                    Log.d("CreateCollection", "Tạo Collection thành công ID: " + createdCollectionId);
                     createAllItemsSequentially(0);
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(CreateCollectionActivity.this, "Lỗi tạo học phần: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateCollectionActivity.this, "Lỗi tạo học phần", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -129,23 +161,15 @@ public class CreateCollectionActivity extends AppCompatActivity {
         item.setCollectionId(createdCollectionId);
         item.setOrderIndex(index);
         item.setImageUrl("");
-        Log.d("CreateCollection", "Đang gửi Item " + index + ": " + item.getTerm());
 
         collectionApi.createCollectionItem(item).enqueue(new Callback<ApiResponse<CollectionItemResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<CollectionItemResponse>> call, Response<ApiResponse<CollectionItemResponse>> response) {
-                if (response.isSuccessful()) {
-                    Log.d("CreateCollection", "Lưu Item " + index + " thành công");
-                } else {
-                    Log.e("CreateCollection", "Lưu Item " + index + " thất bại: " + response.code());
-
-                }
                 createAllItemsSequentially(index + 1);
             }
 
             @Override
             public void onFailure(Call<ApiResponse<CollectionItemResponse>> call, Throwable t) {
-                Log.e("CreateCollection", "Lỗi mạng khi lưu Item " + index, t);
                 createAllItemsSequentially(index + 1);
             }
         });

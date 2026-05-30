@@ -1,8 +1,10 @@
 package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.request.CollectionItemRequest;
+import com.example.mosquizto.Dto.request.CollectionReportRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
+import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
@@ -32,7 +34,7 @@ public interface CollectionApi {
 
     // Lấy chi tiết 1 thông tin bộ thẻ theo ID
     @GET("collection/{id}")
-    Call<ApiResponse<Collection>> getCollectionById(@Path("id") int id);
+    Call<ApiResponse<CollectionResponse>> getCollectionById(@Path("id") int id);
 
     // Lấy ra danh sách các item của 1 bộ thẻ
     @GET("collection/item/{id}")
@@ -62,10 +64,24 @@ public interface CollectionApi {
             @Query("size") int size,
             @Query("author") String author
     );
+    @PUT("collection/{id}") // Thay đổi endpoint cho khớp với BE
+    Call<ApiResponse<Integer>> updateCollection(@Path("id") int id, @Body CollectionRequest request);
+
+    // Cập nhật từng Item trong Collection
+    @PUT("collection/item/{id}") // Thay đổi endpoint cho khớp với BE
+    Call<ApiResponse<CollectionItemResponse>> updateCollectionItem(@Path("id") int id, @Body CollectionItemRequest request);
+
+    @DELETE("collection/{id}")
+    Call<ApiResponse<Void>> deleteCollection(@Path("id") int id);
+    @DELETE("collection/item/{id}")
+    Call<ApiResponse<CollectionItemResponse>> deleteCollectionItem(@Path("id") int id);
     @GET("collection/item/starred")
     Call<ApiResponse<List<StarredCollectionItemResponse>>> getStarredCollections();
     @PUT("collection/item/{id}/star")
     Call<ApiResponse<StarredCollectionItemResponse>> starCollectionItem(@Path("id") int id);
     @DELETE("collection/item/{id}/star")
     Call<ApiResponse<Void>> unstarCollectionItem(@Path("id") int id);
+
+    @POST("reports/collections/{collectionId}")
+    Call<ApiResponse<CollectionReportResponse>> reportCollection(@Path("collectionId") int collectionId, @Body CollectionReportRequest request);
 }

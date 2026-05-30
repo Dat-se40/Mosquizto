@@ -159,6 +159,38 @@
     <string name="game_btn_fb">Play Fill Blank</string>
     <string name="game_desc_match">Match terms to definitions</string>
     <string name="game_btn_match">Play Match</string>
+
+    <!-- Report Dialog -->
+    <string name="report_collection_title">Report set</string>
+    <string name="report_reason_title">Select a reason (Required)</string>
+    <string name="report_reason_inaccurate">Inaccurate information</string>
+    <string name="report_reason_offensive">Offensive content / Violation</string>
+    <string name="report_reason_spam">Spam / Advertisement</string>
+    <string name="report_reason_other">Other reason</string>
+    <string name="report_details_title">Additional details (Optional)</string>
+    <string name="report_details_hint">Enter detailed description...</string>
+    <string name="report_submit_button">Submit report</string>
+    <string name="msg_report_select_reason">Please select a reason for the report!</string>
+    <string name="msg_report_success">Report submitted successfully. Thank you!</string>
+    <string name="msg_report_error">Failed to submit report. Please try again later.</string>
+    <string name="msg_network_error">Network error!</string>
+    <string name="msg_loading_data">Loading data, please try again later</string>
     <string name="all">All</string>
     <string name="starred">Starred</string>
+
+    <!-- Folder strings -->
+    <string name="save_to_folder">Save to folder</string>
+    <string name="folder_icon_desc">Folder icon</string>
+    <string name="status_icon_desc">Status icon</string>
+    <string name="msg_added_to_folder">Added to %1$s</string>
+    <string name="msg_failed_add_to_folder">Failed to add to folder</string>
+    <string name="msg_fetching_folders">Loading folders...</string>
+    <string name="msg_no_folders">You don\'t have any folders yet</string>
+    <string name="done">Done</string>
+    <string name="new_folder">New Folder</string>
+    <string name="folder_name">Folder name</string>
+    <string name="create">Create</string>
+    <string name="msg_failed_create_folder">Failed to create folder</string>
+    <string name="msg_empty_set">This set is empty</string>
+    <string name="create_new_folder">Create a new folder</string>
 </resources>

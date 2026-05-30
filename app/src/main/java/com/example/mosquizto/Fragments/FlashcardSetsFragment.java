@@ -111,7 +111,7 @@ public class FlashcardSetsFragment extends Fragment {
         // 1. Xử lý Logic kéo để Refresh
         swipeRefreshLayout.setOnRefreshListener(this::fetchMyCollections);
 
-        // 2. Xử lý Logic lọc (Filters)
+
 
         // Tự động load API lần đầu tiên
         fetchMyCollections();
@@ -129,9 +129,16 @@ public class FlashcardSetsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
-                    if (remoteList == null) {
-                        remoteList = new ArrayList<>();
+
+                    // Tà đạo: Lưu count vào SessionManager để dùng sau
+                    if (remoteList != null) {
+                        for (CollectionResponse col : remoteList) {
+                            if (col.getId() != null) {
+                                sessionManager.saveCollectionCount(col.getId(), col.getCount() != null ? col.getCount() : 0);
+                            }
+                        }
                     }
+
                     originalList = remoteList;
                     adapter.setCollectionList(remoteList);
                     cacheCollectionCounts(getContext(), remoteList);

@@ -145,7 +145,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResultClick(SearchResultItem item) {
                 if(mainActivity != null)
-                    mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle());
+                    mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle(), item.getCreatedByUsername());
             }
 
             @Override

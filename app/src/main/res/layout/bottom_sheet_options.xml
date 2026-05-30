@@ -15,6 +15,13 @@
         android:background="@color/app_divider" />
 
     <TextView
+        android:id="@+id/btnEdit"
+        style="@style/BottomSheetMenuItem"
+        android:drawableStart="@drawable/ic_edit"
+        android:text="Edit"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/btnAddToClass"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_group"
@@ -42,14 +49,15 @@
         android:id="@+id/btnSetInfo"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_info"
-        android:text="Set info" />
+        android:text="Set info"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/btnReport"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_report"
         android:text="Report this set"
-        android:textColor="@color/quizlet_red"
-        app:drawableTint="@color/quizlet_red"/>
+        android:textColor="#D93025"
+        app:drawableTint="#D93025"/>
 
 </LinearLayout>
