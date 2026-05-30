@@ -49,7 +49,8 @@
         android:id="@+id/btnSetInfo"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_info"
-        android:text="Set info" />
+        android:text="Set info"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/btnReport"
@@ -57,6 +58,7 @@
         android:drawableStart="@drawable/ic_report"
         android:text="Report this set"
         android:textColor="#D93025"
-        app:drawableTint="#D93025"/>
+        app:drawableTint="#D93025"
+        />
 
 </LinearLayout>

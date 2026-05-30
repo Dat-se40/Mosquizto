@@ -107,4 +107,20 @@
     <string name="msg_loading_data">Đang tải dữ liệu, vui lòng thử lại sau</string>
     <string name="all">Tất cả</string>
     <string name="starred">Đã đánh dấu sao</string>
+
+    <!-- Folder strings -->
+    <string name="save_to_folder">Lưu vào thư mục</string>
+    <string name="folder_icon_desc">Biểu tượng thư mục</string>
+    <string name="status_icon_desc">Biểu tượng trạng thái</string>
+    <string name="msg_added_to_folder">Đã thêm vào %1$s</string>
+    <string name="msg_failed_add_to_folder">Không thể thêm vào thư mục</string>
+    <string name="msg_fetching_folders">Đang tải danh sách thư mục...</string>
+    <string name="msg_no_folders">Bạn chưa có thư mục nào</string>
+    <string name="done">Xong</string>
+    <string name="new_folder">Thư mục mới</string>
+    <string name="folder_name">Tên thư mục</string>
+    <string name="create">Tạo</string>
+    <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
+    <string name="msg_empty_set">Bộ thẻ này đang trống</string>
+    <string name="create_new_folder">Tạo thư mục mới</string>
 </resources>
