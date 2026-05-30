@@ -23,9 +23,9 @@
                 android:id="@+id/btnBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/circle_button_bg"
                 android:src="@drawable/ic_arrow_back"
-                android:contentDescription="Quay lại"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/imageButton_back"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true" />
 
@@ -125,7 +125,7 @@
             <TextView
                 android:id="@+id/tvAchievements"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:text="@string/title_achievements"
                 android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
@@ -135,10 +135,10 @@
 
             <TextView
                 android:id="@+id/tvSeeAll"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/see_all"
-                android:textColor="@color/text_link"
+                android:textColor="@color/primary_color"
                 android:textSize="14sp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
@@ -183,8 +183,10 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            android:background="@drawable/custom_edittext_border"
+            android:layout_marginTop="20dp"
+            android:text="@string/btn_logout"
+            android:textSize="17sp"
+            android:background="@drawable/custom_redbtn"
             android:id="@+id/btn_logout">
 
         </Button>

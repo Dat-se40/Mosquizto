@@ -23,6 +23,7 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import com.example.mosquizto.Adapters.TermListAdapter;
 import com.example.mosquizto.Dto.request.StartStudySessionRequest;
 import com.example.mosquizto.Dto.request.StudySessionDetailRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
@@ -90,6 +91,7 @@ public class MemoryGameActivity extends AppCompatActivity {
     private View layoutSkippedResult, layoutActionsFb;
     private TextView btnDontKnow;
     private Button btnSubmitFb, btnContinueFb;
+    private androidx.recyclerview.widget.RecyclerView rvLearnedTerms;
 
     // UI MATCH
     private TextView[] matchLeftViews;
@@ -151,6 +153,8 @@ public class MemoryGameActivity extends AppCompatActivity {
         viewSummary = findViewById(R.id.viewSummary);
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle);
         btnContinueSummary = findViewById(R.id.btnContinueSummary);
+        rvLearnedTerms = findViewById(R.id.rvLearnedTerms);
+        rvLearnedTerms.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
 
         findViewById(R.id.btnCloseGame).setOnClickListener(v -> handleClose());
 
@@ -213,7 +217,7 @@ public class MemoryGameActivity extends AppCompatActivity {
         Collections.shuffle(shuffledDeck);
 
         if (currentGameMode == GameMode.LEARN) {
-            tvRoundName.setText("LEARN MODE");
+            tvRoundName.setText(getString(R.string.tvRound1));
             // Learn: 10 câu MC, sau đó đổi mode sang FB (Giả lập logic cũ nhưng dùng chung mảng)
             int limit = Math.min(10, shuffledDeck.size());
             for (int i = 0; i < limit; i++) {
@@ -221,7 +225,7 @@ public class MemoryGameActivity extends AppCompatActivity {
             }
             totalTestQuestions = limit;
         } else {
-            tvRoundName.setText("TEST MODE");
+            tvRoundName.setText(getString(R.string.tvRound2));
             // Test: Mix MC, FB, Match. Max 20 questions
             int limit = Math.min(20, shuffledDeck.size());
             int i = 0;
@@ -351,12 +355,12 @@ public class MemoryGameActivity extends AppCompatActivity {
             layoutResultMc.setVisibility(View.VISIBLE);
             if (isCorrect) {
                 clickedBtn.setBackgroundResource(R.drawable.bg_option_correct);
-                tvResultMessageMc.setText("Correct!");
+                tvResultMessageMc.setText(getString(R.string.tvCorrectAnswer));
                 tvResultMessageMc.setTextColor(Color.parseColor("#4CAF50"));
                 new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
             } else {
                 clickedBtn.setBackgroundResource(R.drawable.bg_option_wrong);
-                tvResultMessageMc.setText("Not quite!");
+                tvResultMessageMc.setText(getString(R.string.tvNotQuiteAnswer));
                 tvResultMessageMc.setTextColor(Color.parseColor("#F44336"));
                 btnContinueMc.setVisibility(View.VISIBLE);
                 btnContinueMc.setOnClickListener(v -> moveToNext());
@@ -398,7 +402,7 @@ public class MemoryGameActivity extends AppCompatActivity {
             layoutActionsFb.setVisibility(View.GONE);
 
             if (isCorrect) {
-                Toast.makeText(MemoryGameActivity.this, "Excellent!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MemoryGameActivity.this, getString(R.string.tvExcellentAnswer), Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
             } else {
                 layoutSkippedResult.setVisibility(View.VISIBLE);
@@ -536,8 +540,8 @@ public class MemoryGameActivity extends AppCompatActivity {
     private void showLearnMidwaySummary() {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
-        tvSummaryTitle.setText("Round 1 Done!");
-        btnContinueSummary.setText("Continue to Round 2 (Fill Blank)");
+        tvSummaryTitle.setText(R.string.round_1_done);
+        btnContinueSummary.setText(R.string.tvContinueRound2);
 
         btnContinueSummary.setOnClickListener(v -> {
             // Biến MC queue thành FB queue để làm vòng 2
@@ -553,14 +557,20 @@ public class MemoryGameActivity extends AppCompatActivity {
         progressGame.setProgress(100);
         viewSummary.setVisibility(View.VISIBLE);
 
-        if (currentGameMode == GameMode.TEST) {
-            int percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
-            tvSummaryTitle.setText("Test Finished!\nScore: " + percentage + "%");
+        if (currentGameMode != GameMode.LEARN) {
+            int percentage = 0;
+            if (!bulkResults.isEmpty()) {
+                percentage = (int)(((float)totalCorrectTest / bulkResults.size()) * 100);
+            }
+            tvSummaryTitle.setText(getString(R.string.tvTestFinished) + percentage + "%");
         } else {
-            tvSummaryTitle.setText("You've mastered this set!");
+            tvSummaryTitle.setText(R.string.tvYouMaster);
         }
 
-        btnContinueSummary.setText("Finish and Save");
+        TermListAdapter adapter = new TermListAdapter(allItems);
+        rvLearnedTerms.setAdapter(adapter);
+
+        btnContinueSummary.setText(R.string.tvfinish_and_save);
         btnContinueSummary.setOnClickListener(v -> submitAllResultsAndExit());
     }
 
@@ -568,7 +578,7 @@ public class MemoryGameActivity extends AppCompatActivity {
         if (sessionId == null) return;
 
         // Hiển thị một thông báo nhẹ hoặc loading nếu muốn
-        Toast.makeText(this, "Saving your progress...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.tvSavingProgress), Toast.LENGTH_SHORT).show();
 
         boolean isFullTest = (currentGameMode == GameMode.TEST);
 
@@ -585,7 +595,7 @@ public class MemoryGameActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t) {
-                Log.e("DEBUG_GAME", "Direct save failed, fallback to WorkManager: " + t.getMessage());
+                Log.e("DEBUG_GAME", getString(R.string.nt_direct_save_failed_fallback_to_workmanager) + t.getMessage());
                 // Nếu lỗi mạng/lỗi kết nối trực tiếp, dùng WorkManager làm cứu cánh để sync sau
                 enqueueCompleteWorker();
                 finish();
@@ -622,7 +632,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                 .build();
 
         WorkManager.getInstance(this).enqueueUniqueWork(
-                "complete_session_" + sessionId,
+                getString(R.string.ntCompleteSession) + sessionId,
                 ExistingWorkPolicy.KEEP,
                 work
         );

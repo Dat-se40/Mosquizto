@@ -81,7 +81,7 @@ public class FolderDetailActivity extends AppCompatActivity {
         btnBigAddMaterials = findViewById(R.id.btnBigAddMaterials);
         rvFolderCollections = findViewById(R.id.rvFolderCollections);
 
-        tvToolbarTitle.setText(folderName != null ? folderName : "Thư mục");
+        tvToolbarTitle.setText(folderName != null ? folderName : getString(R.string.tvToolbarTitle));
         rvFolderCollections.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -90,7 +90,7 @@ public class FolderDetailActivity extends AppCompatActivity {
 
         View.OnClickListener addMaterialsAction = v -> {
             if (folderId == null || folderId == -1) {
-                Toast.makeText(this, "Folder không hợp lệ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.ntInvalidFolder), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -117,7 +117,7 @@ public class FolderDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onShareFolder() {
-                    Toast.makeText(FolderDetailActivity.this, "Chức năng chia sẻ đang phát triển", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.developing_feature), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -142,13 +142,13 @@ public class FolderDetailActivity extends AppCompatActivity {
                     tvToolbarTitle.setText(folderName);
                     showCollections(data.getCollections());
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, "Không thể tải thư mục", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntCannotLoadFolder), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -186,20 +186,20 @@ public class FolderDetailActivity extends AppCompatActivity {
         form.setPadding(padding, 8, padding, 0);
 
         EditText etName = new EditText(this);
-        etName.setHint("Tên thư mục");
+        etName.setHint(getString(R.string.tvToolbarTitle));
         etName.setText(folderName);
         form.addView(etName);
 
         EditText etDescription = new EditText(this);
-        etDescription.setHint("Mô tả");
+        etDescription.setHint(getString(R.string.et_description));
         etDescription.setText(folderDescription);
         form.addView(etDescription);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Chỉnh sửa thư mục")
+                .setTitle(getString(R.string.editFolder))
                 .setView(form)
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Lưu", null)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.save), null)
                 .create();
 
         dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
@@ -207,7 +207,7 @@ public class FolderDetailActivity extends AppCompatActivity {
             String description = etDescription.getText().toString().trim();
 
             if (name.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập tên thư mục", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.ntEnterFolderName), Toast.LENGTH_SHORT).show();
             } else {
                 updateFolder(name, description, dialog);
             }
@@ -225,26 +225,26 @@ public class FolderDetailActivity extends AppCompatActivity {
                     folderName = folder.getName();
                     folderDescription = folder.getDescription();
                     tvToolbarTitle.setText(folderName);
-                    Toast.makeText(FolderDetailActivity.this, "Đã cập nhật thư mục", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntUpdateFolder), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntUpdateFailed), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showDeleteConfirmDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Xóa thư mục?")
-                .setMessage("Các học phần sẽ được gỡ khỏi thư mục này.")
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Xóa", (dialog, which) -> deleteFolder())
+                .setTitle(getString(R.string.deleteFolder))
+                .setMessage(getString(R.string.ntRemoveStudySets))
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteFolder())
                 .show();
     }
 
@@ -253,16 +253,16 @@ public class FolderDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(FolderDetailActivity.this, "Đã xóa thư mục", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntFolderDeleted), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, "Xóa thư mục thất bại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntDeleteFailed), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -272,7 +272,7 @@ public class FolderDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(FolderDetailActivity.this, "Đã xóa khỏi thư mục", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntDeleted), Toast.LENGTH_SHORT).show();
                     if (adapter != null) {
                         adapter.removeItem(position);
                         if (adapter.getItemCount() == 0) {
@@ -281,13 +281,13 @@ public class FolderDetailActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntDeleteFailed), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
             }
         });
     }

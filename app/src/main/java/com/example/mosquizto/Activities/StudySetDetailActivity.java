@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -128,7 +129,10 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 }
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
-
+            ImageButton btnBack = findViewById(R.id.btnBack);
+            btnBack.setOnClickListener(v -> {
+                finish(); // Trở về màn hình trước đó
+            });
             viewPagerFlashcards = findViewById(R.id.viewPagerFlashcards);
             rvTerms = findViewById(R.id.rvTerms);
             rvTerms.setItemAnimator(null);

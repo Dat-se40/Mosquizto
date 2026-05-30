@@ -1,4 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFEBEE" /> <stroke android:width="2dp" android:color="#F44336" />
+    <solid android:color="@color/white" />
+    <stroke android:width="3dp" android:color="@color/quizlet_red" />
     <corners android:radius="8dp" />
 </shape>

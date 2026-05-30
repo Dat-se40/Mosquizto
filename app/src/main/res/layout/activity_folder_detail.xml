@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Tên Folder"
+                android:text="@string/tvToolbarTitle"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_color_primary"/>
@@ -68,9 +68,10 @@
             android:src="@drawable/ic_folder"
             app:tint="@color/quizlet_gray_icon"/>
         <TextView
+            android:id="@+id/tvEmptyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thư mục này chưa có học liệu"
+            android:text="@string/tvEmptyTitle"
             android:textColor="@color/text_color_secondary"
             android:layout_marginTop="16dp"
             android:textSize="16sp"/>
@@ -78,7 +79,7 @@
             android:id="@+id/btnBigAddMaterials"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm học liệu"
+            android:text="@string/btnBigAddMaterials"
             android:textColor="@color/app_on_primary"
             android:backgroundTint="@color/primary_color"
             android:layout_marginTop="24dp"

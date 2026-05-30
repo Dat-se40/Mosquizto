@@ -22,10 +22,11 @@
                     android:src="@drawable/ic_arrow_back"
                     android:background="?attr/selectableItemBackgroundBorderless"/>
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvCreateStudySet"
+                    android:layout_width="350dp"
                     android:layout_height="wrap_content"
-                    android:text="Tạo học phần"
-                    android:layout_centerInParent="true"
+                    android:text="@string/tvCreateStudySet"
+                    android:gravity="center_horizontal"
                     android:textStyle="bold"
                     android:textSize="22sp"
                     android:textColor="@color/text_color_primary"/>
@@ -35,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_settings"
                     android:layout_toStartOf="@id/btn_save"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="5dp"
                     android:background="?attr/selectableItemBackgroundBorderless"/>
                 <ImageButton
                     android:id="@+id/btn_save"
@@ -63,9 +64,9 @@
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tiêu đề"
+                android:hint="@string/et_title"
                 android:background="@null"
-                android:textSize="20sp" android:textStyle="bold"
+                android:textSize="20sp"
                 android:textColor="@color/text_color_primary"
                 android:textColorHint="@color/search_bar_hint"/>
 
@@ -78,16 +79,17 @@
             <EditText android:id="@+id/et_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Mô tả"
+                android:hint="@string/et_description"
                 android:background="@null"
-                android:textSize="20sp" android:textStyle="bold"
+                android:textSize="20sp"
                 android:textColor="@color/text_color_primary"
                 android:textColorHint="@color/search_bar_hint"/>
 
             <View android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/app_divider"
-                android:layout_marginTop="8dp" android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_items"
@@ -98,7 +100,7 @@
             <Button android:id="@+id/btn_add_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+ THÊM THẺ"
+                android:text="@string/btn_add_card"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/background_white"
                 android:textColor="@color/primary_color"/>
