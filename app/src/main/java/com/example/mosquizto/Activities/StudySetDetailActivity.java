@@ -96,6 +96,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             setContentView(R.layout.activity_study_set_detail);
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi hiển thị giao diện!", Toast.LENGTH_LONG).show();
+            Log.d("StudySetDetailActivity", "onCreate: FAILED: " + e.getMessage());
             finish();
             return;
         }

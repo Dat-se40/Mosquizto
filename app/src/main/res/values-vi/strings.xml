@@ -128,7 +128,6 @@
     <string name="gameLearn">Học tập</string>
     <string name="tvTermsTitle">Thuật ngữ</string>
     <string name="fabStudy">Học</string>
-    <string name="delete">Xóa</string>
     <string name="Complete">Hoàn thành</string>
     <string name="Congratulation"> Bạn đã hoàn thành tất cả!</string>
     <string name="Reload">Tải lại</string>
@@ -138,7 +137,7 @@
     <string name="matching">Nối khớp</string>
     <string name="test">Bài kiểm tra</string>
     <string name="finish_and_save">Hoàn thành và lưu</string>
-    <string name="round_1_done">Hoàn thành vòng 1</string>
+
     <string name="continue_to_round_2_fill_blank">Tiếp tục với vòng 2: Điền vòng ô trống</string>
     <string name="you_ve_mastered_this_set">Bạn đã thành thạo bộ này</string>
     <string name="learn_questions">Học các câu hỏi</string>

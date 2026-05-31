@@ -218,8 +218,10 @@
         android:text="@string/fabStudy"
         android:textSize="17sp"
         android:textColor="@color/app_on_primary"
+        android:gravity="center"
+        android:paddingVertical="16dp"
         app:backgroundTint="@color/primary_color"
         app:cornerRadius="40dp"
         android:visibility="visible"
-        android:background="@drawable/custom_btn"/>
+        app:elevation="4dp" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

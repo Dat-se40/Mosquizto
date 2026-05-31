@@ -129,7 +129,6 @@
     <string name="gameLearn">Learn</string>
     <string name="tvTermsTitle">Terms</string>
     <string name="fabStudy">Study set</string>
-    <string name="delete">Delete</string>
 
     <string name="Complete">Complete</string>
     <string name="Congratulation"> Congratulation!</string>
@@ -140,7 +139,7 @@
     <string name="matching">Matching</string>
     <string name="test">Test</string>
     <string name="finish_and_save">Finish and Save</string>
-    <string name="round_1_done">Round 1 Done!</string>
+
     <string name="continue_to_round_2_fill_blank">Continue to Round 2 (Fill Blank)</string>
     <string name="you_ve_mastered_this_set">You\'ve mastered this set!</string>
     <string name="learn_questions">Learn questions</string>
