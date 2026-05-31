@@ -69,6 +69,13 @@
             android:exported="false">
         </activity>
 
+        <activity
+            android:name=".Activities.FlashcardActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".Activities.FlashcardSummaryActivity" />
+
         <activity android:name=".Activities.WelcomeActivity" android:exported="true"
             android:theme="@style/Theme.Mosquizto">
             <intent-filter>
