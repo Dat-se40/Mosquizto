@@ -22,13 +22,15 @@
         android:layout_marginBottom="8dp"
         android:text="Tên bộ thẻ"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textColor="@color/text_color_secondary"/>
 
     <TextView
         android:id="@+id/tvRemoveSet"
         style="@style/BottomSheetMenuItem"
         android:text="Xóa khỏi thư mục"
-        android:drawableStart="@drawable/ic_delete" />
+        android:drawableStart="@drawable/ic_delete"
+        android:textColor="@color/quizlet_red"
+        android:drawableTint="@color/quizlet_red"/>
 
 </LinearLayout>

@@ -17,19 +17,21 @@
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/app_icon_tint"/>
         <TextView
+            android:id="@+id/tvOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Tùy chọn"
+            android:text="@string/tvOption"
             android:textColor="@color/text_color_primary"
             android:textSize="18sp"
             android:textStyle="bold"/>
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
+        android:id="@+id/tvWhocanaccess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AI CÓ QUYỀN XEM?"
+        android:text="@string/tvWhocanaccess"
         android:padding="16sp"
         android:textColor="@color/text_color_secondary"
         android:textSize="12sp"
@@ -45,13 +47,13 @@
             android:id="@+id/rb_public"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mọi người"
+            android:text="@string/rb_public"
             android:textColor="@color/text_color_primary"/>
         <RadioButton
             android:id="@+id/rb_private"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chỉ mình tôi"
+            android:text="@string/rb_private"
             android:textColor="@color/text_color_primary"/>
     </RadioGroup>
 </LinearLayout>

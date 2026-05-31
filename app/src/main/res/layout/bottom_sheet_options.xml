@@ -58,7 +58,6 @@
         android:drawableStart="@drawable/ic_report"
         android:text="Report this set"
         android:textColor="#D93025"
-        app:drawableTint="#D93025"
-        />
+        app:drawableTint="#D93025"/>
 
 </LinearLayout>

@@ -16,9 +16,9 @@
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/circle_button_bg"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Quay lại"
+            android:contentDescription="@string/imageButton_back"
             android:layout_marginBottom="16dp" />
 
         <TextView
@@ -158,7 +158,7 @@
             android:layout_height="56dp"
             android:text="@string/btn_create_account"
             android:textColor="@color/app_on_primary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:background="@drawable/custom_btn"
             app:backgroundTint="@null"
             android:enabled="false" />

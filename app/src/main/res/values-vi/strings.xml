@@ -17,7 +17,7 @@
     <string name="btn_SendLink">Gửi liên kết</string>
     <string name="textView_ResetNoti">Chúng tôi đã gửi một email đến %1$s</string>
     <string name="textView_NoteRSNoti">Nhấp vào liên kết trong email. Hãy chắc chắn rằng bạn đã
-        kiểm tra hộp thư rác nếu không thấy email trong hộp thư của bạn</string>
+        kiểm tra hộp thư rác nếu không tìm thấy email trong hộp thư của bạn</string>
     <string name="btn_Gobacktologin">Quay lại đăng nhập</string>
     <string name="imageButton_back">Quay lại</string>
     <string name="lostConnectionNoti">Mất kết nối</string>
@@ -34,10 +34,10 @@
     <string name="title_profile">Hồ sơ</string>
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_activity">Hoạt động</string>
-    <string name="title_achievements">Thành tựu</string>
+    <string name="title_achievements">Thành tích</string>
     <string name="see_all">Xem tất cả</string>
     <string name="streak_title">Bắt đầu một chuỗi phiên học</string>
-    <string name="streak_desc">Các chuỗi phiên học giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
+    <string name="streak_desc">Các chuỗi phiên học tập giúp bạn có động lực và đạt được mục tiêu. Bắt đầu chuỗi đầu tiên của bạn ngay hôm nay!</string>
     <string name="title_settings">Cài đặt</string>
     <string name="setting_appearance">GIAO DIỆN</string>
     <string name="setting_dark_mode">Chế độ tối</string>
@@ -45,13 +45,15 @@
 
     <string name="hint_search">Hoc phần, sách giáo khoa...</string>
     <string name="cancel">Hủy</string>
+    <string name="save">Lưu</string>"
+    <string name="delete">Xóa</string>
     <string name="scan">Quét 1 cuốn sách giáo khoa hoặc câu hỏi</string>
-    <string name="student_search">Các học sinh khác tìm kiếm</string>
+    <string name="student_search">Các học sinh khác cũng đang tìm kiếm</string>
     <string name="no_results">Không có kết quả</string>
     <string name="results">Kết quả</string>
     <string name="clear_all">Xóa tất cả</string>
 
-    <string name="headline">Cách học tốt nhất.\nĐăng ký miễn phí.</string>
+    <string name="headline">Phương pháp học tập tốt nhất.\nĐăng ký miễn phí ngay.</string>
     <string name="welcome_terms_text">Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi</string>
     <string name="btn_google">Tiếp tục với Google</string>
     <string name="btn_email">Đăng ký bằng Email</string>
@@ -60,7 +62,72 @@
     <string name="sign_up">Đăng Kí</string>
     <string name="continue_with">Tiếp tục với %1$s</string>
     <string name="logout">Đăng xuất</string>
-    <string name="delete">Xóa</string>
+
+    <string name="etSearch">Tìm kiếm</string>
+    <string name="btnCreateNew">Tạo học phần mới</string>
+    <string name="tvOption">Tùy chọn</string>
+    <string name="tvWhocanaccess">AI CÓ QUYỀN XEM?</string>
+    <string name="rb_public">Mọi người</string>
+    <string name="rb_private">Chỉ mình tôi</string>
+
+    <string name="tvCreateStudySet">Tạo học phần</string>
+    <string name="et_title">Tiêu đề</string>
+    <string name="et_description">Mô tả</string>
+    <string name="btn_add_card">Thêm thẻ</string>
+    <string name="tvToolbarTitle">Tên thư mục</string>
+    <string name="tvEmptyTitle">Thư mục này chưa có học phần</string>
+    <string name="btnBigAddMaterials">Thêm học phần</string>
+    <string name="ntInvalidFolder">Thư mục không hợp lệ</string>
+    <string name="ntCannotLoadFolder">Không thể tải thư mục</string>
+    <string name="editFolder">Chỉnh sửa thư mục</string>
+    <string name="ntEnterFolderName">Vui lòng nhập tên thư mục</string>
+    <string name="ntUpdateFolder">Đã cập nhật thư mục</string>
+    <string name="ntUpdateFailed">Cập nhật thất bại</string>
+    <string name="deleteFolder">Xóa thư mục?</string>
+    <string name="ntRemoveStudySets">Các học phần sẽ bị xóa khỏi thư mục này.</string>
+    <string name="ntFolderDeleted">Đã xóa thư mục</string>
+    <string name="ntDeleteFailed">Xóa thất bại</string>
+    <string name="ntDeleted">Đã xóa khỏi thư mục</string>
+
+    <string name="developing_feature">Chức năng đang phát triển</string>
+    <string name="ntConnectionError">Lỗi kết nối</string>
+
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_create">Tạo</string>
+    <string name="nav_library">Thư viện</string>
+    <string name="nav_profile">Tài khoản</string>
+
+    <string name="tvRoundName">HỌC</string>
+    <string name="tvModeLabelMc">CHỌN ĐÁP ÁN ĐÚNG</string>
+    <string name="tvModeLabelFb">ĐIỀN VÀO Ô TRỐNG</string>
+    <string name="tvResultMessageFb">Hãy thử lại sau</string>
+    <string name="tvModeLabelMatch">NỐI Ô</string>
+    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>"
+    <string name="tvCorrectAnswer">Chính xác!</string>
+    <string name="tvNotQuiteAnswer">Khá ổn!</string>
+    <string name="tvExcellentAnswer">Xuất sắc!</string>
+    <string name="edtAnswer">Nhập câu trả lời</string>
+    <string name="btnDontKnow">Không biết</string>
+    <string name="btnSubmitFb">Gửi</string>
+    <string name="tvSummaryTitle">Bạn đang làm rất tốt! 🎉</string>
+
+    <string name="tvRound1">HỌC TẬP</string>
+    <string name="tvRound2">KIỂM TRA</string>
+
+    <string name="btnContinue">Tiếp tục</string>
+    <string name="round_1_done">Hoàn thành vòng 1!</string>
+    <string name="tvContinueRound2">Tiếp tục vòng 2</string>
+    <string name="tvTestFinished">Kiểm tra kết thúc!\nĐiểm: </string>
+    <string name="tvYouMaster">Bạn đã thành thạo học phần này!</string>
+    <string name="tvfinish_and_save">Hoàn thành và lưu</string>
+    <string name="tvSavingProgress">Đang lưu tiến độ...</string>
+    <string name="ntCompleteSession">hoan_thanh_phien_hoc_</string>
+    <string name="nt_direct_save_failed_fallback_to_workmanager">Lưu trực tiếp thất bại, chuyển sang phương án dự phòng sử dụng WorkManager</string>
+    <string name="btn_logout">Đăng xuất</string>
+
+    <string name="gameLearn">Học tập</string>
+    <string name="tvTermsTitle">Thuật ngữ</string>
+    <string name="fabStudy">Học</string>
     <string name="Complete">Hoàn thành</string>
     <string name="Congratulation"> Bạn đã hoàn thành tất cả!</string>
     <string name="Reload">Tải lại</string>
@@ -70,7 +137,7 @@
     <string name="matching">Nối khớp</string>
     <string name="test">Bài kiểm tra</string>
     <string name="finish_and_save">Hoàn thành và lưu</string>
-    <string name="round_1_done">Hoàn thành vòng 1</string>
+
     <string name="continue_to_round_2_fill_blank">Tiếp tục với vòng 2: Điền vòng ô trống</string>
     <string name="you_ve_mastered_this_set">Bạn đã thành thạo bộ này</string>
     <string name="learn_questions">Học các câu hỏi</string>

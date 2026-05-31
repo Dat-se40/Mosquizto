@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -95,6 +96,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             setContentView(R.layout.activity_study_set_detail);
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi hiển thị giao diện!", Toast.LENGTH_LONG).show();
+            Log.d("StudySetDetailActivity", "onCreate: FAILED: " + e.getMessage());
             finish();
             return;
         }
@@ -139,7 +141,10 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 }
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
-
+            ImageButton btnBack = findViewById(R.id.btnBack);
+            btnBack.setOnClickListener(v -> {
+                finish(); // Trở về màn hình trước đó
+            });
             viewPagerFlashcards = findViewById(R.id.viewPagerFlashcards);
             rvTerms = findViewById(R.id.rvTerms);
             rvTerms.setItemAnimator(null);
@@ -401,7 +406,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
-            
+
             view.findViewById(R.id.btnDone).setOnClickListener(v -> dialog.dismiss());
             view.findViewById(R.id.btnCreateNewFolderInDialog).setOnClickListener(v -> {
                 showSimpleCreateFolderDialog(view, dialog);
@@ -473,7 +478,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private void loadFoldersForSaveDialog(View dialogView, AlertDialog dialog) {
         LinearLayout layoutFolderList = dialogView.findViewById(R.id.layoutFolderList);
         layoutFolderList.removeAllViews();
-        
+
         TextView tvMsg = new TextView(this);
         tvMsg.setText(R.string.msg_fetching_folders);
         tvMsg.setPadding(32, 32, 32, 32);
@@ -518,7 +523,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
         tvFolderName.setText(folder.getName());
         ivStatus.setImageResource(R.drawable.ic_add);
-        
+
         itemView.setOnClickListener(v -> {
             ivStatus.setEnabled(false);
             folderApi.addCollectionToFolder(folder.getId(), collectionId).enqueue(new Callback<ApiResponse<FolderResponse>>() {
