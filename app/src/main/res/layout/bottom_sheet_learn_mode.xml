@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose a goal for this session"
+        android:text="@string/choose_a_goal_for_this_session"
         android:textSize="28sp"
         android:fontFamily="@font/geomanist_bold"
         android:textColor="@color/text_color_primary"
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="Cram for a test"
+                android:text="@string/cram_for_a_test"
                 android:textSize="20sp"
                 android:textColor="@color/text_color_primary"/>
 
@@ -68,21 +68,23 @@
         app:cardElevation="0dp"
         app:cardCornerRadius="12dp"
         app:strokeWidth="2dp"
-        app:strokeColor="@color/primary_color">
+        app:strokeColor="@color/quizlet_border">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
             android:gravity="center_vertical"
-            android:background="@color/primary_color_light">
-        <TextView
+            android:background="@color/background_white">
+
+            <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="Memory it all"
+            android:text="@string/memory_it_all"
             android:textSize="20sp"
-            android:textColor="@color/primary_color"/>
+            android:textColor="@color/text_color_primary"/>
 
             <ImageView
                 android:layout_width="28dp"
@@ -96,7 +98,7 @@
         android:id="@+id/btnStartLearn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Start learn"
+        android:text="@string/start_learn"
         android:textSize="20sp"
         android:textColor="@color/app_on_primary"
         app:cornerRadius="30dp"
