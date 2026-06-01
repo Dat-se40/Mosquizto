@@ -80,7 +80,8 @@ public class LoginViewModel extends ViewModel {
             @Override
             public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
                 _isLoading.setValue(false);
-                _errorMessage.setValue("Lỗi kết nối server!");
+                _errorMessage.setValue("Lỗi kết nối server! " + t.getMessage() + "\n call: " + call.toString() );
+                Log.e("LoginViewModel", "onFailure: " + t.getMessage());
             }
         });
     }

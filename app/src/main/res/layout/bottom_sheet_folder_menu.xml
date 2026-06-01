@@ -17,25 +17,25 @@
     <TextView
         android:id="@+id/tvAddMaterials"
         style="@style/BottomSheetMenuItem"
-        android:text="Thêm học liệu"
+        android:text="@string/tvAddMaterials"
         android:drawableStart="@drawable/ic_add" />
 
     <TextView
         android:id="@+id/tvEditFolder"
         style="@style/BottomSheetMenuItem"
-        android:text="Chỉnh sửa thư mục"
+        android:text="@string/tvEditFolder"
         android:drawableStart="@drawable/ic_edit" />
 
     <TextView
         android:id="@+id/tvShareFolder"
         style="@style/BottomSheetMenuItem"
-        android:text="Chia sẻ thư mục"
+        android:text="@string/tvShareFolder"
         android:drawableStart="@drawable/ic_share" />
 
     <TextView
         android:id="@+id/tvDeleteFolder"
         style="@style/BottomSheetMenuItem"
-        android:text="Xóa thư mục"
+        android:text="@string/tvDeleteFolder"
         android:drawableStart="@drawable/ic_delete"
         android:textColor="#D93025"
         app:drawableTint="#D93025"/>
