@@ -44,4 +44,5 @@
 
     <color name="quizlet_green">#4CAF50</color>
     <color name="quizlet_red">#D93025</color>
+    <color name="btn_random_game">#EEF2FF</color>
 </resources>

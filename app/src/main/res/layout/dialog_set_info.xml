@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set info"
+            android:text="@string/btnSetInfo"
             android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="@color/text_color_primary"
@@ -32,7 +32,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CREATED BY"
+        android:text="@string/created_by"
         android:textSize="12sp"
         android:textStyle="bold"
         android:textColor="@color/text_color_secondary"
@@ -64,7 +64,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="VISIBLE TO"
+        android:text="@string/visible_to"
         android:textSize="12sp"
         android:textStyle="bold"
         android:textColor="@color/text_color_secondary"

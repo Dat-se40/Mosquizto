@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,47 +66,52 @@ public class FlashcardSetsFragment extends Fragment {
         });
         rv.setAdapter(adapter);
 
-        TabLayout tabLayout = v.findViewById(R.id.tabLayoutTerms);
+        // =========== XỬ LÝ TEXTVIEW BẬT MENU THẢ XUỐNG ===========
+        TextView tvFilterTerms = v.findViewById(R.id.tvFilterTerms);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+        tvFilterTerms.setOnClickListener(view -> {
+            // Tạo một Menu thả xuống neo vào tvFilterTerms
+            android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getContext(), tvFilterTerms);
+
+            // Thêm các lựa chọn vào Menu
+            popupMenu.getMenu().add("All");
+            popupMenu.getMenu().add("Created");
+
+            // Bắt sự kiện khi người dùng chọn 1 mục
+            popupMenu.setOnMenuItemClickListener(item -> {
+                String selectedItem = item.getTitle().toString();
+
+                // Cập nhật lại chữ hiển thị trên màn hình
+                tvFilterTerms.setText(selectedItem);
+
                 try {
-                    int position = tab.getPosition();
-
-                    // Đảm bảo originalList không bị null trước khi xử lý
                     if (originalList == null) {
                         originalList = new ArrayList<>();
                     }
 
-                    if (position == 0) {
-                        // Tab "All"
+                    if (selectedItem.equals(getString(R.string.all))) {
                         adapter.setCollectionList(originalList);
-                    } else if (position == 1) {
-                        // Tab "Created"
+                    } else if (selectedItem.equals(getString(R.string.created))) {
                         List<CollectionResponse> filteredList = new ArrayList<>();
 
                         if (sessionManager != null && sessionManager.getCurrUser() != null) {
-                            // Lặp qua list gốc để lọc
-                            for (CollectionResponse item : originalList) {
-                                if (item != null && item.getUserName() != null && item.getUserName().equals(sessionManager.getCurrUser().getUsername())) {
-                                    filteredList.add(item);
+                            for (CollectionResponse col : originalList) {
+                                if (col != null && col.getUserName() != null &&
+                                        col.getUserName().equals(sessionManager.getCurrUser().getUsername())) {
+                                    filteredList.add(col);
                                 }
                             }
-
                         }
                         adapter.setCollectionList(filteredList);
                     }
                 } catch (Exception e) {
-                    Log.e("FlashcardSetsFragment", "Lỗi khi chuyển tab", e);
+                    android.util.Log.e("FlashcardSetsFragment", "Lỗi khi chọn filter", e);
                 }
-            }
+                return true; // Trả về true để báo là đã xử lý xong sự kiện
+            });
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            // Hiển thị Menu
+            popupMenu.show();
         });
 
         // 1. Xử lý Logic kéo để Refresh

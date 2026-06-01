@@ -57,7 +57,7 @@
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_report"
         android:text="@string/btnReport"
-        android:textColor="#D93025"
-        app:drawableTint="#D93025"/>
+        android:textColor="@color/quizlet_red"
+        app:drawableTint="@color/quizlet_red"/>
 
 </LinearLayout>

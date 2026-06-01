@@ -173,6 +173,7 @@
     <string name="msg_network_error">Lỗi kết nối mạng!</string>
     <string name="msg_loading_data">Đang tải dữ liệu, vui lòng thử lại sau</string>
     <string name="all">Tất cả</string>
+    <string name="created">Đã tạo</string>
     <string name="starred">Đã đánh dấu sao</string>
 
     <!-- Folder strings -->
@@ -190,6 +191,7 @@
     <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
     <string name="msg_empty_set">Bộ thẻ này đang trống</string>
     <string name="create_new_folder">Tạo thư mục mới</string>
+    <string name="create_folder">Tạo thư mục</string>
 
     <!--Study set strings-->
     <string name="DialogError">Lỗi hiển thị Dialog!</string>
@@ -211,4 +213,12 @@
     <string name="btnShare">Chia sẻ</string>
     <string name="btnSetInfo">Thông tin</string>
     <string name="btnReport">Báo cáo học phần này</string>
+    <string name="tvRemoveSet">Xóa khỏi thư mục</string>
+    <string name="et_folder_name">Tên thư mục</string>
+    <string name="tvStudySet">Bộ thẻ</string>
+    <string name="tvFolder">Thư mục</string>
+    <string name="created_by">TẠO BỞI</string>
+    <string name="visible_to">HIỂN THỊ VỚI</string>
+    <string name="jump_back_in">Tiếp tục học</string>
+    <string name="recents">Gần đây</string>
 </resources>

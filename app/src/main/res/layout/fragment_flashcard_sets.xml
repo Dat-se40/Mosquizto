@@ -7,49 +7,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
         android:padding="8dp">
-        <!--
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_filter"
+        <TextView
+            android:id="@+id/tvFilterTerms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleSelection="true">
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_all"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="All"
-                android:checked="true" />
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_created"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Created" />
-        </com.google.android.material.chip.ChipGroup> -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutTerms"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_tab_layout_rounded"
-            app:tabIndicatorColor="@color/primary_color"
-            app:tabSelectedTextColor="@color/primary_color"
-            app:tabTextColor="@color/text_color_secondary"
-            app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2">
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="All" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Created" />
-        </com.google.android.material.tabs.TabLayout>
+            android:text="@string/all"
+            android:textSize="16sp"
+            android:textColor="@color/primary_color"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:drawableEnd="@drawable/unfold_more_ic"
+            android:drawableTint="@color/primary_color"/>
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

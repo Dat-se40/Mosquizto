@@ -117,7 +117,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     }
     @Override
     public int getItemCount() {
-        return collections == null ? 0 : collections.size();
+        return collections == null ? 0 : Math.min(collections.size(), 5);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
