@@ -45,7 +45,7 @@
 
     <string name="hint_search">Hoc phần, sách giáo khoa...</string>
     <string name="cancel">Hủy</string>
-    <string name="save">Lưu</string>"
+    <string name="save">Lưu</string>
     <string name="delete">Xóa</string>
     <string name="scan">Quét 1 cuốn sách giáo khoa hoặc câu hỏi</string>
     <string name="student_search">Các học sinh khác cũng đang tìm kiếm</string>
@@ -102,7 +102,7 @@
     <string name="tvModeLabelFb">ĐIỀN VÀO Ô TRỐNG</string>
     <string name="tvResultMessageFb">Hãy thử lại sau</string>
     <string name="tvModeLabelMatch">NỐI Ô</string>
-    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>"
+    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>
     <string name="tvCorrectAnswer">Chính xác!</string>
     <string name="tvNotQuiteAnswer">Khá ổn!</string>
     <string name="tvExcellentAnswer">Xuất sắc!</string>
@@ -190,4 +190,13 @@
     <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
     <string name="msg_empty_set">Bộ thẻ này đang trống</string>
     <string name="create_new_folder">Tạo thư mục mới</string>
+    <string name="msg_share_success">Chia sẻ thành công\n</string>
+    <string name="msg_share_failed">Chia sẻ thất bại\n</string>
+
+    <!-- Share Dialog Strings -->
+    <string name="share_collection_title">Chia sẻ học phần</string>
+    <string name="role_label">Chọn vai trò</string>
+    <string name="viewer_role">Người xem</string>
+    <string name="viewer_hint">Người xem có thể thấy và học học phần này.</string>
+    <string name="share">Chia sẻ</string>
 </resources>

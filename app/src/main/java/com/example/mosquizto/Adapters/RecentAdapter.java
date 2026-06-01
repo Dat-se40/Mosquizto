@@ -26,6 +26,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     private OnItemOptionsClickedListener optionsListener;
     private OnCollectionActionListener actionListener;
 
+
     // Cập nhật Interface: Chia thành các hành động cụ thể
     public interface OnCollectionActionListener {
         void onEdit(CollectionResponse item, int position);

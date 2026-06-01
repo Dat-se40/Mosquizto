@@ -2,6 +2,7 @@ package com.example.mosquizto.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -161,7 +162,10 @@ public class HomeFragment extends Fragment {
         recentAdapter.SetOnCloclickListener(new RecentAdapter.OnCollectionActionListener() {
             @Override public void onEdit(CollectionResponse item, int position) {}
             @Override public void onShare(CollectionResponse item, int position) {}
-            @Override public void onDelete(CollectionResponse item, int position) {}
+            @Override public void onDelete(CollectionResponse item, int position)
+            {
+                deleteRecentItem(item.getId(),position);
+            }
         });
         rvRecents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         rvRecents.setAdapter(recentAdapter);
@@ -173,6 +177,23 @@ public class HomeFragment extends Fragment {
         rvJumpBackIn.setItemAnimator(null);
         rvRecents.setItemAnimator(null);
         rvBasedOnRecent.setItemAnimator(null);
+    }
+
+    private void deleteRecentItem(Integer id, int listViewPosition) {
+        collectionApi.deleteRecentOpenedCollection(id).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (!isAdded() || getView() == null) return;
+                if (response.isSuccessful()) {
+                    recentAdapter.removeItem(listViewPosition);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void fetchJumpBackIn() {

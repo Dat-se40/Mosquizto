@@ -89,8 +89,8 @@
     <string name="ntDeleteFailed">Delete failed</string>
     <string name="ntDeleted">Removed from folder</string>
 
-    <string name="developing_feature">">Developing feature</string>
-    <string name="ntConnectionError">Connection error</string>"
+    <string name="developing_feature">Developing feature</string>
+    <string name="ntConnectionError">Connection error</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_create">Create</string>
@@ -192,4 +192,13 @@
     <string name="msg_failed_create_folder">Failed to create folder</string>
     <string name="msg_empty_set">This set is empty</string>
     <string name="create_new_folder">Create a new folder</string>
+    <string name="msg_share_success">Share Successfully\n</string>
+    <string name="msg_share_failed">Share failed\n</string>
+
+    <!-- Share Dialog Strings -->
+    <string name="share_collection_title">Share study set</string>
+    <string name="role_label">Select a role</string>
+    <string name="viewer_role">Viewer</string>
+    <string name="viewer_hint">Viewers can see and study this set.</string>
+    <string name="share">Share</string>
 </resources>

@@ -26,6 +26,7 @@ import com.example.mosquizto.Adapters.FlashcardCarouselAdapter;
 import com.example.mosquizto.Adapters.TermListAdapter;
 import com.example.mosquizto.Dto.request.CollectionReportRequest;
 import com.example.mosquizto.Dto.request.CreateFolderRequest;
+import com.example.mosquizto.Dto.request.ShareCollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
@@ -33,6 +34,7 @@ import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
 import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
+import com.example.mosquizto.Fragments.ShareCollectionDialog;
 import com.example.mosquizto.Models.TermItemUIModel;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
@@ -96,7 +98,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
             setContentView(R.layout.activity_study_set_detail);
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi hiển thị giao diện!", Toast.LENGTH_LONG).show();
-            Log.d("StudySetDetailActivity", "onCreate: FAILED: " + e.getMessage());
             finish();
             return;
         }
@@ -142,9 +143,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
             ImageButton btnBack = findViewById(R.id.btnBack);
-            btnBack.setOnClickListener(v -> {
-                finish(); // Trở về màn hình trước đó
-            });
+            if (btnBack != null) btnBack.setOnClickListener(v -> finish());
+
             viewPagerFlashcards = findViewById(R.id.viewPagerFlashcards);
             rvTerms = findViewById(R.id.rvTerms);
             rvTerms.setItemAnimator(null);
@@ -305,6 +305,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
         View btnAddToFolder = view.findViewById(R.id.btnAddToFolder);
         View btnCopy = view.findViewById(R.id.btnMakeCopy);
         View btnReport = view.findViewById(R.id.btnReport);
+        View btnShare = view.findViewById(R.id.btnShareCollection);
 
         if (author != null && sessionManager.getCurrUser() != null) {
             boolean isOwner = author.equals(sessionManager.getCurrUser().getUsername());
@@ -340,8 +341,47 @@ public class StudySetDetailActivity extends AppCompatActivity {
             showReportDialog();
         });
 
+        if (btnShare != null) btnShare.setOnClickListener(v -> {
+            dialog.dismiss();
+            showShareCollectionDialog();
+        });
+
         dialog.setContentView(view);
         dialog.show();
+    }
+
+    private void showShareCollectionDialog() {
+        boolean isOwner = author != null
+                && sessionManager.getCurrUser() != null
+                && author.equals(sessionManager.getCurrUser().getUsername());
+
+        ShareCollectionDialog shareDialog = ShareCollectionDialog.newInstance(isOwner);
+        shareDialog.setOnShareListener((username, role) -> {
+            collectionApi.shareCollection(collectionId, new ShareCollectionRequest(username, role))
+                    .enqueue(new Callback<ApiResponse<Void>>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse<Void>> call,
+                                               @NonNull Response<ApiResponse<Void>> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(StudySetDetailActivity.this,
+                                        R.string.msg_share_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(StudySetDetailActivity.this,
+                                        R.string.msg_share_failed, Toast.LENGTH_SHORT).show();
+                            }
+                            Log.d(TAG + "[SHARE]", "onResponse: " + response.message());
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse<Void>> call,
+                                              @NonNull Throwable t) {
+                            Toast.makeText(StudySetDetailActivity.this,
+                                    R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                            Log.d(TAG + "[SHARE]", "onFailure: " + t.getMessage());
+                        }
+                    });
+        });
+        shareDialog.show(getSupportFragmentManager(), "ShareCollectionDialog");
     }
 
     private void showReportDialog() {
@@ -406,7 +446,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
-
+            
             view.findViewById(R.id.btnDone).setOnClickListener(v -> dialog.dismiss());
             view.findViewById(R.id.btnCreateNewFolderInDialog).setOnClickListener(v -> {
                 showSimpleCreateFolderDialog(view, dialog);
@@ -426,34 +466,36 @@ public class StudySetDetailActivity extends AppCompatActivity {
         input.setHint(R.string.folder_name);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams.WRAP_CONTENT);
         input.setLayoutParams(lp);
-        builder.setView(input);
+        
+        android.widget.FrameLayout container = new android.widget.FrameLayout(this);
+        container.setPadding(48, 16, 48, 0);
+        container.addView(input);
+        builder.setView(container);
 
         builder.setPositiveButton(R.string.create, (dialog, which) -> {
             String folderName = input.getText().toString().trim();
             if (!folderName.isEmpty()) {
-                createNewFolderAndAddCollection(folderName, parentDialogView, parentDialog);
+                createNewFolderAndAddCollection(folderName, parentDialog);
             }
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
         builder.show();
     }
 
-    private void createNewFolderAndAddCollection(String name, View dialogView, AlertDialog dialog) {
-        CreateFolderRequest req = new CreateFolderRequest(name, "");
-        folderApi.createFolder(req).enqueue(new Callback<ApiResponse<FolderResponse>>() {
+    private void createNewFolderAndAddCollection(String name, AlertDialog dialogToClose) {
+        folderApi.createFolder(new CreateFolderRequest(name, "")).enqueue(new Callback<ApiResponse<FolderResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Response<ApiResponse<FolderResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Long newFolderId = response.body().getData().getId();
-                    addCollectionToSpecificFolder(newFolderId, name, dialog);
+                    addCollectionToSpecificFolder(newFolderId, name, dialogToClose);
                 } else {
                     Toast.makeText(StudySetDetailActivity.this, R.string.msg_failed_create_folder, Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
+            @Override public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
                 Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
             }
         });
@@ -478,7 +520,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private void loadFoldersForSaveDialog(View dialogView, AlertDialog dialog) {
         LinearLayout layoutFolderList = dialogView.findViewById(R.id.layoutFolderList);
         layoutFolderList.removeAllViews();
-
+        
         TextView tvMsg = new TextView(this);
         tvMsg.setText(R.string.msg_fetching_folders);
         tvMsg.setPadding(32, 32, 32, 32);
