@@ -184,6 +184,13 @@ public class StudySetDetailActivity extends AppCompatActivity {
             View btnOptions = findViewById(R.id.btnOptions);
             if (btnOptions != null) btnOptions.setOnClickListener(v -> showOptionsBottomSheet());
 
+            // ── FLASHCARD navigate (Từ nhánh feature/flashcard) ───────────────
+            View rowFlashcard = findViewById(R.id.cardFlashcardsGame);
+            if (rowFlashcard != null) {
+                rowFlashcard.setOnClickListener(v -> openFlashcardActivity());
+            }
+            // ─────────────────────────────────────────────────────────────────
+
             TabLayout tabLayout = findViewById(R.id.tabLayoutTerms);
             if (tabLayout != null) {
                 tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -211,6 +218,36 @@ public class StudySetDetailActivity extends AppCompatActivity {
             Log.e(TAG, "setupListeners: FAILED: " + e.getMessage(), e);
         }
     }
+
+    // ── Mở FlashcardActivity (Đã điều chỉnh để lấy data từ originalItems) ────
+    private void openFlashcardActivity() {
+        if (originalItems == null || originalItems.isEmpty()) {
+            Toast.makeText(this, "Chưa có dữ liệu thẻ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ArrayList<String> terms       = new ArrayList<>();
+        ArrayList<String> definitions = new ArrayList<>();
+
+        for (CollectionItemResponse item : originalItems) {
+            String term = item.getTerm();
+            String def  = item.getDefinition();
+            if (term != null) terms.add(term);
+            if (def  != null) definitions.add(def);
+        }
+
+        Intent intent = new Intent(this, FlashcardActivity.class);
+        intent.putStringArrayListExtra("terms",       terms);
+        intent.putStringArrayListExtra("definitions", definitions);
+
+        if (tvSetTitle != null && tvSetTitle.getText() != null) {
+            ArrayList<String> titleList = new ArrayList<>();
+            titleList.add(tvSetTitle.getText().toString());
+            intent.putStringArrayListExtra("title", titleList);
+        }
+        startActivity(intent);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void fetchCollectionData() {
         if (collectionApi == null) return;
