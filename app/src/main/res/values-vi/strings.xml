@@ -60,6 +60,36 @@
     <string name="have_an_account">Đã có tài khoản? </string>
     <string name="login">Đăng nhập</string>
     <string name="sign_up">Đăng Kí</string>
+
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_sec_personal_info">Thông tin cá nhân</string>
+    <string name="settings_sec_offline_learning">Học ngoại tuyến</string>
+    <string name="settings_sec_preferences">Ưu tiên</string>
+    <string name="settings_sec_about">Giới thiệu</string>
+
+    <string name="settings_username">Tên người dùng</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_create_password">Tạo mật khẩu</string>
+
+    <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
+    <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
+    <string name="settings_manage_storage">Quản lý dung lượng lưu trữ</string>
+
+    <string name="settings_push_notifications">Thông báo đẩy</string>
+    <string name="settings_sound_effects">Hiệu ứng âm thanh</string>
+    <string name="settings_haptic_feedback">Phản hồi xúc giác</string>
+    <string name="settings_privacy_cookie_choices">Lựa chọn về quyền riêng tư/cookie</string>
+
+    <string name="settings_privacy_policy">Quyền riêng tư</string>
+    <string name="settings_california_privacy">Quyền riêng tư California</string>
+    <string name="settings_terms_of_service">Điều khoản dịch vụ</string>
+    <string name="settings_open_source_licenses">Giấy phép mã nguồn mở</string>
+    <string name="settings_support_center">Trung tâm Hỗ trợ</string>
+
+    <string name="settings_logout">Đăng xuất</string>
+    <string name="settings_delete_account">Xóa tài khoản</string>
+    <string name="settings_version">v10.35</string>
+    <string name="settings_back_description">Quay lại</string>
     <string name="continue_with">Tiếp tục với %1$s</string>
     <string name="logout">Đăng xuất</string>
 
