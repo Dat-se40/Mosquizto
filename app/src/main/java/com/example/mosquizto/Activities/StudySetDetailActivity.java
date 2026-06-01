@@ -97,7 +97,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
         try {
             setContentView(R.layout.activity_study_set_detail);
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi hiển thị giao diện!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.DialogError), Toast.LENGTH_LONG).show();
+            Log.d("StudySetDetailActivity", "onCreate: FAILED: " + e.getMessage());
             finish();
             return;
         }
@@ -122,12 +123,12 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 if (collectionId != -1) {
                     getWindow().getDecorView().post(this::fetchCollectionData);
                 } else {
-                    Toast.makeText(this, "ID bộ thẻ không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.InvalidId, Toast.LENGTH_SHORT).show();
                 }
             }
         } catch (Exception e) {
             Log.e(TAG, "onCreate: CRITICAL ERROR: " + e.getMessage(), e);
-            Toast.makeText(this, "Lỗi khởi tạo Activity!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ActivityInitializationError, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -156,7 +157,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
             fabStudy = findViewById(R.id.fabStudy);
             nestedScrollView = findViewById(R.id.nestedScrollView);
-            tvSetTitle = findViewById(R.id.tvSetTitle);
+            tvSetTitle = findViewById(R.id.tvSetTitleHeader);
             Log.d(TAG, "initViews: DONE");
         } catch (Exception e) {
             Log.e(TAG, "initViews: FAILED: " + e.getMessage(), e);
@@ -446,7 +447,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
-            
+
             view.findViewById(R.id.btnDone).setOnClickListener(v -> dialog.dismiss());
             view.findViewById(R.id.btnCreateNewFolderInDialog).setOnClickListener(v -> {
                 showSimpleCreateFolderDialog(view, dialog);
@@ -455,7 +456,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             loadFoldersForSaveDialog(view, dialog);
             dialog.show();
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi hiển thị Dialog!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.DialogError), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -468,11 +469,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         input.setLayoutParams(lp);
-        
-        android.widget.FrameLayout container = new android.widget.FrameLayout(this);
-        container.setPadding(48, 16, 48, 0);
-        container.addView(input);
-        builder.setView(container);
+        builder.setView(input);
 
         builder.setPositiveButton(R.string.create, (dialog, which) -> {
             String folderName = input.getText().toString().trim();
@@ -520,7 +517,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private void loadFoldersForSaveDialog(View dialogView, AlertDialog dialog) {
         LinearLayout layoutFolderList = dialogView.findViewById(R.id.layoutFolderList);
         layoutFolderList.removeAllViews();
-        
+
         TextView tvMsg = new TextView(this);
         tvMsg.setText(R.string.msg_fetching_folders);
         tvMsg.setPadding(32, 32, 32, 32);
@@ -599,18 +596,39 @@ public class StudySetDetailActivity extends AppCompatActivity {
             MaterialCardView cardMemory = view.findViewById(R.id.cardModeMemory);
             Button btnStartLearn = view.findViewById(R.id.btnStartLearn);
 
+            // Ánh xạ LinearLayout và TextView bên trong để đổi màu chữ và nền
+            LinearLayout layoutTest = (LinearLayout) cardTest.getChildAt(0);
+            TextView tvTest = (TextView) layoutTest.getChildAt(0);
+
+            LinearLayout layoutMemory = (LinearLayout) cardMemory.getChildAt(0);
+            TextView tvMemory = (TextView) layoutMemory.getChildAt(0);
+
             final String[] selectedMode = {"LEARN"};
             Runnable updateSelectionUI = () -> {
                 try {
                     boolean isLearn = selectedMode[0].equals("LEARN");
-                    cardMemory.setStrokeColor(android.graphics.Color.parseColor(isLearn ? "#4255FF" : "#E0E0E0"));
+
+                    int colorPurple = getColor(R.color.primary_color);
+                    int colorLightPurple = getColor(R.color.primary_color_light);
+                    int colorGrayBorder = getColor(R.color.quizlet_border);
+                    int colorWhite = getColor(R.color.background_white);
+                    int colorTextPrimary = getColor(R.color.text_color_primary);
+
+                    // --- Cập nhật thẻ Memory (LEARN) ---
+                    cardMemory.setStrokeColor(isLearn ? colorPurple : colorGrayBorder);
                     cardMemory.setStrokeWidth(isLearn ? 4 : 2);
-                    cardMemory.getChildAt(0).setBackgroundColor(android.graphics.Color.parseColor(isLearn ? "#E8EAFF" : "#00000000"));
-                    cardTest.setStrokeColor(android.graphics.Color.parseColor(!isLearn ? "#4255FF" : "#E0E0E0"));
+                    layoutMemory.setBackgroundColor(isLearn ? colorLightPurple : colorWhite);
+                    tvMemory.setTextColor(isLearn ? colorPurple : colorTextPrimary);
+
+                    // --- Cập nhật thẻ Test ---
+                    cardTest.setStrokeColor(!isLearn ? colorPurple : colorGrayBorder);
                     cardTest.setStrokeWidth(!isLearn ? 4 : 2);
-                    cardTest.getChildAt(0).setBackgroundColor(android.graphics.Color.parseColor(!isLearn ? "#E8EAFF" : "#00000000"));
+                    layoutTest.setBackgroundColor(!isLearn ? colorLightPurple : colorWhite);
+                    tvTest.setTextColor(!isLearn ? colorPurple : colorTextPrimary);
                 } catch (Exception e) { Log.e(TAG, "updateSelectionUI: FAILED", e); }
             };
+
+            updateSelectionUI.run();
 
             cardTest.setOnClickListener(v -> { selectedMode[0] = "TEST"; updateSelectionUI.run(); });
             cardMemory.setOnClickListener(v -> { selectedMode[0] = "LEARN"; updateSelectionUI.run(); });
@@ -628,7 +646,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             dialog.setContentView(view);
             dialog.show();
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi hiển thị Learn Mode!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.LearnModeDisplayError, Toast.LENGTH_SHORT).show();
         }
     }
 }

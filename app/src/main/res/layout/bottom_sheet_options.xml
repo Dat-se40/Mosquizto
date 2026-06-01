@@ -18,45 +18,45 @@
         android:id="@+id/btnEdit"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_edit"
-        android:text="Edit"
+        android:text="@string/edit"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/btnAddToClass"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_group"
-        android:text="Add to class" />
+        android:text="@string/btnAddToClass" />
 
     <TextView
         android:id="@+id/btnAddToFolder"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_bookmark"
-        android:text="Add to folder" />
+        android:text="@string/btnAddToFolder" />
 
     <TextView
         android:id="@+id/btnMakeCopy"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_copy"
-        android:text="Make a copy" />
+        android:text="@string/btnMakeCopy" />
 
     <TextView
         android:id="@+id/btnShareCollection"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_share"
-        android:text="Share" />
+        android:text="@string/btnShare" />
 
     <TextView
         android:id="@+id/btnSetInfo"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_info"
-        android:text="Set info"
+        android:text="@string/btnSetInfo"
         android:visibility="gone"/>
 
     <TextView
         android:id="@+id/btnReport"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_report"
-        android:text="Report this set"
+        android:text="@string/btnReport"
         android:textColor="#D93025"
         app:drawableTint="#D93025"/>
 

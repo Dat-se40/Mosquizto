@@ -117,7 +117,7 @@
     <string name="btnContinue">Tiếp tục</string>
     <string name="round_1_done">Hoàn thành vòng 1!</string>
     <string name="tvContinueRound2">Tiếp tục vòng 2</string>
-    <string name="tvTestFinished">Kiểm tra kết thúc!\nĐiểm: </string>
+    <string name="tvTestFinished">Kiểm tra kết thúc!\nĐiểm: %1$d%%</string>
     <string name="tvYouMaster">Bạn đã thành thạo học phần này!</string>
     <string name="tvfinish_and_save">Hoàn thành và lưu</string>
     <string name="tvSavingProgress">Đang lưu tiến độ...</string>
@@ -190,6 +190,27 @@
     <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
     <string name="msg_empty_set">Bộ thẻ này đang trống</string>
     <string name="create_new_folder">Tạo thư mục mới</string>
+
+    <!--Study set strings-->
+    <string name="DialogError">Lỗi hiển thị Dialog!</string>
+    <string name="InvalidId">ID bộ thẻ không hợp lệ!</string>
+    <string name="ActivityInitializationError">Lỗi khởi tạo Activity!</string>
+    <string name="LearnModeDisplayError">Lỗi hiển thị Learn Mode!</string>
+    <string name="tvAddMaterials">Thêm học phần</string>
+    <string name="tvEditFolder">Chỉnh sửa thư mục</string>
+    <string name="tvShareFolder">Chia sẻ thư mục</string>
+    <string name="tvDeleteFolder">Xóa thư mục</string>
+    <string name="choose_a_goal_for_this_session">Chọn mục tiêu cho phiên học này</string>
+    <string name="cram_for_a_test">Ôn tập cấp tốc</string>
+    <string name="memory_it_all">Ghi nhớ tất cả</string>
+    <string name="start_learn">Bắt đầu học</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="btnAddToClass">Thêm vào lớp</string>
+    <string name="btnAddToFolder">Thêm vào thư mục</string>
+    <string name="btnMakeCopy">Tạo bản sao</string>
+    <string name="btnShare">Chia sẻ</string>
+    <string name="btnSetInfo">Thông tin</string>
+    <string name="btnReport">Báo cáo học phần này</string>
     <string name="msg_share_success">Chia sẻ thành công\n</string>
     <string name="msg_share_failed">Chia sẻ thất bại\n</string>
 
