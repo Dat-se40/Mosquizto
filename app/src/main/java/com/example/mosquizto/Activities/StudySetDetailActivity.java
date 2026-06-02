@@ -24,17 +24,16 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mosquizto.Adapters.FlashcardCarouselAdapter;
 import com.example.mosquizto.Adapters.TermListAdapter;
+import com.example.mosquizto.Dialogs.ShareCollectionDialog;
 import com.example.mosquizto.Dto.request.CollectionReportRequest;
 import com.example.mosquizto.Dto.request.CreateFolderRequest;
 import com.example.mosquizto.Dto.request.ShareCollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
-import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
 import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
-import com.example.mosquizto.Fragments.ShareCollectionDialog;
 import com.example.mosquizto.Models.TermItemUIModel;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;

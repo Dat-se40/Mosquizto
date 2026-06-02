@@ -1,4 +1,4 @@
-package com.example.mosquizto.Fragments;
+package com.example.mosquizto.Dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.mosquizto.R;
 import com.example.mosquizto.Util.CollectionRole;
 import com.example.mosquizto.databinding.DialogShareCollectionBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -144,12 +145,12 @@ public class ShareCollectionDialog extends DialogFragment {
                 : "";
 
         if (TextUtils.isEmpty(username)) {
-            showUsernameError("Username must not be empty");
+            showUsernameError(getString(R.string.username_must_not_be_empty));
             return false;
         }
 
         if (username.length() > 100) {
-            showUsernameError("Username must not exceed 100 characters");
+            showUsernameError(getString(R.string.username_must_not_exceed_100_characters));
             return false;
         }
 

@@ -283,4 +283,7 @@
     <string name="card_front">Mặt trước</string>
     <string name="term">Thuật ngữ</string>
     <string name="definition">Định nghĩa</string>
+    <string name="username_must_not_be_empty">Tên người dùng không được để trống</string>
+    <string name="username_must_not_exceed_100_characters">Tên người dùng không được vượt quá 100 ký tự</string>
+    <string name="tv_library_title">Thư viện</string>
 </resources>

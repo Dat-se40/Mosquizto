@@ -47,6 +47,8 @@ public class FlashcardSetsFragment extends Fragment {
     @Inject
     SessionManager sessionManager;
     private List<CollectionResponse> originalList = new ArrayList<>();
+    private String currentFilterMode = getString(R.string.all);
+    private String currentSearchQuery = "";
     MainActivity mainActivity ;
 
     @Nullable
@@ -74,8 +76,8 @@ public class FlashcardSetsFragment extends Fragment {
             android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getContext(), tvFilterTerms);
 
             // Thêm các lựa chọn vào Menu
-            popupMenu.getMenu().add("All");
-            popupMenu.getMenu().add("Created");
+            popupMenu.getMenu().add(getString(R.string.all));
+            popupMenu.getMenu().add(getString(R.string.created));
 
             // Bắt sự kiện khi người dùng chọn 1 mục
             popupMenu.setOnMenuItemClickListener(item -> {
@@ -84,29 +86,9 @@ public class FlashcardSetsFragment extends Fragment {
                 // Cập nhật lại chữ hiển thị trên màn hình
                 tvFilterTerms.setText(selectedItem);
 
-                try {
-                    if (originalList == null) {
-                        originalList = new ArrayList<>();
-                    }
+                currentFilterMode = selectedItem;
+                applyFilter();
 
-                    if (selectedItem.equals(getString(R.string.all))) {
-                        adapter.setCollectionList(originalList);
-                    } else if (selectedItem.equals(getString(R.string.created))) {
-                        List<CollectionResponse> filteredList = new ArrayList<>();
-
-                        if (sessionManager != null && sessionManager.getCurrUser() != null) {
-                            for (CollectionResponse col : originalList) {
-                                if (col != null && col.getUserName() != null &&
-                                        col.getUserName().equals(sessionManager.getCurrUser().getUsername())) {
-                                    filteredList.add(col);
-                                }
-                            }
-                        }
-                        adapter.setCollectionList(filteredList);
-                    }
-                } catch (Exception e) {
-                    android.util.Log.e("FlashcardSetsFragment", "Lỗi khi chọn filter", e);
-                }
                 return true; // Trả về true để báo là đã xử lý xong sự kiện
             });
 
@@ -177,5 +159,44 @@ public class FlashcardSetsFragment extends Fragment {
         }
 
         editor.apply(); // Lưu bất đồng bộ
+    }
+
+    // Hàm này sẽ được LibraryFragment gọi xuống khi gõ ô tìm kiếm
+    public void filterData(String query) {
+        this.currentSearchQuery = query.toLowerCase().trim();
+        applyFilter();
+    }
+
+    // Hàm lõi xử lý lọc đồng thời cả Loại (All/Created) lẫn Từ khóa tìm kiếm
+    private void applyFilter() {
+        if (originalList == null || adapter == null) return;
+
+        List<CollectionResponse> filteredList = new ArrayList<>();
+
+        for (CollectionResponse item : originalList) {
+            if (item == null) continue;
+
+            // 1. Kiểm tra điều kiện Loại (All / Created)
+            boolean matchesMode = true;
+            if (currentFilterMode.equals(getString(R.string.created))) {
+                matchesMode = (sessionManager != null && sessionManager.getCurrUser() != null &&
+                        item.getUserName() != null &&
+                        item.getUserName().equals(sessionManager.getCurrUser().getUsername()));
+            }
+
+            // 2. Kiểm tra điều kiện Từ khóa tìm kiếm (Query)
+            boolean matchesQuery = true;
+            if (!currentSearchQuery.isEmpty()) {
+                matchesQuery = (item.getTitle() != null && item.getTitle().toLowerCase().contains(currentSearchQuery));
+            }
+
+            // Nếu thỏa mãn đồng thời cả 2 điều kiện thì mới giữ lại hiển thị
+            if (matchesMode && matchesQuery) {
+                filteredList.add(item);
+            }
+        }
+
+        // Cập nhật danh sách hiển thị lên RecyclerView
+        adapter.setCollectionList(filteredList);
     }
 }

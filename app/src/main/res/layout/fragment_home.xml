@@ -12,8 +12,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        app:backgroundTint="@android:color/transparent"
+        android:background="@null"
         app:elevation="0dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,12 +30,14 @@
                 android:background="@drawable/bg_search_bar"
                 android:drawableStart="@drawable/icon_search"
                 android:drawablePadding="8dp"
-                android:hint="Search"
+                android:hint="@string/etSearch"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColorHint="@color/search_bar_hint"
                 android:textColor="@color/text_color_primary"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:focusable="false"
+                android:clickable="true"/>
 
             <ImageView
                 android:id="@+id/iv_avatar"

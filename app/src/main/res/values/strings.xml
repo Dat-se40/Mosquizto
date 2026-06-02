@@ -289,5 +289,8 @@
     <string name="card_front">Card front</string>
     <string name="term">Term</string>
     <string name="definition">Definition</string>
+    <string name="username_must_not_be_empty">Username must not be empty</string>
+    <string name="username_must_not_exceed_100_characters">Username must not exceed 100 characters</string>
+    <string name="tv_library_title">Your Library</string>
 
 </resources>
