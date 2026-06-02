@@ -53,7 +53,6 @@ public class FolderDetailActivity extends AppCompatActivity {
 
     @Inject
     FolderApi folderApi;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,11 +190,27 @@ public class FolderDetailActivity extends AppCompatActivity {
 
             @Override
             public void onDelete(CollectionResponse item, int position) {
-                // Hiện Dialog xác nhận -> Xóa API -> Xóa khỏi UI
-                // recentAdapter.removeItem(position);
+                deleteRecentItem(item.getId(),position);
             }
         });
         rvFolderCollections.setAdapter(adapter);
+    }
+
+    private void deleteRecentItem(Integer id, int position) {
+        folderApi.removeCollectionFromFolder(folderId,id).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+               if(response != null && response.isSuccessful())
+               {
+                   adapter.removeItem(position);
+               }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void showEditFolderDialog() {

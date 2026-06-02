@@ -1,5 +1,7 @@
 package com.example.mosquizto.ViewModels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -55,15 +57,18 @@ public class CreateAccountViewModel extends ViewModel {
                     // sessionManager.saveToken(response.body().getData().getToken());
                     _message.postValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
+                    Log.e("SIGN_UP", "onResponse: " + response.body().getData());
                 } else {
                     _message.postValue("Đăng kí thất bại");
+                    Log.e("SIGN_UP", "onResponse: " + response.message());
                     uiState.postValue(UiState.ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                _message.postValue("Đăng kí thất bại");
+                _message.postValue("Lỗi đường truyền");
+                Log.e("SIGN_UP", "onFailure: " + t.getMessage());
                 uiState.setValue(UiState.ERROR);
             }
         });

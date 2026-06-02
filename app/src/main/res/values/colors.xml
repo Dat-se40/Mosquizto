@@ -45,4 +45,42 @@
     <color name="quizlet_green">#4CAF50</color>
     <color name="quizlet_red">#D93025</color>
     <color name="btn_random_game">#EEF2FF</color>
+
+    <!-- ── Nền chung ─────────────────────────────────────── -->
+    <color name="background_dark">#0D1130</color>
+    <color name="card_background">#1A2151</color>
+    <color name="card_settings_bg">#1E2554</color>
+
+    <!-- ── Văn bản ───────────────────────────────────────── -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8891B4</color>
+
+    <!-- ── Nhấn mạnh ─────────────────────────────────────── -->
+    <color name="accent_blue">#4255FF</color>
+    <color name="accent_blue_light">#6B7AFF</color>
+
+    <!-- ── Trạng thái thẻ ────────────────────────────────── -->
+    <!-- Biết  (vuốt phải → xanh lá) -->
+    <color name="swipe_right_color">#23C4A0</color>
+    <color name="counter_green">#23C4A0</color>
+    <color name="counter_green_border">#1A9E83</color>
+    <!-- Đang học (vuốt trái → cam) -->
+    <color name="swipe_left_color">#F5A623</color>
+    <color name="counter_orange">#F5A623</color>
+    <color name="counter_orange_border">#C8861B</color>
+
+    <!-- ── Legend summary ────────────────────────────────── -->
+    <color name="legend_green_bg">#1A3D35</color>
+    <color name="legend_orange_bg">#3D2A10</color>
+    <color name="legend_gray_bg">#252D50</color>
+
+    <!-- ── Progress bar ──────────────────────────────────── -->
+    <color name="progress_background">#252D50</color>
+    <color name="progress_fill">#4255FF</color>
+
+    <!-- ── Misc ──────────────────────────────────────────── -->
+    <color name="error_red">#FF4C4C</color>
+    <color name="divider_color">#2A3460</color>
+    <color name="star_active">#F5A623</color>
+    <color name="transparent">#00000000</color>
 </resources>

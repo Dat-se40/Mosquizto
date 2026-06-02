@@ -12,7 +12,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
+        android:background="@color/transparent"
+        app:backgroundTint="@android:color/transparent"
         app:elevation="0dp">
         <LinearLayout
             android:layout_width="match_parent"

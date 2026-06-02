@@ -92,4 +92,12 @@ public class SessionManager {
         editor.putInt(PREFIX_COLLECTION_COUNT + id, i);
         editor.apply();
     }
+
+    public void clearSession() {
+        // xóa token
+        setAccessToken(null);
+        setRefreshToken(null);
+        // xóa user
+        setCurrUser(null);
+    }
 }

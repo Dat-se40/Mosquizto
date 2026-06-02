@@ -40,7 +40,7 @@
         android:text="@string/btnMakeCopy" />
 
     <TextView
-        android:id="@+id/btnShare"
+        android:id="@+id/btnShareCollection"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_share"
         android:text="@string/btnShare" />
