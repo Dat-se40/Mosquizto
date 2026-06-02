@@ -58,9 +58,10 @@ public class CreateFolderDialog extends DialogFragment {
 
             if (name.isEmpty()) {
                 Toast.makeText(requireContext(), "Vui lòng nhập tên thư mục", Toast.LENGTH_SHORT).show();
-            } else if (description.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng nhập mô tả thư mục", Toast.LENGTH_SHORT).show();
             } else {
+                if(description.isEmpty()){
+                    description = "Không có mô tả";
+                }
                 createFolder(name, description);
             }
         });

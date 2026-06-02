@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingBottom="24dp">
 
     <View
         android:layout_width="40dp"
@@ -54,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Learn"
+            android:text="@string/gameLearn"
             android:textSize="20sp"
             android:textColor="@color/text_color_primary" />
     </LinearLayout>

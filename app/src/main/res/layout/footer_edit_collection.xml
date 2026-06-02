@@ -10,7 +10,7 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ THÊM THẺ"
+        android:text="@string/btn_add_card"
         android:textColor="@color/primary_color"
-        android:textStyle="bold" />
+        android:textSize="15sp"/>
 </LinearLayout>

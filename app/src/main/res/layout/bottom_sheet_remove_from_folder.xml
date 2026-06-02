@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/bg_bottom_sheet"
     android:paddingTop="16dp"
@@ -21,16 +22,15 @@
         android:paddingHorizontal="20dp"
         android:layout_marginBottom="8dp"
         android:text="Tên bộ thẻ"
-        android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@color/text_color_secondary"/>
 
     <TextView
         android:id="@+id/tvRemoveSet"
         style="@style/BottomSheetMenuItem"
-        android:text="Xóa khỏi thư mục"
         android:drawableStart="@drawable/ic_delete"
+        android:text="@string/tvRemoveSet"
         android:textColor="@color/quizlet_red"
-        android:drawableTint="@color/quizlet_red"/>
+        app:drawableTint="@color/quizlet_red"/>
 
 </LinearLayout>

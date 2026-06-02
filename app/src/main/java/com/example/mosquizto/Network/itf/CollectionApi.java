@@ -2,6 +2,7 @@ package com.example.mosquizto.Network.itf;
 
 import com.example.mosquizto.Dto.request.CollectionItemRequest;
 import com.example.mosquizto.Dto.request.CollectionReportRequest;
+import com.example.mosquizto.Dto.request.ShareCollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
@@ -36,6 +37,9 @@ public interface CollectionApi {
     @GET("collection/{id}")
     Call<ApiResponse<CollectionResponse>> getCollectionById(@Path("id") int id);
 
+    @POST("user-collection/share/{collectionId}")
+    Call<ApiResponse<Void>> shareCollection(@Path("collectionId") int collectionId,@Body ShareCollectionRequest request);
+
     // Lấy ra danh sách các item của 1 bộ thẻ
     @GET("collection/item/{id}")
     Call<ApiResponse<List<CollectionItemResponse>>> getCollectionItemById(@Path("id") int id);
@@ -47,6 +51,8 @@ public interface CollectionApi {
     // lấy ra danh sách bộ thẻ được mở gần đây (Recents)
     @GET("collection/recent-opened")
     Call<ApiResponse<List<CollectionResponse>>> getRecentOpenedCollections();
+    @DELETE("user-collection/collection/{collectionId}/recent")
+    Call<ApiResponse<Void>> deleteRecentOpenedCollection(@Path("collectionId") int collectionId);
     @GET("collection/my-list")
     Call<ApiResponse<PageResponse<CollectionResponse>>> getMyCollections(
             @Query("page") int page,
@@ -84,4 +90,6 @@ public interface CollectionApi {
 
     @POST("reports/collections/{collectionId}")
     Call<ApiResponse<CollectionReportResponse>> reportCollection(@Path("collectionId") int collectionId, @Body CollectionReportRequest request);
+
+
 }

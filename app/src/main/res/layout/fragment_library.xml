@@ -4,11 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_grey"> <com.google.android.material.appbar.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_white"
-    app:elevation="0dp">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background_grey">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_white"
+        app:elevation="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,15 +20,32 @@
         android:paddingHorizontal="16dp">
 
         <TextView
+            android:id="@+id/tv_library_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="Your Library"
+            android:layout_marginStart="10dp"
+            android:text="@string/tv_library_title"
             android:textColor="@color/text_color_primary"
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/et_library_search"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/layout_buttons"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_search_bar"
+            android:paddingHorizontal="16dp"
+            android:hint="@string/etSearch"
+            android:singleLine="true"
+            android:textColor="@color/text_color_primary"
+            android:visibility="gone" />
+
         <LinearLayout
+            android:id="@+id/layout_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -44,7 +65,8 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add" /> </LinearLayout>
+                android:src="@drawable/ic_add" />
+        </LinearLayout>
     </RelativeLayout>
 
     <com.google.android.material.tabs.TabLayout

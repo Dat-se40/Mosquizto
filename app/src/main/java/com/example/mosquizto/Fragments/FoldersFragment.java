@@ -39,6 +39,7 @@ public class FoldersFragment extends Fragment {
     private TextView tvEmpty;
     private FolderAdapter folderAdapter;
     private Call<ApiResponse<List<FolderSummaryResponse>>> foldersCall;
+    private List<FolderSummaryResponse> originalList = new ArrayList<>();
 
     @Inject
     FolderApi folderApi;
@@ -115,8 +116,9 @@ public class FoldersFragment extends Fragment {
 
                 showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    // data rỗng vẫn là thành công, UI sẽ hiện trạng thái chưa có folder.
                     List<FolderSummaryResponse> folders = response.body().getData();
+
+                    originalList = folders != null ? folders : new ArrayList<>();
                     showFolders(folders != null ? folders : new ArrayList<>());
                 } else {
                     showFolders(new ArrayList<>());
@@ -149,4 +151,29 @@ public class FoldersFragment extends Fragment {
         tvEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         rvFolders.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
+
+    // Hàm nhận từ khóa tìm kiếm từ LibraryFragment truyền xuống cho tab Folder
+    public void filterData(String query) {
+        if (originalList == null || folderAdapter == null) return;
+
+        String cleanQuery = query.toLowerCase().trim();
+
+        // Nếu ô tìm kiếm trống, hiển thị lại toàn bộ danh sách thư mục gốc
+        if (cleanQuery.isEmpty()) {
+            showFolders(originalList);
+            return;
+        }
+
+        List<FolderSummaryResponse> filteredList = new ArrayList<>();
+        for (FolderSummaryResponse folder : originalList) {
+            // Lọc theo tên thư mục (Không phân biệt chữ hoa thường)
+            if (folder != null && folder.getName() != null && folder.getName().toLowerCase().contains(cleanQuery)) {
+                filteredList.add(folder);
+            }
+        }
+
+        // Gọi hàm hiển thị (Hàm này tự lo việc ẩn hiện màn hình trống tvEmpty của bạn)
+        showFolders(filteredList);
+    }
+
 }

@@ -13,15 +13,6 @@
         android:background="@color/app_divider"
         android:layout_marginBottom="20dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tạo mới"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_color_primary"
-        android:layout_marginBottom="24dp"/>
-
     <LinearLayout
         android:id="@+id/option_flashcard_set"
         android:layout_width="match_parent"
@@ -36,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Học phần"
+            android:text="@string/tvStudySet"
             android:layout_marginStart="16dp"
             android:textSize="22sp"
             android:textColor="@color/text_color_primary"/>
@@ -56,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thư mục"
+            android:text="@string/tvFolder"
             android:layout_marginStart="16dp"
             android:textSize="22sp"
             android:textColor="@color/text_color_primary"/>

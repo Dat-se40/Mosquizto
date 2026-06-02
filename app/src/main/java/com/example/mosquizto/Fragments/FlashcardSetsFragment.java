@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,8 @@ public class FlashcardSetsFragment extends Fragment {
     @Inject
     SessionManager sessionManager;
     private List<CollectionResponse> originalList = new ArrayList<>();
+    private String currentFilterMode = getString(R.string.all);
+    private String currentSearchQuery = "";
     MainActivity mainActivity ;
 
     @Nullable
@@ -65,47 +68,32 @@ public class FlashcardSetsFragment extends Fragment {
         });
         rv.setAdapter(adapter);
 
-        TabLayout tabLayout = v.findViewById(R.id.tabLayoutTerms);
+        // =========== XỬ LÝ TEXTVIEW BẬT MENU THẢ XUỐNG ===========
+        TextView tvFilterTerms = v.findViewById(R.id.tvFilterTerms);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                try {
-                    int position = tab.getPosition();
+        tvFilterTerms.setOnClickListener(view -> {
+            // Tạo một Menu thả xuống neo vào tvFilterTerms
+            android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getContext(), tvFilterTerms);
 
-                    // Đảm bảo originalList không bị null trước khi xử lý
-                    if (originalList == null) {
-                        originalList = new ArrayList<>();
-                    }
+            // Thêm các lựa chọn vào Menu
+            popupMenu.getMenu().add(getString(R.string.all));
+            popupMenu.getMenu().add(getString(R.string.created));
 
-                    if (position == 0) {
-                        // Tab "All"
-                        adapter.setCollectionList(originalList);
-                    } else if (position == 1) {
-                        // Tab "Created"
-                        List<CollectionResponse> filteredList = new ArrayList<>();
+            // Bắt sự kiện khi người dùng chọn 1 mục
+            popupMenu.setOnMenuItemClickListener(item -> {
+                String selectedItem = item.getTitle().toString();
 
-                        if (sessionManager != null && sessionManager.getCurrUser() != null) {
-                            // Lặp qua list gốc để lọc
-                            for (CollectionResponse item : originalList) {
-                                if (item != null && item.getUserName() != null && item.getUserName().equals(sessionManager.getCurrUser().getUsername())) {
-                                    filteredList.add(item);
-                                }
-                            }
+                // Cập nhật lại chữ hiển thị trên màn hình
+                tvFilterTerms.setText(selectedItem);
 
-                        }
-                        adapter.setCollectionList(filteredList);
-                    }
-                } catch (Exception e) {
-                    Log.e("FlashcardSetsFragment", "Lỗi khi chuyển tab", e);
-                }
-            }
+                currentFilterMode = selectedItem;
+                applyFilter();
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+                return true; // Trả về true để báo là đã xử lý xong sự kiện
+            });
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            // Hiển thị Menu
+            popupMenu.show();
         });
 
         // 1. Xử lý Logic kéo để Refresh
@@ -171,5 +159,44 @@ public class FlashcardSetsFragment extends Fragment {
         }
 
         editor.apply(); // Lưu bất đồng bộ
+    }
+
+    // Hàm này sẽ được LibraryFragment gọi xuống khi gõ ô tìm kiếm
+    public void filterData(String query) {
+        this.currentSearchQuery = query.toLowerCase().trim();
+        applyFilter();
+    }
+
+    // Hàm lõi xử lý lọc đồng thời cả Loại (All/Created) lẫn Từ khóa tìm kiếm
+    private void applyFilter() {
+        if (originalList == null || adapter == null) return;
+
+        List<CollectionResponse> filteredList = new ArrayList<>();
+
+        for (CollectionResponse item : originalList) {
+            if (item == null) continue;
+
+            // 1. Kiểm tra điều kiện Loại (All / Created)
+            boolean matchesMode = true;
+            if (currentFilterMode.equals(getString(R.string.created))) {
+                matchesMode = (sessionManager != null && sessionManager.getCurrUser() != null &&
+                        item.getUserName() != null &&
+                        item.getUserName().equals(sessionManager.getCurrUser().getUsername()));
+            }
+
+            // 2. Kiểm tra điều kiện Từ khóa tìm kiếm (Query)
+            boolean matchesQuery = true;
+            if (!currentSearchQuery.isEmpty()) {
+                matchesQuery = (item.getTitle() != null && item.getTitle().toLowerCase().contains(currentSearchQuery));
+            }
+
+            // Nếu thỏa mãn đồng thời cả 2 điều kiện thì mới giữ lại hiển thị
+            if (matchesMode && matchesQuery) {
+                filteredList.add(item);
+            }
+        }
+
+        // Cập nhật danh sách hiển thị lên RecyclerView
+        adapter.setCollectionList(filteredList);
     }
 }

@@ -45,7 +45,7 @@
 
     <string name="hint_search">Hoc phần, sách giáo khoa...</string>
     <string name="cancel">Hủy</string>
-    <string name="save">Lưu</string>"
+    <string name="save">Lưu</string>
     <string name="delete">Xóa</string>
     <string name="scan">Quét 1 cuốn sách giáo khoa hoặc câu hỏi</string>
     <string name="student_search">Các học sinh khác cũng đang tìm kiếm</string>
@@ -59,7 +59,37 @@
     <string name="btn_email">Đăng ký bằng Email</string>
     <string name="have_an_account">Đã có tài khoản? </string>
     <string name="login">Đăng nhập</string>
-    <string name="sign_up">Đăng Kí</string>
+    <string name="sign_up">Đăng ký</string>
+
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_sec_personal_info">Thông tin cá nhân</string>
+    <string name="settings_sec_offline_learning">Học ngoại tuyến</string>
+    <string name="settings_sec_preferences">Ưu tiên</string>
+    <string name="settings_sec_about">Giới thiệu</string>
+
+    <string name="settings_username">Tên người dùng</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_create_password">Tạo mật khẩu</string>
+
+    <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
+    <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
+    <string name="settings_manage_storage">Quản lý dung lượng lưu trữ</string>
+
+    <string name="settings_push_notifications">Thông báo đẩy</string>
+    <string name="settings_sound_effects">Hiệu ứng âm thanh</string>
+    <string name="settings_haptic_feedback">Phản hồi xúc giác</string>
+    <string name="settings_privacy_cookie_choices">Lựa chọn về quyền riêng tư/cookie</string>
+
+    <string name="settings_privacy_policy">Quyền riêng tư</string>
+    <string name="settings_california_privacy">Quyền riêng tư California</string>
+    <string name="settings_terms_of_service">Điều khoản dịch vụ</string>
+    <string name="settings_open_source_licenses">Giấy phép mã nguồn mở</string>
+    <string name="settings_support_center">Trung tâm Hỗ trợ</string>
+
+    <string name="settings_logout">Đăng xuất</string>
+    <string name="settings_delete_account">Xóa tài khoản</string>
+    <string name="settings_version">v10.35</string>
+    <string name="settings_back_description">Quay lại</string>
     <string name="continue_with">Tiếp tục với %1$s</string>
     <string name="logout">Đăng xuất</string>
 
@@ -102,7 +132,7 @@
     <string name="tvModeLabelFb">ĐIỀN VÀO Ô TRỐNG</string>
     <string name="tvResultMessageFb">Hãy thử lại sau</string>
     <string name="tvModeLabelMatch">NỐI Ô</string>
-    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>"
+    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>
     <string name="tvCorrectAnswer">Chính xác!</string>
     <string name="tvNotQuiteAnswer">Khá ổn!</string>
     <string name="tvExcellentAnswer">Xuất sắc!</string>
@@ -173,6 +203,7 @@
     <string name="msg_network_error">Lỗi kết nối mạng!</string>
     <string name="msg_loading_data">Đang tải dữ liệu, vui lòng thử lại sau</string>
     <string name="all">Tất cả</string>
+    <string name="created">Đã tạo</string>
     <string name="starred">Đã đánh dấu sao</string>
 
     <!-- Folder strings -->
@@ -190,6 +221,7 @@
     <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
     <string name="msg_empty_set">Bộ thẻ này đang trống</string>
     <string name="create_new_folder">Tạo thư mục mới</string>
+    <string name="create_folder">Tạo thư mục</string>
 
     <!--Study set strings-->
     <string name="DialogError">Lỗi hiển thị Dialog!</string>
@@ -211,4 +243,47 @@
     <string name="btnShare">Chia sẻ</string>
     <string name="btnSetInfo">Thông tin</string>
     <string name="btnReport">Báo cáo học phần này</string>
+    <string name="msg_share_success">Chia sẻ thành công\n</string>
+    <string name="msg_share_failed">Chia sẻ thất bại\n</string>
+
+    <!-- Share Dialog Strings -->
+    <string name="share_collection_title">Chia sẻ học phần</string>
+    <string name="role_label">Chọn vai trò</string>
+    <string name="viewer_role">Người xem</string>
+    <string name="viewer_hint">Người xem có thể thấy và học học phần này.</string>
+    <string name="share">Chia sẻ</string>
+    <string name="tvRemoveSet">Xóa khỏi thư mục</string>
+    <string name="et_folder_name">Tên thư mục</string>
+    <string name="tvStudySet">Bộ thẻ</string>
+    <string name="tvFolder">Thư mục</string>
+    <string name="created_by">TẠO BỞI</string>
+    <string name="visible_to">HIỂN THỊ VỚI</string>
+    <string name="jump_back_in">Tiếp tục học</string>
+    <string name="recents">Gần đây</string>
+
+
+    <!--Flashcard strings-->
+    <string name="hint_swipe_flipped">Vuốt sang trái để đánh dấu Đang học\nVuốt sang phải để đánh dấu Biết</string>
+    <string name="hint_tap_to_flip">Chạm vào thẻ để lật</string>
+    <string name="auto_scroll_is_on">Tự động cuộn thẻ đang bật</string>
+    <string name="auto_scroll_is_off">Tự động cuộn thẻ đang tắt</string>
+    <string name="tv_summary_title">Bạn đang làm rất tuyệt! Hãy tiếp tục tập trung vào các thuật ngữ khó.</string>
+    <string name="tv_progress_label">Tiến độ của bạn</string>
+    <string name="known">Đã biết</string>
+    <string name="learning">Đang học</string>
+    <string name="tv_back_last">Quay lại câu hỏi cuối cùng</string>
+    <string name="btn_continue_review">Tiếp tục ôn thuật ngữ</string>
+    <string name="btn_study_mode">Ôn luyện trong chế độ Học</string>
+    <string name="tv_reset_flashcard">Đặt lại Thẻ ghi nhớ</string>
+    <string name="general">Chung</string>
+    <string name="learn_method">Phương pháp học</string>
+    <string name="standard_sorting">Phân loại cơ bản</string>
+    <string name="shuffle">Trộn thẻ</string>
+    <string name="Flashcard_Settings">Thiết lập thẻ ghi nhớ</string>
+    <string name="card_front">Mặt trước</string>
+    <string name="term">Thuật ngữ</string>
+    <string name="definition">Định nghĩa</string>
+    <string name="username_must_not_be_empty">Tên người dùng không được để trống</string>
+    <string name="username_must_not_exceed_100_characters">Tên người dùng không được vượt quá 100 ký tự</string>
+    <string name="tv_library_title">Thư viện</string>
 </resources>

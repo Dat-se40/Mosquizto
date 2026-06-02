@@ -11,6 +11,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -43,4 +44,7 @@ public interface StudyApi {
 
     @GET("study-session/get-jump-back-in")
     Call<ApiResponse<List<StudySessionResponse>>> getJumpBackIn();
+
+    @DELETE("study-session/{id}")
+    Call<ApiResponse<Void>> deleteStudySession(@Path("id") Long id);
 }

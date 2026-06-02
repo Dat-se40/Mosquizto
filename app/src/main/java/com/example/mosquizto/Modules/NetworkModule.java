@@ -33,7 +33,7 @@ public class NetworkModule {
     @Singleton
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .baseUrl("http://192.168.1.114:8080/")
+                .baseUrl("http://192.168.1.131:8080/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

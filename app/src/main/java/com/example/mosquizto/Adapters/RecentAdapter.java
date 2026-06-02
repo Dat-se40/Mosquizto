@@ -26,6 +26,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     private OnItemOptionsClickedListener optionsListener;
     private OnCollectionActionListener actionListener;
 
+
     // Cập nhật Interface: Chia thành các hành động cụ thể
     public interface OnCollectionActionListener {
         void onEdit(CollectionResponse item, int position);
@@ -117,7 +118,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
     }
     @Override
     public int getItemCount() {
-        return collections == null ? 0 : collections.size();
+        return collections == null ? 0 : Math.min(collections.size(), 5);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

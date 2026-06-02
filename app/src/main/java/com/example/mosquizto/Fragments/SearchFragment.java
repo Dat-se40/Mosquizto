@@ -87,7 +87,6 @@ public class SearchFragment extends Fragment {
     private void initViews(View view) {
         etSearch = view.findViewById(R.id.etSearch);
         ivClear = view.findViewById(R.id.ivClear);
-        ivCamera = view.findViewById(R.id.ivCamera);
         tvCancel = view.findViewById(R.id.tvCancel);
         tvClearAll = view.findViewById(R.id.tvClearAll);
         cgSearchType = view.findViewById(R.id.cgSearchType);

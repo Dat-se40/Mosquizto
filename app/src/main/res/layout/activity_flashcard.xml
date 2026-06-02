@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_grey">
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_color_primary" />
+
+    <TextView
+        android:id="@+id/tv_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color_primary"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        tools:text="1 / 20"
+        app:layout_constraintBottom_toBottomOf="@id/btn_close"
+        app:layout_constraintEnd_toStartOf="@id/btn_settings"
+        app:layout_constraintStart_toEndOf="@id/btn_close"
+        app:layout_constraintTop_toTopOf="@id/btn_close" />
+
+    <ImageButton
+        android:id="@+id/btn_settings"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_color_secondary" />
+
+    <View
+        android:id="@+id/progress_background"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/quizlet_border"
+        app:layout_constraintTop_toBottomOf="@id/btn_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/progress_fill"
+        android:layout_width="1dp"
+        android:layout_height="4dp"
+        android:background="@color/primary_color"
+        app:layout_constraintTop_toTopOf="@id/progress_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/progress_background" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_learning_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/background_white"
+        app:cardCornerRadius="8dp"
+        app:strokeWidth="1.5dp"
+        app:strokeColor="#FF9800"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_background">
+
+        <TextView
+            android:id="@+id/tv_learning_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:textColor="#FF9800"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="0" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_known_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/background_white"
+        app:cardCornerRadius="8dp"
+        app:strokeWidth="1.5dp"
+        app:strokeColor="#4CAF50"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_background">
+
+        <TextView
+            android:id="@+id/tv_known_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:textColor="#4CAF50"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="0" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <FrameLayout
+        android:id="@+id/card_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_learning_counter">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_front"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/background_white"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/quizlet_border">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/iv_star_front"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_bookmark"
+                    app:tint="@color/text_color_secondary" />
+
+                <TextView
+                    android:id="@+id/tv_front_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    tools:text="honor" />
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_back"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/background_white"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/quizlet_border">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/iv_star_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_bookmark"
+                    app:tint="@color/text_color_secondary" />
+
+                <TextView
+                    android:id="@+id/tv_back_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="20sp"
+                    tools:text="(v/n) vinh danh/ danh dự" />
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_prev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_replay"
+            app:tint="@color/text_color_secondary" />
+
+        <TextView
+            android:id="@+id/tv_swipe_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/text_color_secondary"
+            android:textSize="15sp"
+            tools:text="@string/hint_tap_to_flip" />
+
+        <ImageButton
+            android:id="@+id/btn_next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_play_arrow"
+            app:tint="@color/text_color_secondary" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,80 +11,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
         android:gravity="center_vertical"
-        android:background="@color/background_grey">
+        android:background="@color/transparent">
 
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/search_bar_background">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_search_bar"
+            android:paddingHorizontal="14dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp">
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableStart="@drawable/icon_search"
+            android:drawablePadding="8dp"
+            android:hint="@string/etSearch"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/text_color_primary"
+            android:textColorHint="@color/search_bar_hint"
+            android:textSize="16sp" />
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_search"
-                    app:tint="@color/app_icon_tint"
-                    android:contentDescription="Search icon"/>
-
-                <EditText
-                    android:id="@+id/etSearch"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@null"
-                    android:hint="Tìm kiếm học phần, người dùng..."
-                    android:textColorHint="@color/search_bar_hint"
-                    android:textColor="@color/text_color_primary"
-                    android:textSize="15sp"
-                    android:inputType="text"
-                    android:imeOptions="actionSearch"
-                    android:singleLine="true"
-                    android:maxLines="1"/>
-
-                <ImageView
-                    android:id="@+id/ivClear"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_close"
-                    app:tint="@color/app_icon_tint"
-                    android:contentDescription="Clear text"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/ivCamera"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_photo_camera"
-                    app:tint="@color/app_icon_tint"
-                    android:contentDescription="Camera search"
-                    android:clickable="true"
-                    android:focusable="true"/>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        <ImageView
+            android:id="@+id/ivClear"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_close"
+            app:tint="@color/app_icon_tint"
+            android:contentDescription="Clear text"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone" />
+    </LinearLayout>
 
         <TextView
             android:id="@+id/tvCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:text="Hủy"
+            android:layout_marginStart="7dp"
+            android:text="@string/cancel"
             android:textColor="@color/text_color_primary"
             android:textSize="15sp"
             android:paddingStart="10dp"
@@ -126,14 +101,14 @@
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Học phần" />
+                        android:text="@string/tvStudySet" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipUser"
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Người dùng" />
+                        android:text="@string/textView_UserName" />
 
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
@@ -153,7 +128,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Gần đây"
+                        android:text="@string/recents"
                         android:textColor="@color/text_color_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
@@ -161,8 +136,8 @@
                         android:id="@+id/tvClearAll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Xóa tất cả"
-                        android:textColor="@color/text_link"
+                        android:text="@string/clear_all"
+                        android:textColor="@color/primary_color"
                         android:textSize="13sp"/>
                 </LinearLayout>
 
