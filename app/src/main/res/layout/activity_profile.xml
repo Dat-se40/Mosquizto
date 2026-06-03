@@ -188,6 +188,7 @@
             android:textSize="17sp"
             android:background="@drawable/custom_redbtn"
             app:backgroundTint="@null"
+            android:textColor="@color/text_white"
             android:id="@+id/btn_logout">
 
         </Button>

@@ -45,7 +45,6 @@ public class SearchFragment extends Fragment {
 
     private EditText etSearch;
     private ImageView ivClear;
-    private ImageView ivCamera;
     private TextView tvCancel;
     private TextView tvClearAll;
 
@@ -188,7 +187,6 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString().trim();
                 ivClear.setVisibility(query.isEmpty() ? View.GONE : View.VISIBLE);
-                ivCamera.setVisibility(query.isEmpty() ? View.VISIBLE : View.GONE);
                 viewModel.onQueryChanged(query);
             }
 
