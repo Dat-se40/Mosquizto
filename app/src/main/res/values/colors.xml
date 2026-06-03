@@ -41,6 +41,8 @@
 
     <color name="quizlet_blue">#4255FF</color>
     <color name="quizlet_gray_icon">#586585</color>
+    <color name="quizlet_light_blue">#EBF8FE</color>
+    <color name="icon_light_blue">#0395C4</color>
 
     <color name="quizlet_green">#4CAF50</color>
     <color name="quizlet_red">#D93025</color>

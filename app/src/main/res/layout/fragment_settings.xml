@@ -4,7 +4,7 @@
     android:id="@+id/settings_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0a0a2c"
+    android:background="@color/background_grey"
     android:fillViewport="true">
 
     <LinearLayout
@@ -16,7 +16,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:paddingStart="8dp"
+            android:paddingStart="10dp"
             android:paddingEnd="16dp">
 
             <ImageButton
@@ -24,7 +24,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:background="@drawable/circle_button_bg"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/settings_back_description"
                 android:src="@drawable/ic_arrow_back" />
 
@@ -33,27 +33,27 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/settings_title"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/text_color_primary"
+                android:textSize="22sp"
+                android:fontFamily="@font/geomanist_bold" />
         </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="24dp"
             android:paddingTop="20dp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="24dp"
             android:paddingBottom="8dp"
             android:text="@string/settings_sec_personal_info"
-            android:textColor="#AABBCC"
-            android:textSize="13sp" />
+            android:textColor="@color/text_gray"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="24dp"
             android:background="@drawable/custom_edittext_border"
             android:clipToOutline="true"
             android:orientation="vertical">
@@ -79,9 +79,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_username"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_primary"
+                        android:textSize="17sp"/>
 
                     <TextView
                         android:id="@+id/tvUsername"
@@ -89,22 +88,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text=""
-                        android:textColor="#AABBCC"
-                        android:textSize="13sp" />
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemEmail"
@@ -127,9 +127,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_email"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_primary"
+                        android:textSize="17sp"/>
 
                     <TextView
                         android:id="@+id/tvEmail"
@@ -137,22 +136,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text=""
-                        android:textColor="#AABBCC"
-                        android:textSize="13sp" />
+                        android:textColor="@color/text_gray"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemPassword"
@@ -170,34 +170,33 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_create_password"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="24dp"
             android:paddingTop="24dp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="8dp"
             android:text="@string/settings_sec_offline_learning"
-            android:textColor="#AABBCC"
-            android:textSize="13sp" />
+            android:textColor="@color/text_gray"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="24dp"
             android:background="@drawable/custom_edittext_border"
             android:clipToOutline="true"
             android:orientation="vertical">
@@ -219,16 +218,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_offline_save_title"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_primary"
+                        android:textSize="17sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="@string/settings_offline_save_desc"
-                        android:textColor="#AABBCC"
+                        android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -244,7 +242,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemStorage"
@@ -262,34 +261,33 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_manage_storage"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="24dp"
             android:paddingTop="24dp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="8dp"
             android:text="@string/settings_sec_preferences"
-            android:textColor="#AABBCC"
-            android:textSize="13sp" />
+            android:textColor="@color/text_gray"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="24dp"
             android:background="@drawable/custom_edittext_border"
             android:clipToOutline="true"
             android:orientation="vertical">
@@ -306,9 +304,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/setting_dark_mode"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchDarkMode"
@@ -321,7 +318,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -335,9 +333,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_push_notifications"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchNotification"
@@ -350,7 +347,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -364,9 +362,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_sound_effects"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchSound"
@@ -379,7 +376,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -393,9 +391,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_haptic_feedback"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchHaptic"
@@ -408,7 +405,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemPrivacyCookie"
@@ -426,34 +424,33 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_privacy_cookie_choices"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="24dp"
             android:paddingTop="24dp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="8dp"
             android:text="@string/settings_sec_about"
-            android:textColor="#AABBCC"
-            android:textSize="13sp" />
+            android:textColor="@color/text_gray"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="24dp"
             android:background="@drawable/custom_edittext_border"
             android:clipToOutline="true"
             android:orientation="vertical">
@@ -474,22 +471,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_privacy_policy"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemPrivacyCalifornia"
@@ -507,22 +504,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_california_privacy"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemTerms"
@@ -540,22 +537,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_terms_of_service"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemOpenSource"
@@ -573,22 +570,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_open_source_licenses"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:background="#1f1f4d" />
+                android:layout_marginEnd="26dp"
+                android:background="@color/app_divider" />
 
             <LinearLayout
                 android:id="@+id/itemSupport"
@@ -606,52 +603,52 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/settings_support_center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_color_primary"
+                    android:textSize="17sp"/>
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="#AABBCC" />
+                    app:tint="@color/text_gray" />
             </LinearLayout>
         </LinearLayout>
 
+        <!--
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/custom_edittext_border"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/custom_btn"
             android:text="@string/settings_logout"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/text_white"
+            android:textSize="18sp"
+            android:fontFamily="@font/geomanist_bold" />-->
 
         <Button
             android:id="@+id/btnDeleteAccount"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="#E53935"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="@color/quizlet_red"
             android:text="@string/settings_delete_account"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/geomanist_bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="16dp"
+            android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="@string/settings_version"
-            android:textColor="#AABBCC"
+            android:textColor="@color/text_gray"
             android:textSize="12sp" />
 
     </LinearLayout>
