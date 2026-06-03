@@ -24,9 +24,8 @@
         android:layout_weight="1"
         android:layout_marginStart="16dp"
         android:text="@string/folder_name"
-        android:textSize="16sp"
-        android:textColor="@color/text_color_primary"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textColor="@color/text_color_primary" />
 
     <ImageView
         android:id="@+id/ivStatus"

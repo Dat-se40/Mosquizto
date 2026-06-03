@@ -96,10 +96,12 @@
                 android:layout_marginTop="24dp"
                 android:orientation="vertical">
 
-                <com.google.android.material.card.MaterialCardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardFlashcardsGame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="12dp"
                     app:cardElevation="2dp"
                     app:cardCornerRadius="12dp"
@@ -113,7 +115,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:padding="16dp"
-                        android:background="@color/white">
+                        android:background="@color/background_white">
                         <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
@@ -124,15 +126,17 @@
                             android:layout_marginStart="16dp"
                             android:text="Flashcards"
                             android:textSize="18sp"
-                            android:textStyle="bold"
                             android:textColor="@color/text_color_primary" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
-                <com.google.android.material.card.MaterialCardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardLearnGame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp"
                     app:cardElevation="2dp"
                     app:cardCornerRadius="12dp"
                     app:strokeWidth="1dp"
@@ -144,8 +148,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:padding="16dp"
-                        android:background="@color/white">
+                        android:padding="16dp">
 
                         <ImageView
                             android:layout_width="28dp"
@@ -158,10 +161,9 @@
                             android:layout_marginStart="16dp"
                             android:text="@string/gameLearn"
                             android:textSize="18sp"
-                            android:textStyle="bold"
                             android:textColor="@color/text_color_primary" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
@@ -208,20 +210,19 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/fabStudy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp"
         android:text="@string/fabStudy"
         android:textSize="17sp"
+        android:textStyle="bold"
         android:textColor="@color/app_on_primary"
         android:gravity="center"
-        android:paddingVertical="16dp"
         app:backgroundTint="@color/primary_color"
-        app:cornerRadius="40dp"
-        android:visibility="visible"
-        app:elevation="4dp" />
+        app:cornerRadius="28dp"
+        android:visibility="visible"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

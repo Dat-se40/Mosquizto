@@ -293,4 +293,6 @@
     <string name="username_must_not_exceed_100_characters">Username must not exceed 100 characters</string>
     <string name="tv_library_title">Your Library</string>
 
+    <string name="progress_completed">%1$d%% of questions completed</string>
+    <string name="tvCollectionDetails">%1$d cards • by %2$s</string>
 </resources>

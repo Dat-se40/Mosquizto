@@ -286,4 +286,7 @@
     <string name="username_must_not_be_empty">Tên người dùng không được để trống</string>
     <string name="username_must_not_exceed_100_characters">Tên người dùng không được vượt quá 100 ký tự</string>
     <string name="tv_library_title">Thư viện</string>
+
+    <string name="progress_completed">Đã hoàn thành %1$d%%</string>
+    <string name="tvCollectionDetails">%1$d thẻ • bởi %2$s</string>
 </resources>

@@ -64,7 +64,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private String author;
     private ViewPager2 viewPagerFlashcards;
     private RecyclerView rvTerms;
-    private ExtendedFloatingActionButton fabStudy;
+    private android.widget.Button fabStudy;
     private NestedScrollView nestedScrollView;
     private TextView tvSetTitle;
 
@@ -168,9 +168,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (nestedScrollView != null && viewPagerFlashcards != null && fabStudy != null) {
                 nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     if (scrollY > viewPagerFlashcards.getBottom()) {
-                        fabStudy.show();
+                        fabStudy.setVisibility(View.VISIBLE);
                     } else {
-                        fabStudy.hide();
+                        fabStudy.setVisibility(View.GONE);
                     }
                 });
             }
@@ -183,12 +183,15 @@ public class StudySetDetailActivity extends AppCompatActivity {
             View btnOptions = findViewById(R.id.btnOptions);
             if (btnOptions != null) btnOptions.setOnClickListener(v -> showOptionsBottomSheet());
 
-            // ── FLASHCARD navigate (Từ nhánh feature/flashcard) ───────────────
             View rowFlashcard = findViewById(R.id.cardFlashcardsGame);
             if (rowFlashcard != null) {
                 rowFlashcard.setOnClickListener(v -> openFlashcardActivity());
             }
-            // ─────────────────────────────────────────────────────────────────
+
+            View cardLearnGame = findViewById(R.id.cardLearnGame);
+            if (cardLearnGame != null) {
+                cardLearnGame.setOnClickListener(v -> showLearnModeBottomSheet());
+            }
 
             TabLayout tabLayout = findViewById(R.id.tabLayoutTerms);
             if (tabLayout != null) {

@@ -47,13 +47,15 @@ public class FlashcardSetsFragment extends Fragment {
     @Inject
     SessionManager sessionManager;
     private List<CollectionResponse> originalList = new ArrayList<>();
-    private String currentFilterMode = getString(R.string.all);
+    private String currentFilterMode;
     private String currentSearchQuery = "";
     MainActivity mainActivity ;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentFilterMode = getString(R.string.all);
+
         View v = inflater.inflate(R.layout.fragment_flashcard_sets, container, false);
         rv = v.findViewById(R.id.recycler_flashcard_sets);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -70,31 +72,26 @@ public class FlashcardSetsFragment extends Fragment {
 
         // =========== XỬ LÝ TEXTVIEW BẬT MENU THẢ XUỐNG ===========
         TextView tvFilterTerms = v.findViewById(R.id.tvFilterTerms);
+        if (tvFilterTerms != null) {
+            // Hiển thị chữ mặc định ban đầu là "All" (hoặc từ strings.xml tương ứng)
+            tvFilterTerms.setText(currentFilterMode);
 
-        tvFilterTerms.setOnClickListener(view -> {
-            // Tạo một Menu thả xuống neo vào tvFilterTerms
-            android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getContext(), tvFilterTerms);
+            tvFilterTerms.setOnClickListener(view -> {
+                android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(getContext(), tvFilterTerms);
+                popupMenu.getMenu().add(getString(R.string.all));
+                popupMenu.getMenu().add(getString(R.string.created));
 
-            // Thêm các lựa chọn vào Menu
-            popupMenu.getMenu().add(getString(R.string.all));
-            popupMenu.getMenu().add(getString(R.string.created));
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    String selectedItem = item.getTitle().toString();
+                    tvFilterTerms.setText(selectedItem);
 
-            // Bắt sự kiện khi người dùng chọn 1 mục
-            popupMenu.setOnMenuItemClickListener(item -> {
-                String selectedItem = item.getTitle().toString();
-
-                // Cập nhật lại chữ hiển thị trên màn hình
-                tvFilterTerms.setText(selectedItem);
-
-                currentFilterMode = selectedItem;
-                applyFilter();
-
-                return true; // Trả về true để báo là đã xử lý xong sự kiện
+                    currentFilterMode = selectedItem;
+                    applyFilter();
+                    return true;
+                });
+                popupMenu.show();
             });
-
-            // Hiển thị Menu
-            popupMenu.show();
-        });
+        }
 
         // 1. Xử lý Logic kéo để Refresh
         swipeRefreshLayout.setOnRefreshListener(this::fetchMyCollections);
@@ -115,6 +112,8 @@ public class FlashcardSetsFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<PageResponse<CollectionResponse>>> call, @NonNull Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
                 swipeRefreshLayout.setRefreshing(false);
+                if (!isAdded()) return; // Chống crash nếu user thoát màn hình trước khi API trả về
+
                 if (response.isSuccessful() && response.body() != null) {
                     List<CollectionResponse> remoteList = response.body().getData().getContent();
 

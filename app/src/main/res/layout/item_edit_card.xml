@@ -40,7 +40,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Term"
+            android:hint="@string/term"
             app:hintTextColor="@color/primary_color"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
 
@@ -52,16 +52,11 @@
                 android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="@color/quizlet_border" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Definition"
+            android:hint="@string/definition"
             app:hintTextColor="@color/primary_color"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
 

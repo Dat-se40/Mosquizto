@@ -9,7 +9,7 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="12dp"
     app:cardBackgroundColor="@color/background_white"
-    app:cardElevation="0dp"
+    app:cardElevation="3dp"
     android:clickable="true"
     android:focusable="true">
 
@@ -22,10 +22,9 @@
 
         <!-- Thumbnail / Icon -->
         <androidx.cardview.widget.CardView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="@color/app_surface_variant"
             app:cardElevation="0dp">
 
             <ImageView

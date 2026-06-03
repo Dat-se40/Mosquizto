@@ -637,7 +637,7 @@
             android:layout_marginEnd="24dp"
             android:backgroundTint="@color/quizlet_red"
             android:text="@string/settings_delete_account"
-            android:textColor="@color/white"
+            android:textColor="@color/background_white"
             android:textSize="18sp"
             android:fontFamily="@font/geomanist_bold" />
 
