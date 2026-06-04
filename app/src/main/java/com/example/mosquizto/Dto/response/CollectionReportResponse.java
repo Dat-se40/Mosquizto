@@ -1,8 +1,9 @@
 package com.example.mosquizto.Dto.response;
 
+import com.example.mosquizto.Util.NotificationWrapper;
 import com.example.mosquizto.Util.ReportStatus;
 
-public class CollectionReportResponse {
+public class CollectionReportResponse implements NotificationWrapper {
     private Integer id;
     private Integer collectionId ;
     private Integer reportedId ;
@@ -75,5 +76,10 @@ public class CollectionReportResponse {
 
     public void setUpdateAt(String updateAt) {
         this.updateAt = updateAt;
+    }
+
+    @Override
+    public int getType() {
+        return 2;
     }
 }

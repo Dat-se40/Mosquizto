@@ -101,6 +101,12 @@ public class ProfilePage extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+        findViewById(R.id.menuActivity).setOnClickListener(v ->
+        {
+            Intent intent = new Intent(ProfilePage.this, NotificationActivity.class);
+            startActivity(intent);
+           // finish();
+        });
     }
 
     // Hàm lấy dữ liệu mới nhất từ nhánh của bạn

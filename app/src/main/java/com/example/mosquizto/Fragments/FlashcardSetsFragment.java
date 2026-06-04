@@ -122,6 +122,7 @@ public class FlashcardSetsFragment extends Fragment {
                         for (CollectionResponse col : remoteList) {
                             if (col.getId() != null) {
                                 sessionManager.saveCollectionCount(col.getId(), col.getCount() != null ? col.getCount() : 0);
+                                sessionManager.saveCollectionTitle(col.getId(), col.getTitle() != null ? col.getTitle() : "UNKNOW");
                             }
                         }
                     }

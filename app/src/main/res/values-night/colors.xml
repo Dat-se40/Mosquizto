@@ -40,4 +40,16 @@
     <color name="quizlet_gray_icon">#94A3B8</color>
     <color name="quizlet_green">#4CAF50</color>
     <color name="quizlet_red">#D93025</color>
+
+    <color name="error_red">#FF6B6B</color>
+    <color name="error_background">#3D1B1B</color>
+    <color name="noti_accent_color">#8EA0FF</color>
+
+    <!-- ── Trạng thái thẻ & Counter ──────────────────────── -->
+    <color name="swipe_right_color">#23C4A0</color>
+    <color name="counter_green">#23C4A0</color>
+    <color name="counter_green_border">#1A9E83</color>
+    <color name="swipe_left_color">#F5A623</color>
+    <color name="counter_orange">#F5A623</color>
+    <color name="counter_orange_border">#C8861B</color>
 </resources>

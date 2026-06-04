@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mosquizto</string>
     <string name="title_activity_login_form" translatable="false">LoginForm</string>
@@ -295,4 +296,14 @@
 
     <string name="progress_completed">%1$d%% of questions completed</string>
     <string name="tvCollectionDetails">%1$d cards • by %2$s</string>
+
+    <string name="notification_title">Notifications</string>
+    <string name="no_notifications">You have no notifications</string>
+
+    <string name="invite_message">%1$s invited you to join course %2$s with role %3$s</string>
+    <string name="report_message">Your course which is named %1$s has been reported.\nReason: %2$s.\n Details: %3$s</string>
+
+    <string name="invite_accept">Accept</string>
+    <string name="invite_denied">Deny</string>
+    <string name="report_revised">Revised</string>
 </resources>

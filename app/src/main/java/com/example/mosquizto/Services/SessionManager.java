@@ -21,6 +21,7 @@ public class SessionManager {
     private static final String PREFIX_COLLECTION_COUNT = "COLLECTION_COUNT_";
     private static final String PREFIX_COLLECTION_AUTHOR = "COLLECTION_AUTHOR_";
 
+    private static final String PREFIX_COLLECTION_TITLE = "COLLECTION_TITLE_";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private String accessToken;
@@ -93,6 +94,16 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void saveCollectionTitle(Integer id, String title)
+    {
+        editor.putString(PREFIX_COLLECTION_TITLE + id, title);
+        editor.apply();
+    }
+
+    public String getCollectionTitle(Integer id)
+    {
+        return sharedPreferences.getString(PREFIX_COLLECTION_TITLE + id, null);
+    }
     public void clearSession() {
         // xóa token
         setAccessToken(null);

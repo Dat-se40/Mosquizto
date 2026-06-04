@@ -289,4 +289,14 @@
 
     <string name="progress_completed">Đã hoàn thành %1$d%%</string>
     <string name="tvCollectionDetails">%1$d thẻ • bởi %2$s</string>
+
+    <string name="notification_title">Thông báo</string>
+    <string name="no_notifications">Bạn không có thông báo nào</string>
+
+    <string name="invite_message">%1$s đã mời bạn tham gia học phần %2$s với quyền %3$s</string>
+    <string name="report_message">Học %1$s phần của bạn đã bị báo cáo.\nLý do: %2$s. \n Mô tả chi tiết: %3$s</string>
+
+    <string name="invite_accept">Đồng ý</string>
+    <string name="invite_denied">Từ chối</string>
+    <string name="report_revised">Đã sửa đổi</string>
 </resources>
