@@ -22,7 +22,7 @@ public class SearchApiResponse {
     public static class SearchPaginatedData {
 
         @SerializedName("hits")
-        private List<SearchResultItem> hits;
+        private List<SearchCollectionResultItem> hits;
 
         @SerializedName("page")
         private int page;
@@ -36,7 +36,7 @@ public class SearchApiResponse {
         @SerializedName("totalPages")
         private int totalPages;
 
-        public List<SearchResultItem> getHits() { return hits; }
+        public List<SearchCollectionResultItem> getHits() { return hits; }
         public int getPage() { return page; }
         public int getHitsPerPage() { return hitsPerPage; }
         public int getTotalHits() { return totalHits; }

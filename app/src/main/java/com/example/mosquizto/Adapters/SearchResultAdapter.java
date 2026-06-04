@@ -9,44 +9,84 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mosquizto.Dto.response.SearchCollectionResultItem;
 import com.example.mosquizto.R;
-import com.example.mosquizto.Dto.response.SearchResultItem;
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Dto.response.UserResponse;
+import com.example.mosquizto.Util.SearchResultWrapper;
 
 import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+    public static final int TYPE_COLLECTION = 1;
+    public static final int TYPE_USER = 2;
 
     public interface OnResultClickListener {
-        void onResultClick(SearchResultItem item);
-        void onMoreClick(SearchResultItem item);
+        void onResultClick(SearchResultWrapper item);
+        void onMoreClick(SearchResultWrapper item);
     }
 
-    private List<SearchResultItem> results;
+    private List<SearchResultWrapper> results;
     private OnResultClickListener listener;
 
-    public SearchResultAdapter(List<SearchResultItem> results, OnResultClickListener listener) {
+    public SearchResultAdapter(List<SearchResultWrapper> results, OnResultClickListener listener) {
         this.results = results;
         this.listener = listener;
+    }
+
+    // BƯỚC 1: Lấy đúng type của item
+    @Override
+    public int getItemViewType(int position) {
+        return results.get(position).getType();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Vì dùng chung 1 layout nên không cần if/else ở đây
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_search_result, parent, false);
         return new ViewHolder(view);
     }
 
+    // BƯỚC 2: Rẽ nhánh để gán dữ liệu phù hợp
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        SearchResultItem item = results.get(position);
+        SearchResultWrapper item = results.get(position);
+        int viewType = getItemViewType(position);
 
-        holder.tvTitle.setText(item.getTitle());
-        holder.tvSubtitle.setText(item.getSubtitle());
+        if (viewType == TYPE_COLLECTION) {
+            SearchCollectionResultItem collection = (SearchCollectionResultItem) item;
 
-        // TODO: Load thumbnail bằng Glide/Picasso nếu có URL
-        // Glide.with(holder.itemView).load(item.getThumbnailUrl()).into(holder.ivThumbnail);
+            holder.tvTitle.setText(collection.getTitle());
 
+            // Subtitle cho Collection: Tên user • Số lượng thuật ngữ
+            String countInfo = (collection.getCount() != null ? collection.getCount() : 0) + " thuật ngữ";
+            String subtitle = collection.getCreatedByUsername() + " • " + countInfo;
+            holder.tvSubtitle.setText(subtitle);
+
+            holder.ivThumbnail.setImageResource(R.drawable.ic_study_set); // Icon học phần
+            holder.ivMore.setVisibility(View.VISIBLE); // Hiện nút 3 chấm
+
+        } else if (viewType == TYPE_USER) {
+            UserResponse user = (UserResponse) item;
+
+            // Title cho User: Ưu tiên FullName, nếu null thì dùng Username
+            String title = (user.getFullName() != null && !user.getFullName().isEmpty())
+                    ? user.getFullName()
+                    : user.getUsername();
+            holder.tvTitle.setText(title);
+
+            // Subtitle cho User: @username
+            holder.tvSubtitle.setText("@" + user.getUsername());
+
+            // Bạn nhớ thêm một drawable tên ic_person (hoặc tương tự) vào thư mục res/drawable nhé
+            holder.ivThumbnail.setImageResource(R.drawable.ic_person);
+
+            holder.ivMore.setVisibility(View.GONE); // Giả sử tìm user thì không cần nút 3 chấm
+        }
+
+        // Xử lý click sự kiện
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onResultClick(item);
         });
@@ -61,7 +101,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return results != null ? results.size() : 0;
     }
 
-    public void updateData(List<SearchResultItem> newResults) {
+    public void updateData(List<SearchResultWrapper> newResults) {
         this.results = newResults;
         notifyDataSetChanged();
     }

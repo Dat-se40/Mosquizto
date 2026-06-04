@@ -92,4 +92,7 @@ public interface CollectionApi {
     Call<ApiResponse<CollectionReportResponse>> reportCollection(@Path("collectionId") int collectionId, @Body CollectionReportRequest request);
 
 
+    @GET("recommendation/collections")
+    Call<ApiResponse<PageResponse<CollectionResponse>>> recommendCollection(@Query("page") int page , @Query("size") int size);
+
 }

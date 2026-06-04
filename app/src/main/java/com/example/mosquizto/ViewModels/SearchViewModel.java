@@ -9,10 +9,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Models.RecentSearchItem;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
-import com.example.mosquizto.Dto.response.SearchResultItem;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.SearchResultWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -53,8 +57,8 @@ public class SearchViewModel extends ViewModel {
     private final MutableLiveData<List<String>> _suggestions = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<String>> suggestions = _suggestions;
 
-    private final MutableLiveData<List<SearchResultItem>> _searchResults = new MutableLiveData<>(new ArrayList<>());
-    public LiveData<List<SearchResultItem>> searchResults = _searchResults;
+    private final MutableLiveData<List<SearchResultWrapper>> _searchResults = new MutableLiveData<>(new ArrayList<>());
+    public LiveData<List<SearchResultWrapper>> searchResults = _searchResults;
 
     private final MutableLiveData<List<RecentSearchItem>> _recentSearches = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<RecentSearchItem>> recentSearches = _recentSearches;
@@ -72,15 +76,17 @@ public class SearchViewModel extends ViewModel {
     private Runnable debounceRunnable;
     private static final long DEBOUNCE_DELAY_MS = 300;
 
+    private final UserApi userApi ;
 
 
     @Inject
-    public SearchViewModel(CollectionApi collectionApi, @ApplicationContext Context context) {
+    public SearchViewModel(CollectionApi collectionApi, @ApplicationContext Context context,
+                            UserApi userApi) {
         this.collectionApi = collectionApi;
         // Khởi tạo SharedPreferences và Gson
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
-
+        this.userApi = userApi ;
         // Load lại lịch sử từ bộ nhớ khi mở màn hình Search
         loadRecentSearchesFromPrefs();
     }
@@ -184,6 +190,36 @@ public class SearchViewModel extends ViewModel {
 
         if (currentType == SearchType.COLLECTION) {
             // TÌM KIẾM HỌC PHẦN
+//            collectionApi.searchCollections(query, 0, 10, null).enqueue(new Callback<ApiResponse<PageResponse<CollectionResponse>>>() {
+//                @Override
+//                public void onResponse(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
+//                    _isLoading.setValue(false);
+//                    Log.d("SearchViewModel", "Search response: " + response.body());
+//                    if (response.isSuccessful() && response.body() != null) {
+//                            List<CollectionResponse> data = response.body().getData().getContent() ;
+//                        if (data != null && ! data.isEmpty() ) {
+//                            List<SearchResultWrapper> searchResultWrappers = new ArrayList<>(data);
+//                            _searchResults.setValue(searchResultWrappers);
+//                            _searchState.setValue(SearchState.HAS_RESULTS);
+//                            Log.d("SearchViewModel", "Search results: " + searchResultWrappers);
+//                        } else {
+//                            _searchResults.setValue(new ArrayList<>());
+//                            _searchState.setValue(SearchState.EMPTY);
+//                            Log.d("SearchViewModel", "Search results empty");
+//                        }
+//
+//                    } else {
+//                        _searchState.setValue(SearchState.EMPTY);
+//                    }
+//                }
+//                @Override
+//                public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
+//                    _isLoading.setValue(false);
+//                    _searchState.setValue(SearchState.EMPTY);
+//                    _errorMessage.setValue("Lỗi kết nối");
+//                    Log.d("SearchViewmodel", Objects.requireNonNull(t.getMessage()));
+//                }
+//            });
             collectionApi.searchCollections(query, 1, 10, null).enqueue(new Callback<SearchApiResponse>() {
                 @Override
                 public void onResponse(Call<SearchApiResponse> call, Response<SearchApiResponse> response) {
@@ -191,7 +227,8 @@ public class SearchViewModel extends ViewModel {
                     if (response.isSuccessful() && response.body() != null) {
                         SearchApiResponse.SearchPaginatedData data = response.body().getData();
                         if (data != null && data.getHits() != null && !data.getHits().isEmpty()) {
-                            _searchResults.setValue(data.getHits());
+                            List<SearchResultWrapper> searchResultWrappers = new ArrayList<>(data.getHits());
+                            _searchResults.setValue(searchResultWrappers);
                             _searchState.setValue(SearchState.HAS_RESULTS);
                         } else {
                             _searchResults.setValue(new ArrayList<>());
@@ -208,13 +245,37 @@ public class SearchViewModel extends ViewModel {
                     _errorMessage.setValue("Lỗi kết nối");
                 }
             });
-
         } else {
-            // TÌM KIẾM NGƯỜI DÙNG
-            // TODO: Ở đây bạn sẽ thay bằng hàm gọi API lấy danh sách User
-            // Ví dụ: userApi.searchUsers(query).enqueue(...)
 
-            // Tạm thời báo rỗng để test
+            userApi.searchUser(query, 1, 10).enqueue(new Callback<ApiResponse<PageResponse<UserResponse>>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<PageResponse<UserResponse>>> call, Response<ApiResponse<PageResponse<UserResponse>>> response) {
+                    _isLoading.setValue(false);
+                    if (response.body() != null && response.isSuccessful())
+                    {
+                        PageResponse<UserResponse> data = response.body().getData();
+                        if (data != null && !data.getContent().isEmpty())
+                        {
+                            List<SearchResultWrapper> searchResultWrappers = new ArrayList<>(data.getContent());
+                            _searchResults.setValue(searchResultWrappers);
+                            _searchState.setValue(SearchState.HAS_RESULTS);
+                        }
+                        else
+                        {
+                            _searchResults.setValue(new ArrayList<>());
+                            _searchState.setValue(SearchState.EMPTY);
+                        }
+                    }else _searchState.setValue(SearchState.EMPTY);
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<PageResponse<UserResponse>>> call, Throwable t) {
+                    _isLoading.setValue(false);
+                    _searchState.setValue(SearchState.EMPTY);
+                    _errorMessage.setValue("Lỗi kết nối");
+                }
+            });
+
             _isLoading.setValue(false);
             _searchResults.setValue(new ArrayList<>());
             _searchState.setValue(SearchState.EMPTY);
