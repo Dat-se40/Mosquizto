@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import java.util.List;
@@ -14,12 +16,14 @@ public class BasedOnRecentAdapter extends RecyclerView.Adapter<BasedOnRecentAdap
 
     private List<CollectionResponse> collections;
 
+    private OnItemCollectionClickedListener itemCollectionClickedListener ;
     public BasedOnRecentAdapter(List<CollectionResponse> collections) {
         this.collections = collections;
     }
     public void setCollections(List<CollectionResponse> collections) {
         this.collections = collections;
         notifyDataSetChanged();
+        this.itemCollectionClickedListener = itemCollectionClickedListener ;
     }
     @NonNull
     @Override
@@ -27,14 +31,28 @@ public class BasedOnRecentAdapter extends RecyclerView.Adapter<BasedOnRecentAdap
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_based_on_recent, parent, false);
         return new ViewHolder(view);
     }
-
+    public void setItemCollectionClickedListener(OnItemCollectionClickedListener onItemCollectionClickedListener)
+    {
+        this.itemCollectionClickedListener = onItemCollectionClickedListener ;
+    }
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CollectionResponse item = collections.get(position);
-        holder.tvTitle.setText(item.getTitle());
+        if (item != null) {
+            if (holder.tvTitle != null) {
+                holder.tvTitle.setText(item.getTitle());
+            }
 
-        String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
-        holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
+            if (holder.tvDetails != null) {
+                String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
+                holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
+            }
+            holder.itemView.setOnClickListener(v -> {
+                if (itemCollectionClickedListener != null) {
+                    itemCollectionClickedListener.OnItemClicked(item);
+                }
+            });
+        }
     }
 
     @Override
@@ -47,8 +65,8 @@ public class BasedOnRecentAdapter extends RecyclerView.Adapter<BasedOnRecentAdap
 
         ViewHolder(View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvCollectionTitle);
-            tvDetails = itemView.findViewById(R.id.tvCollectionDetails);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvDetails = itemView.findViewById(R.id.tvDetails);
         }
     }
 }

@@ -94,6 +94,13 @@ public class ProfilePage extends AppCompatActivity {
             Intent intent = new Intent(ProfilePage.this, SettingsActivity.class);
             startActivity(intent);
         });
+        findViewById(R.id.btn_logout).setOnClickListener(v ->
+        {
+            sessionManager.logout();
+            Intent intent = new Intent(ProfilePage.this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     // Hàm lấy dữ liệu mới nhất từ nhánh của bạn
