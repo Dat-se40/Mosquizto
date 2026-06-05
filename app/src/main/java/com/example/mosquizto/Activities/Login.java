@@ -12,10 +12,15 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.mosquizto.Event.LoginSuccessEvent;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.ViewModels.LoginViewModel;
 import com.example.mosquizto.Services.SessionManager;
+
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -87,6 +92,10 @@ public class Login extends AppCompatActivity {
             if (isSuccess != null && isSuccess) {
                 Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 // Chuyển sang màn hình chính
+                String token = sessionManager.getAccessToken();
+                if (token != null) {
+                    EventBus.getDefault().postSticky(new LoginSuccessEvent(token));
+                }
                 Intent intent = new Intent(Login.this, MainActivity.class);
                 startActivity(intent);
                 finish(); // Đóng màn hình login

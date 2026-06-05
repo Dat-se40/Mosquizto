@@ -2,7 +2,6 @@ package com.example.mosquizto.Adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -33,15 +32,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<NotificationWrapper> notifications;
     private OnNotificationActionListener listener;
 
-    private SessionManager sessionManager ;
+    private SessionManager sessionManager;
+
     public interface OnNotificationActionListener {
         void onAcceptInvite(ShareCollectionResponse invite, int position);
         void onDenyInvite(ShareCollectionResponse invite, int position);
         void onDismissReport(CollectionReportResponse report, int position);
     }
 
-    public NotificationAdapter(List<NotificationWrapper> notifications, OnNotificationActionListener listener) {
+    public NotificationAdapter(List<NotificationWrapper> notifications, SessionManager sessionManager, OnNotificationActionListener listener) {
         this.notifications = notifications;
+        this.sessionManager = sessionManager;
         this.listener = listener;
     }
 
@@ -67,7 +68,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         NotificationWrapper item = notifications.get(position);
         Context context = holder.itemView.getContext();
-        
+
         // Lấy mã màu accent dưới dạng Hex để dùng trong HTML
         int colorInt = ContextCompat.getColor(context, R.color.noti_accent_color);
 
@@ -100,7 +101,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder.getItemViewType() == TYPE_REPORT) {
             ReportViewHolder reportHolder = (ReportViewHolder) holder;
             CollectionReportResponse report = (CollectionReportResponse) item;
-            String collectionTitle = sessionManager.getCollectionTitle(report.getCollectionId());
+
+            String collectionTitle = "Unknown";
+            if (sessionManager != null) {
+                String title = sessionManager.getCollectionTitle(report.getCollectionId());
+                if (title != null) {
+                    collectionTitle = title;
+                }
+            }
 
             String reason = report.getReason();
             String description = report.getDescription();
@@ -137,11 +145,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.notifications = newNotifications;
         notifyDataSetChanged();
     }
+
     private void applyBold(
             SpannableStringBuilder ssb,
             String fullText,
             String target
     ) {
+        if (target == null) return;
         int start = fullText.indexOf(target);
 
         if (start >= 0) {
@@ -153,12 +163,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             );
         }
     }
+
     private void applyBoldAndColor(
             SpannableStringBuilder ssb,
             String fullText,
             String target,
             int color
     ) {
+        if (target == null) return;
         int start = fullText.indexOf(target);
 
         if (start >= 0) {
@@ -177,9 +189,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             );
         }
     }
+
     static class InviteViewHolder extends RecyclerView.ViewHolder {
         TextView tvInviteContent, tvTime;
         Button btnAccept, btnDeny;
+
         InviteViewHolder(View itemView) {
             super(itemView);
             tvInviteContent = itemView.findViewById(R.id.tvInviteContent);
@@ -191,6 +205,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class ReportViewHolder extends RecyclerView.ViewHolder {
         TextView tvReportContent, btnDismiss;
+
         ReportViewHolder(View itemView) {
             super(itemView);
             tvReportContent = itemView.findViewById(R.id.tvReportContent);

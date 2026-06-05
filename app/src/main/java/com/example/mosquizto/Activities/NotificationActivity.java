@@ -33,7 +33,8 @@ public class NotificationActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
 
     @Inject
-    SessionManager sessionManager ;
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +57,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        adapter = new NotificationAdapter(null, new NotificationAdapter.OnNotificationActionListener() {
+        adapter = new NotificationAdapter(null, sessionManager, new NotificationAdapter.OnNotificationActionListener() {
             @Override
             public void onAcceptInvite(ShareCollectionResponse invite, int position) {
                 viewModel.respondInvitation(invite.getCollectionId(), "ENABLE");
@@ -72,7 +73,7 @@ public class NotificationActivity extends AppCompatActivity {
                 viewModel.dismissReport(report.getId().longValue());
             }
         });
-        adapter.setSessionManager(this.sessionManager);
+
         rvNotifications.setLayoutManager(new LinearLayoutManager(this));
         rvNotifications.setAdapter(adapter);
     }
