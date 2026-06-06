@@ -23,6 +23,7 @@ import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.ViewModels.MainViewModel;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.example.mosquizto.Activities.ProfilePage;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment homeFragment;
     private Fragment searchFragment;
     private Fragment libraryFragment;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +74,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void observeNotifications() {
-        viewModel.getNotifications().observe(this,message ->
+        viewModel.getNotifications().observe(this, message ->
         {
-            // TODO: làm cái hiện thông báo với message
+        });
+        viewModel.getNotificationCount().observe(this, count ->
+        {
+            BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
+            if (badge != null) {
+                badge.setVisible(count > 0);
+                badge.setNumber(count);
+            }
         });
     }
 
@@ -90,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.nav_home);
         switchToFragment(FragmentTag.home);
 
@@ -106,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
                 switchToLibrary();
                 return true;
             } else if (id == R.id.nav_profile) {
+                // Khi click vào Profile thì ẩn chấm đỏ đi
+                BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
+                if (badge != null) {
+                    badge.setVisible(false);
+                }
                 startActivity(new Intent(this, ProfilePage.class));
                 return false;
             }

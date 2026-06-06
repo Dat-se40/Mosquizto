@@ -1,8 +1,11 @@
 package com.example.mosquizto.Activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
@@ -15,9 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mosquizto.Adapters.NotificationAdapter;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.ShareCollectionResponse;
+import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.ViewModels.NotificationViewModel;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 
 import javax.inject.Inject;
 
@@ -31,9 +37,12 @@ public class NotificationActivity extends AppCompatActivity {
     private ProgressBar pbLoading;
     private LinearLayout layoutEmpty;
     private NotificationAdapter adapter;
-
+    private BadgeDrawable badge;
+    
     @Inject
     SessionManager sessionManager;
+    @Inject
+    WebSocketManager webSocketManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,17 +69,26 @@ public class NotificationActivity extends AppCompatActivity {
         adapter = new NotificationAdapter(null, sessionManager, new NotificationAdapter.OnNotificationActionListener() {
             @Override
             public void onAcceptInvite(ShareCollectionResponse invite, int position) {
-                viewModel.respondInvitation(invite.getCollectionId(), "ENABLE");
+                if (invite.getCollectionId() != null) {
+                    viewModel.respondInvitation(invite.getCollectionId(), "ENABLE");
+                    webSocketManager.readNotification();
+                }
             }
 
             @Override
             public void onDenyInvite(ShareCollectionResponse invite, int position) {
-                viewModel.respondInvitation(invite.getCollectionId(), "DENIED");
+                if (invite.getCollectionId() != null) {
+                    viewModel.respondInvitation(invite.getCollectionId(), "DENIED");
+                    webSocketManager.readNotification();
+                }
             }
 
             @Override
             public void onDismissReport(CollectionReportResponse report, int position) {
-                viewModel.dismissReport(report.getId().longValue());
+                if (report.getId() != null) {
+                    viewModel.dismissReport(report.getId().longValue());
+                    webSocketManager.readNotification();
+                }
             }
         });
 
@@ -78,6 +96,7 @@ public class NotificationActivity extends AppCompatActivity {
         rvNotifications.setAdapter(adapter);
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
 
@@ -93,7 +112,29 @@ public class NotificationActivity extends AppCompatActivity {
         });
 
         viewModel.isLoading.observe(this, loading -> {
-            pbLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+            pbLoading.setVisibility(loading != null && loading ? View.VISIBLE : View.GONE);
+        });
+
+        ImageView notificationIcon = findViewById(R.id.notificationIcon);
+        FrameLayout badgeContainer = findViewById(R.id.notificationBadgeContainer);
+        
+        if (notificationIcon != null && badgeContainer != null) {
+            badge = BadgeDrawable.create(this);
+            badge.setMaxCharacterCount(3);
+
+            // Use post to ensure the view hierarchy is fully established before attaching
+            notificationIcon.post(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    BadgeUtils.attachBadgeDrawable(badge, notificationIcon, badgeContainer);
+                }
+            });
+        }
+
+        webSocketManager.getNotificationCount().observe(this, count -> {
+            if (badge != null && count != null) {
+                badge.setNumber(count);
+                badge.setVisible(count > 0);
+            }
         });
     }
 

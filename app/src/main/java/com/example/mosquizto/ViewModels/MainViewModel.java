@@ -18,7 +18,10 @@ public class MainViewModel extends ViewModel {
     public LiveData<String> getNotifications() {
         return webSocketManager.getNotifications();
     }
-
+    public LiveData<Integer> getNotificationCount()
+    {
+        return webSocketManager.getNotificationCount();
+    }
     public void connectStomp(String token) {
         webSocketManager.connect(token);
     }
