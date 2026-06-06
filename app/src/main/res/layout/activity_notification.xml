@@ -36,6 +36,23 @@
             android:layout_toEndOf="@id/btnBack"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp" />
+
+        <!-- Correctly wrap anchor view in FrameLayout for BadgeUtils -->
+        <FrameLayout
+            android:id="@+id/notificationBadgeContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tvHeaderTitle"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp">
+
+            <ImageView
+                android:id="@+id/notificationIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/app_icon_tint" />
+        </FrameLayout>
     </RelativeLayout>
 
     <ProgressBar

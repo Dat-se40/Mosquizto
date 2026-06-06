@@ -92,7 +92,7 @@
         <LinearLayout
             android:id="@+id/menuActivity"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/custom_edittext_border"
             android:gravity="center_vertical"
@@ -101,13 +101,20 @@
             android:clickable="true"
             android:focusable="true">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_notifications"
-                android:contentDescription="Hoạt động"
-                android:layout_marginEnd="16dp"
-                app:tint="@color/app_icon_tint" />
+            <FrameLayout
+                android:id="@+id/notificationBadgeContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp">
+
+                <ImageView
+                    android:id="@+id/ic_notification"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_notifications"
+                    android:contentDescription="Hoạt động"
+                    app:tint="@color/app_icon_tint" />
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"

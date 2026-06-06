@@ -55,6 +55,7 @@ dependencies {
     
     implementation(libs.work.runtime)
     implementation(libs.hilt.work)
+    implementation(libs.play.services.maps3d)
     ksp(libs.hilt.work.compiler) // Add this to fix CompleteSessionWorker instantiation error
     
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")

@@ -20,6 +20,7 @@ import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.ShareCollectionResponse;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.CollectionRole;
 import com.example.mosquizto.Util.NotificationWrapper;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
+        if (notifications == null || position >= notifications.size()) return TYPE_INVITE;
         return notifications.get(position).getType();
     }
 
@@ -66,18 +68,21 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (notifications == null || position >= notifications.size()) return;
         NotificationWrapper item = notifications.get(position);
         Context context = holder.itemView.getContext();
 
-        // Lấy mã màu accent dưới dạng Hex để dùng trong HTML
         int colorInt = ContextCompat.getColor(context, R.color.noti_accent_color);
 
-        if (holder.getItemViewType() == TYPE_INVITE) {
+        if (holder.getItemViewType() == TYPE_INVITE && item instanceof ShareCollectionResponse) {
             InviteViewHolder inviteHolder = (InviteViewHolder) holder;
             ShareCollectionResponse invite = (ShareCollectionResponse) item;
-            String username = invite.getInviterUsername();
-            String title = invite.getTitle();
-            String role = invite.getCollectionRole().name();
+            
+            String username = invite.getInviterUsername() != null ? invite.getInviterUsername() : "Someone";
+            String title = invite.getTitle() != null ? invite.getTitle() : "a collection";
+            
+            CollectionRole collectionRole = invite.getCollectionRole();
+            String role = (collectionRole != null) ? collectionRole.name() : "VIEWER";
 
             String text = context.getString(
                     R.string.invite_message,
@@ -87,31 +92,32 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             );
 
             SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-            // username
             applyBoldAndColor(ssb, text, username, colorInt);
-            // title
             applyBoldAndColor(ssb, text, title, colorInt);
-            // role
             applyBold(ssb, text, role);
 
             inviteHolder.tvInviteContent.setText(ssb);
-            inviteHolder.btnAccept.setOnClickListener(v -> listener.onAcceptInvite(invite, position));
-            inviteHolder.btnDeny.setOnClickListener(v -> listener.onDenyInvite(invite, position));
+            inviteHolder.btnAccept.setOnClickListener(v -> {
+                if (listener != null) listener.onAcceptInvite(invite, position);
+            });
+            inviteHolder.btnDeny.setOnClickListener(v -> {
+                if (listener != null) listener.onDenyInvite(invite, position);
+            });
 
-        } else if (holder.getItemViewType() == TYPE_REPORT) {
+        } else if (holder.getItemViewType() == TYPE_REPORT && item instanceof CollectionReportResponse) {
             ReportViewHolder reportHolder = (ReportViewHolder) holder;
             CollectionReportResponse report = (CollectionReportResponse) item;
 
             String collectionTitle = "Unknown";
-            if (sessionManager != null) {
+            if (sessionManager != null && report.getCollectionId() != null) {
                 String title = sessionManager.getCollectionTitle(report.getCollectionId());
                 if (title != null) {
                     collectionTitle = title;
                 }
             }
 
-            String reason = report.getReason();
-            String description = report.getDescription();
+            String reason = report.getReason() != null ? report.getReason() : "No reason";
+            String description = report.getDescription() != null ? report.getDescription() : "";
 
             String text = context.getString(
                     R.string.report_message,
@@ -121,14 +127,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             );
 
             SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-            // Collection name
             applyBoldAndColor(ssb, text, collectionTitle, colorInt);
-            // Reason
             applyBold(ssb, text, reason);
-            // Description
             applyBold(ssb, text, description);
+            
             reportHolder.tvReportContent.setText(ssb);
-            reportHolder.btnDismiss.setOnClickListener(v -> listener.onDismissReport(report, position));
+            reportHolder.btnDismiss.setOnClickListener(v -> {
+                if (listener != null) listener.onDismissReport(report, position);
+            });
         }
     }
 
@@ -146,14 +152,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    private void applyBold(
-            SpannableStringBuilder ssb,
-            String fullText,
-            String target
-    ) {
-        if (target == null) return;
+    private void applyBold(SpannableStringBuilder ssb, String fullText, String target) {
+        if (target == null || target.isEmpty()) return;
         int start = fullText.indexOf(target);
-
         if (start >= 0) {
             ssb.setSpan(
                     new StyleSpan(Typeface.BOLD),
@@ -164,15 +165,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private void applyBoldAndColor(
-            SpannableStringBuilder ssb,
-            String fullText,
-            String target,
-            int color
-    ) {
-        if (target == null) return;
+    private void applyBoldAndColor(SpannableStringBuilder ssb, String fullText, String target, int color) {
+        if (target == null || target.isEmpty()) return;
         int start = fullText.indexOf(target);
-
         if (start >= 0) {
             ssb.setSpan(
                     new StyleSpan(Typeface.BOLD),
@@ -180,7 +175,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     start + target.length(),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
-
             ssb.setSpan(
                     new ForegroundColorSpan(color),
                     start,

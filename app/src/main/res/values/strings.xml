@@ -323,8 +323,8 @@
     <string name="msg_stomp_connected" translatable="false">Establish STOMP connection successfully </string>
     <string name="msg_stomp_error" translatable="false">Network fail: </string>
     <string name="msg_stomp_closed" translatable="false">STOMP has been closed</string>
-    <string name="msg_stomp_notification" translatable="false">Notification: %1$s</string>
-    <String name="msg_stomp_notification" translatable="false">Report: %1$s</String>
+    <string name="msg_stomp_notification_invitation" translatable="false">Notification: %1$s</string>
+    <string name="msg_stomp_notification_report" translatable="false">Report: %1$s</string>
     <string name="msg_stomp_receive_error" translatable="false">Error while receiving message: </string>
     <string name="notification_prefix" translatable="false">🔔 </string>
     <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
