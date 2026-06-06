@@ -4,14 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="10dp"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="@color/background_white"
-    app:cardElevation="3dp"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/background_white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,18 +19,23 @@
 
         <!-- Thumbnail / Icon -->
         <androidx.cardview.widget.CardView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
 
-            <ImageView
-                android:id="@+id/ivThumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_study_set"
-                android:scaleType="centerCrop"
-                android:contentDescription="Study set thumbnail"/>
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_icon_light_blue">
+                <ImageView
+                    android:id="@+id/ivThumbnail"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_card"
+                    app:tint="@color/quizlet_ic_blue" />
+            </FrameLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Text info -->

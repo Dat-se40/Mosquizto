@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingVertical="16dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@color/app_divider" />
+
+    <TextView
+        android:id="@+id/btnHideUser"
+        style="@style/BottomSheetMenuItem"
+        android:drawableStart="@drawable/ic_visibility_off"
+        android:text="@string/btnHideUser"/>
+
+    <TextView
+        android:id="@+id/btnReportUser"
+        style="@style/BottomSheetMenuItem"
+        android:drawableStart="@drawable/ic_report"
+        android:text="@string/btnReportUser"
+        android:textColor="@color/quizlet_red"
+        app:drawableTint="@color/quizlet_red"/>/>
+
+</LinearLayout>

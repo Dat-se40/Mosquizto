@@ -17,7 +17,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_card"
-            app:tint="#0887CA" />
+            app:tint="@color/quizlet_ic_blue" />
     </FrameLayout>
 
     <LinearLayout

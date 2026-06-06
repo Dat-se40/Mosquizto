@@ -7,36 +7,27 @@
     android:background="@color/background_grey">
 
     <!-- Header / Toolbar -->
-    <RelativeLayout
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:background="@color/background_white"
-        android:elevation="4dp">
-
-        <ImageButton
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background_white">
+        <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_arrow_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/imageButton_back"
-            android:layout_alignParentStart="true"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_centerVertical="true"
-            app:tint="@color/app_icon_tint" />
-
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/app_icon_tint"/>
         <TextView
-            android:id="@+id/tvHeaderTitle"
+            android:id="@+id/tvNotifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notification_title"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/tvNotifications"
             android:textColor="@color/text_color_primary"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_toEndOf="@id/btnBack"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="12dp" />
-    </RelativeLayout>
+            android:textStyle="bold"/>
+    </androidx.appcompat.widget.Toolbar>
 
     <ProgressBar
         android:id="@+id/pbLoading"
