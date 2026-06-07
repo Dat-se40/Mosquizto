@@ -17,11 +17,17 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.mosquizto.Dto.response.NotificationResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,10 +51,14 @@ public class WebSocketManager {
 
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
+    private final Gson gson;
+
+    private final Map<String, Long> unreadNotificationMap = new HashMap<>();
 
     @Inject
-    public WebSocketManager(@ApplicationContext Context context) {
+    public WebSocketManager(@ApplicationContext Context context, Gson gson) {
         this.context = context;
+        this.gson = gson;
         // 1. Initialize SharedPreferences FIRST
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
@@ -66,6 +76,18 @@ public class WebSocketManager {
 
     public LiveData<Integer> getNotificationCount() {
         return _notificationCount;
+    }
+
+    private String getNotificationKey(String type, Long referenceId) {
+        return type + "_" + referenceId;
+    }
+
+    public Long getNotificationIdForReference(String type, Long refId) {
+        return unreadNotificationMap.get(getNotificationKey(type, refId));
+    }
+
+    public void removeNotificationFromMap(String type, Long refId) {
+        unreadNotificationMap.remove(getNotificationKey(type, refId));
     }
 
     @SuppressLint("CheckResult")
@@ -94,20 +116,39 @@ public class WebSocketManager {
 
         stompClient.connect(headers);
 
-        stompClient.topic(context.getString(R.string.ws_topic_invitation)).subscribe(message -> {
-            _notifications.postValue(context.getString(R.string.notification_prefix) + message.getPayload());
-            handleNewIncomingNotification(message.getPayload());
-        }, t -> Log.e("STOMP", "Err Inv", t));
+        String notificationTopic = "/user/queue/notifications";
 
-        stompClient.topic(context.getString(R.string.ws_topic_report)).subscribe(message -> {
-            _notifications.postValue(context.getString(R.string.notification_prefix) + message.getPayload());
-            handleNewIncomingNotification(message.getPayload());
-        }, t -> Log.e("STOMP", "Err Rep", t));
+        stompClient.topic(notificationTopic).subscribe(message -> {
+            String jsonPayload = message.getPayload();
+
+            Type listType = new TypeToken<List<NotificationResponse>>(){}.getType();
+            try {
+                List<NotificationResponse> incomingNotifs = gson.fromJson(jsonPayload, listType);
+
+                if (incomingNotifs != null && !incomingNotifs.isEmpty()) {
+                    // Cập nhật số lượng thông báo (Badge count)
+                    updateNotificationCount(incomingNotifs.size());
+
+                    // Xử lý từng thông báo cho System Tray (Đảm bảo ID khác nhau)
+                    for (NotificationResponse notif : incomingNotifs) {
+                        if (notif.getNotificationType() != null && notif.getReferenceId() != null) {
+                            String key = getNotificationKey(notif.getNotificationType().name(), notif.getReferenceId());
+                            unreadNotificationMap.put(key, notif.getId());
+                        }
+                        handleNewIncomingNotification(notif);
+                    }
+                    _notifications.postValue(incomingNotifs.get(0).getMessage());
+                }
+            } catch (Exception e) {
+                Log.e("STOMP", "Error parsing notification JSON: " + jsonPayload, e);
+            }
+        }, t -> Log.e("STOMP", "Error receiving notification", t));
     }
 
-    private void handleNewIncomingNotification(String message) {
-        incrementNotificationCount();
-        showSystemNotification("Mosquizto", message);
+    private void handleNewIncomingNotification(NotificationResponse notif) {
+        // Truyền thẳng cái ID gốc từ DB vào đây
+        int androidNotificationId = notif.getId() != null ? notif.getId().intValue() : (int) System.currentTimeMillis();
+        showSystemNotification(androidNotificationId, "Mosquizto", notif.getMessage());
     }
 
     public void incrementNotificationCount() {
@@ -143,15 +184,15 @@ public class WebSocketManager {
         }
     }
 
-    public void showSystemNotification(String title, String content) {
+    public void showSystemNotification(int notificationId, String title, String content) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         if (intent != null) intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications)
+                .setSmallIcon(R.drawable.ic_notifications) // Nhớ check icon này có đúng chuẩn transparent PNG chưa nhé
                 .setContentTitle(title)
                 .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -160,7 +201,8 @@ public class WebSocketManager {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+            // SỬ DỤNG ID ĐỘC NHẤT
+            notificationManager.notify(notificationId, builder.build());
         }
     }
 

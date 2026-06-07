@@ -71,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
         if (sessionManager.isLoggedIn()) {
             viewModel.connectStomp(sessionManager.getAccessToken());
         }
+         if (viewModel.getNotificationCount().getValue() > 0)
+         {
+             BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_profile);
+             badge.setVisible(true);
+             badge.setNumber(viewModel.getNotificationCount().getValue());
+         }
     }
 
     private void observeNotifications() {
@@ -79,10 +85,13 @@ public class MainActivity extends AppCompatActivity {
         });
         viewModel.getNotificationCount().observe(this, count ->
         {
-            BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
-            if (badge != null) {
-                badge.setVisible(count > 0);
+            BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_profile);
+            if (count != null && count > 0) {
+                badge.setVisible(true);
                 badge.setNumber(count);
+            } else {
+                badge.setVisible(false);
+                badge.clearNumber();
             }
         });
     }
@@ -115,11 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 switchToLibrary();
                 return true;
             } else if (id == R.id.nav_profile) {
-                // Khi click vào Profile thì ẩn chấm đỏ đi
-                BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
-                if (badge != null) {
-                    badge.setVisible(false);
-                }
                 startActivity(new Intent(this, ProfilePage.class));
                 return false;
             }

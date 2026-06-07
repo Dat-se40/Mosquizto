@@ -70,7 +70,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onAcceptInvite(ShareCollectionResponse invite, int position) {
                 if (invite.getCollectionId() != null) {
-                    viewModel.respondInvitation(invite.getCollectionId(), "ENABLE");
+                    viewModel.respondInvitation(invite, "ENABLE");
                     webSocketManager.readNotification();
                 }
             }
@@ -78,7 +78,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onDenyInvite(ShareCollectionResponse invite, int position) {
                 if (invite.getCollectionId() != null) {
-                    viewModel.respondInvitation(invite.getCollectionId(), "DENIED");
+                    viewModel.respondInvitation(invite, "DENIED");
                     webSocketManager.readNotification();
                 }
             }
@@ -86,7 +86,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onDismissReport(CollectionReportResponse report, int position) {
                 if (report.getId() != null) {
-                    viewModel.dismissReport(report.getId().longValue());
+                    viewModel.dismissReport(report);
                     webSocketManager.readNotification();
                 }
             }
@@ -132,8 +132,13 @@ public class NotificationActivity extends AppCompatActivity {
 
         webSocketManager.getNotificationCount().observe(this, count -> {
             if (badge != null && count != null) {
-                badge.setNumber(count);
-                badge.setVisible(count > 0);
+                if (count > 0) {
+                    badge.setVisible(true);
+                    badge.setNumber(count);
+                } else {
+                    badge.clearNumber();
+                    badge.setVisible(false);
+                }
             }
         });
     }

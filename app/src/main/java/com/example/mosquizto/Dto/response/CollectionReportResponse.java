@@ -13,6 +13,7 @@ public class CollectionReportResponse implements NotificationWrapper {
     private ReportStatus status;
     private String createAt;
     private String updateAt;
+    private Long notificationId;
 
     public Integer getId() {
         return id;
@@ -81,5 +82,15 @@ public class CollectionReportResponse implements NotificationWrapper {
     @Override
     public int getType() {
         return 2;
+    }
+
+    @Override
+    public Long getNotificationId() {
+        return notificationId;
+    }
+
+    @Override
+    public void setNotificationId(Long id) {
+        this.notificationId = id;
     }
 }

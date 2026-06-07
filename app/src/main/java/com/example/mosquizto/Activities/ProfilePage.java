@@ -98,9 +98,12 @@ public class ProfilePage extends AppCompatActivity {
         }
 
         webSocketManager.getNotificationCount().observe(this, count -> {
-            if (badge != null && count != null) {
+            if (count > 0) {
+                badge.setVisible(true);
                 badge.setNumber(count);
-                badge.setVisible(count > 0);
+            } else {
+                badge.clearNumber();
+                badge.setVisible(false);
             }
         });
     }
