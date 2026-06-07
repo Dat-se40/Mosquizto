@@ -35,9 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/text_color_primary"
-            android:textSize="14sp"
+            android:textSize="17sp"
             android:lineSpacingExtra="2dp"
-            android:text="UserA đã mời bạn tham gia học phần Title làm EDITOR"/>
+            android:text="@string/tvInviteContent"/>
 
         <TextView
             android:id="@+id/tvTime"
@@ -60,9 +60,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="@string/invite_accept"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:backgroundTint="@color/primary_color"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:cornerRadius="18dp"/>
@@ -73,9 +73,9 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="10dp"
                 android:text="@string/invite_denied"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:backgroundTint="@color/app_button_secondary_background"
-                android:textColor="@color/app_button_secondary_text"
+                android:textColor="@color/text_color_primary"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:cornerRadius="18dp"/>

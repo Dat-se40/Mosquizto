@@ -49,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
             if(name != null && !name.isEmpty())
             {
                 btnContinue.setVisibility(View.VISIBLE);
-                btnContinue.setText("Welcome back " + name + " !");
+                btnContinue.setText(getString(R.string.welcome_back) + name + "!");
                 btnSignUpEmail.setAlpha(0.5f);
 
                 btnSignUpEmail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F0F2F8")));

@@ -323,12 +323,24 @@
     <string name="msg_stomp_connected" translatable="false">Establish STOMP connection successfully </string>
     <string name="msg_stomp_error" translatable="false">Network fail: </string>
     <string name="msg_stomp_closed" translatable="false">STOMP has been closed</string>
-    <string name="msg_stomp_notification_invitation" translatable="false">Notification: %1$s</string>
-    <string name="msg_stomp_notification_report" translatable="false">Report: %1$s</string>
+    <string name="msg_stomp_notification" translatable="false">Notification: %1$s</string>
     <string name="msg_stomp_receive_error" translatable="false">Error while receiving message: </string>
     <string name="notification_prefix" translatable="false">🔔 </string>
     <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
     <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
     <string name="intent_key_author" translatable="false">AUTHOR</string>
 
+    <string name="tvTotalCardsCount">%1$d cards</string>
+    <string name="editStudySet">Edit set</string>
+
+    <string name="tvNotifications">Notifications</string>
+    <string name="tvInviteContent">%1$s invited you to join course %2$s with role %3$s</string>
+    <string name="tvReportContent">Your course which is named %1$s has been reported. Reason: %2$s.</string>
+    <string name="welcome_back">"Welcome back "</string>
+
+
+    <string name="followers_following">%1$d followers • %2$d following</string>
+    <string name="follow">Follow</string>
+    <string name="btnHideUser">Hide this user</string>
+    <string name="btnReportUser">Report this user</string>
 </resources>

@@ -43,6 +43,7 @@
     <color name="quizlet_blue">#4255FF</color>
     <color name="quizlet_gray_icon">#586585</color>
     <color name="quizlet_light_blue">#EBF8FE</color>
+    <color name="quizlet_ic_blue">#0887CA</color>
     <color name="icon_light_blue">#0395C4</color>
 
     <color name="quizlet_green">#4CAF50</color>
@@ -88,4 +89,5 @@
     <color name="divider_color">#2A3460</color>
     <color name="star_active">#F5A623</color>
     <color name="transparent">#00000000</color>
+
 </resources>
