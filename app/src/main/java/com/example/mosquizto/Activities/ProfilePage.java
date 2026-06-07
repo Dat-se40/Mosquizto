@@ -120,6 +120,7 @@ public class ProfilePage extends AppCompatActivity {
         
         findViewById(R.id.btn_logout).setOnClickListener(v -> {
             sessionManager.logout();
+            webSocketManager.disconnect();
             Intent intent = new Intent(ProfilePage.this, WelcomeActivity.class);
             startActivity(intent);
             finish();

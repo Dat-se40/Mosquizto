@@ -192,23 +192,23 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void GoToStudySetActivity(Context context , CollectionResponse item)
+    public static void GoToStudySetActivity(Context context , CollectionResponse item)
     {
         GoToStudySetActivity(context , item.getId(), item.getTitle(), item.getUserName());
     }
 
-    public void GoToStudySetActivity(Context context , Integer id , String title)
+    public static void GoToStudySetActivity(Context context , Integer id , String title)
     {
         GoToStudySetActivity(context, id, title, null);
     }
 
-    public void GoToStudySetActivity(Context context , Integer id , String title, String author)
+    public static void GoToStudySetActivity(Context context , Integer id , String title, String author)
     {
         Intent intent = new Intent(context, StudySetDetailActivity.class);
-        intent.putExtra(getString(R.string.intent_key_collection_id), id != null ? id : -1);
-        intent.putExtra(getString(R.string.intent_key_collection_title), title);
-        intent.putExtra(getString(R.string.intent_key_author), author);
-        startActivity(intent);
+        intent.putExtra(context.getString(R.string.intent_key_collection_id), id != null ? id : -1);
+        intent.putExtra(context.getString(R.string.intent_key_collection_title), title);
+        intent.putExtra(context.getString(R.string.intent_key_author), author);
+        context.startActivity(intent);
     }
 
     @Override

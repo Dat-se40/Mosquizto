@@ -31,6 +31,7 @@ import com.example.mosquizto.Dto.request.ShareCollectionRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
+import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
 import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
@@ -41,7 +42,6 @@ import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.lang.reflect.Method;
@@ -64,7 +64,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private String author;
     private ViewPager2 viewPagerFlashcards;
     private RecyclerView rvTerms;
-    private android.widget.Button fabStudy;
+    private Button fabStudy;
     private NestedScrollView nestedScrollView;
     private TextView tvSetTitle;
     private TermListAdapter termListAdapter;
@@ -96,30 +96,44 @@ public class StudySetDetailActivity extends AppCompatActivity {
             setContentView(R.layout.activity_study_set_detail);
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.DialogError), Toast.LENGTH_LONG).show();
-            Log.d("StudySetDetailActivity", "onCreate: FAILED: " + e.getMessage());
+            Log.d(TAG, "onCreate: FAILED: " + e.getMessage());
             finish();
             return;
         }
 
         try {
             if (getIntent() != null) {
-                collectionId = getIntent().getIntExtra("COLLECTION_ID", -1);
-                String title = getIntent().getStringExtra("COLLECTION_TITLE");
-                author = getIntent().getStringExtra("AUTHOR");
+                // ĐỒNG BỘ: Sử dụng resource string làm key cho đồng bộ với GoToStudySetActivity
+                collectionId = getIntent().getIntExtra(getString(R.string.intent_key_collection_id), -1);
+                String title = getIntent().getStringExtra(getString(R.string.intent_key_collection_title));
+                author = getIntent().getStringExtra(getString(R.string.intent_key_author));
 
                 if (author == null && collectionId != -1) {
                     author = sessionManager.getCollectionAuthor(collectionId);
                 }
+
                 initViews();
 
-                if (title != null && tvSetTitle != null) {
+                // Hiển thị ngay lập tức nếu dữ liệu Intent có sẵn và không rỗng
+                if (title != null && !title.trim().isEmpty() && tvSetTitle != null) {
                     tvSetTitle.setText(title);
+                }
+
+                TextView tvAuthorName = findViewById(R.id.tvAuthorName);
+                if (author != null && !author.trim().isEmpty() && tvAuthorName != null) {
+                    tvAuthorName.setText(author);
                 }
 
                 setupListeners();
 
                 if (collectionId != -1) {
                     getWindow().getDecorView().post(this::fetchCollectionData);
+
+                    // BỘ LỌC CHUẨN: Chỉ gọi API Metadata khi thực sự thiếu thông tin cốt lõi (ví dụ đi từ Notification sang)
+                    if (author == null || author.trim().isEmpty() || title == null || title.trim().isEmpty()) {
+                        Log.d(TAG, "Missing metadata from intent, fetching via API...");
+                        getWindow().getDecorView().post(this::fetchCollectionMetaData);
+                    }
                 } else {
                     Toast.makeText(this, R.string.InvalidId, Toast.LENGTH_SHORT).show();
                 }
@@ -128,6 +142,35 @@ public class StudySetDetailActivity extends AppCompatActivity {
             Log.e(TAG, "onCreate: CRITICAL ERROR: " + e.getMessage(), e);
             Toast.makeText(this, R.string.ActivityInitializationError, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void fetchCollectionMetaData() {
+        collectionApi.getCollectionById(collectionId).enqueue(new Callback<ApiResponse<CollectionResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<CollectionResponse>> call, @NonNull Response<ApiResponse<CollectionResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    CollectionResponse data = response.body().getData();
+
+                    // 1. Cập nhật và hiển thị Title tiêu đề bài học
+                    if (tvSetTitle != null) {
+                        tvSetTitle.setText(data.getTitle());
+                    }
+
+                    // 2. Đồng bộ trường tác giả (Thay getAuthor() bằng hàm get tương ứng trong DTO của bạn nếu khác)
+                    author = data.getUserName();
+
+                    TextView tvAuthorName = findViewById(R.id.tvAuthorName);
+                    if (tvAuthorName != null && author != null) {
+                        tvAuthorName.setText(author);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<CollectionResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "fetchCollectionMetaData onFailure", t);
+            }
+        });
     }
 
     private void initViews() {
@@ -220,7 +263,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
         }
     }
 
-    // ── Mở FlashcardActivity (Đã điều chỉnh để lấy data từ originalItems) ────
     private void openFlashcardActivity() {
         if (originalItems == null || originalItems.isEmpty()) {
             Toast.makeText(this, "Chưa có dữ liệu thẻ!", Toast.LENGTH_SHORT).show();
@@ -248,7 +290,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
         }
         startActivity(intent);
     }
-    // ─────────────────────────────────────────────────────────────────────────
 
     private void fetchCollectionData() {
         if (collectionApi == null) return;
@@ -303,59 +344,39 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
         if (viewPagerFlashcards != null) {
             FlashcardCarouselAdapter pagerAdapter = new FlashcardCarouselAdapter(this, originalItems);
-            pagerAdapter.setOnZoomClickListener(new FlashcardCarouselAdapter.OnZoomClickListener() {
-                @Override
-                public void onZoomClick() {
-                    openFlashcardActivity(); // Mở màn hình học Flashcards lớn
-                }
-            });
-
+            pagerAdapter.setOnZoomClickListener(this::openFlashcardActivity);
             viewPagerFlashcards.setAdapter(pagerAdapter);
 
-            // ================== THÊM ĐOẠN LOGIC CAROUSEL VÀO ĐÂY ==================
-            viewPagerFlashcards.setOffscreenPageLimit(3); // Tải sẵn các thẻ kế bên
+            viewPagerFlashcards.setOffscreenPageLimit(3);
 
-            // Tạo hiệu ứng thu nhỏ (Scale) các thẻ nằm ở hai bên rìa
             ViewPager2.PageTransformer transformer = (page, position) -> {
                 float r = 1 - Math.abs(position);
-                page.setScaleY(0.85f + r * 0.15f); // Thẻ ở giữa tỷ lệ 1.0, hai bên thu về 0.85
+                page.setScaleY(0.85f + r * 0.15f);
                 page.setScaleX(0.90f + r * 0.10f);
             };
             viewPagerFlashcards.setPageTransformer(transformer);
 
-            // Liên kết ViewPager2 với TabLayout để tạo dấu chấm nhảy theo lượt lướt
             TabLayout tabLayoutIndicator = findViewById(R.id.tabLayoutIndicator);
             if (tabLayoutIndicator != null) {
                 new com.google.android.material.tabs.TabLayoutMediator(tabLayoutIndicator, viewPagerFlashcards,
-                        (tab, position) -> {
-                            // Không viết chữ lên tab, để trống để hiển thị dạng chấm tròn drawable
-                        }).attach();
+                        (tab, position) -> {}).attach();
             }
-            // =====================================================================
         }
 
-        // Đổ tổng số lượng từ lên màn hình
         TextView tvTotalCardsCount = findViewById(R.id.tvTotalCardsCount);
         if (tvTotalCardsCount != null && originalItems != null) {
-            tvTotalCardsCount.setText(originalItems.size() + " từ");
+            tvTotalCardsCount.setText(String.format(getString(R.string.tvTotalCardsCount), originalItems.size()));
         }
 
-        TextView tvAuthorName = findViewById(R.id.tvAuthorName);
-        if (tvAuthorName != null && author != null) {
-            tvAuthorName.setText(author);
-        }
+        // ĐÃ XÓA: Bỏ dòng gán text author cũ ở đây để tránh đè dữ liệu vô ích của hàm fetchCollectionMetaData
 
         if (termListAdapter != null) {
             termListAdapter.updateData(uiItems);
             termListAdapter.SetOnDetailItemClickedListener(event -> {
                 CollectionItemResponse clickedItem = event.item;
                 boolean newStarState = !termListAdapter.isItemStarred(clickedItem.getId());
-                try {
-                    if (newStarState) StarItem(clickedItem.getId());
-                    else UStarItem(clickedItem.getId());
-                } catch (Exception e) {
-                    Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
-                }
+                if (newStarState) StarItem(clickedItem.getId());
+                else UStarItem(clickedItem.getId());
                 termListAdapter.updateStarState(clickedItem.getId(), newStarState);
             });
         }
@@ -393,7 +414,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
         if (btnEdit != null) btnEdit.setOnClickListener(v -> {
             dialog.dismiss();
             Intent intent = new Intent(this, EditCollectionActivity.class);
-            intent.putExtra("COLLECTION_ID", collectionId);
+            intent.putExtra(getString(R.string.intent_key_collection_id), collectionId); // ĐỒNG BỘ KEY INTENT
             startActivity(intent);
         });
 
@@ -447,7 +468,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
                                 Toast.makeText(StudySetDetailActivity.this,
                                         R.string.msg_share_failed, Toast.LENGTH_SHORT).show();
                             }
-                            Log.d(TAG + "[SHARE]", "onResponse: " + response.message());
                         }
 
                         @Override
@@ -455,7 +475,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
                                               @NonNull Throwable t) {
                             Toast.makeText(StudySetDetailActivity.this,
                                     R.string.msg_network_error, Toast.LENGTH_SHORT).show();
-                            Log.d(TAG + "[SHARE]", "onFailure: " + t.getMessage());
                         }
                     });
         });
@@ -474,9 +493,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
             }
 
             android.widget.RadioGroup rgReasons = view.findViewById(R.id.rgReportReasons);
-            android.widget.EditText edtDescription = view.findViewById(R.id.edtReportDescription);
-            android.widget.Button btnCancel = view.findViewById(R.id.btnCancelReport);
-            android.widget.Button btnSubmit = view.findViewById(R.id.btnSubmitReport);
+            EditText edtDescription = view.findViewById(R.id.edtReportDescription);
+            Button btnCancel = view.findViewById(R.id.btnCancelReport);
+            Button btnSubmit = view.findViewById(R.id.btnSubmitReport);
 
             btnCancel.setOnClickListener(v -> reportDialog.dismiss());
             btnSubmit.setOnClickListener(v -> {
@@ -673,7 +692,6 @@ public class StudySetDetailActivity extends AppCompatActivity {
             MaterialCardView cardMemory = view.findViewById(R.id.cardModeMemory);
             Button btnStartLearn = view.findViewById(R.id.btnStartLearn);
 
-            // Ánh xạ LinearLayout và TextView bên trong để đổi màu chữ và nền
             LinearLayout layoutTest = (LinearLayout) cardTest.getChildAt(0);
             TextView tvTest = (TextView) layoutTest.getChildAt(0);
 
@@ -691,13 +709,11 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     int colorWhite = getColor(R.color.background_white);
                     int colorTextPrimary = getColor(R.color.text_color_primary);
 
-                    // --- Cập nhật thẻ Memory (LEARN) ---
                     cardMemory.setStrokeColor(isLearn ? colorPurple : colorGrayBorder);
                     cardMemory.setStrokeWidth(isLearn ? 4 : 2);
                     layoutMemory.setBackgroundColor(isLearn ? colorLightPurple : colorWhite);
                     tvMemory.setTextColor(isLearn ? colorPurple : colorTextPrimary);
 
-                    // --- Cập nhật thẻ Test ---
                     cardTest.setStrokeColor(!isLearn ? colorPurple : colorGrayBorder);
                     cardTest.setStrokeWidth(!isLearn ? 4 : 2);
                     layoutTest.setBackgroundColor(!isLearn ? colorLightPurple : colorWhite);

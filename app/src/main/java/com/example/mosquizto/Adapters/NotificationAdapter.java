@@ -39,6 +39,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onAcceptInvite(ShareCollectionResponse invite, int position);
         void onDenyInvite(ShareCollectionResponse invite, int position);
         void onDismissReport(CollectionReportResponse report, int position);
+        void onItemClick(NotificationWrapper item);
     }
 
     public NotificationAdapter(List<NotificationWrapper> notifications, SessionManager sessionManager, OnNotificationActionListener listener) {
@@ -73,6 +74,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Context context = holder.itemView.getContext();
 
         int colorInt = ContextCompat.getColor(context, R.color.noti_accent_color);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(item);
+        });
 
         if (holder.getItemViewType() == TYPE_INVITE && item instanceof ShareCollectionResponse) {
             InviteViewHolder inviteHolder = (InviteViewHolder) holder;

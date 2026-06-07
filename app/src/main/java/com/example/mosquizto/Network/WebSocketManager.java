@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.mosquizto.Activities.NotificationActivity;
 import com.example.mosquizto.Dto.response.NotificationResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
@@ -45,10 +46,11 @@ public class WebSocketManager {
 
     private final MutableLiveData<String> _notifications = new MutableLiveData<>();
     private final MutableLiveData<Integer> _notificationCount = new MutableLiveData<>(0);
+    private final MutableLiveData<Boolean> _forceRefreshTrigger = new MutableLiveData<>(false);
     private static final String CHANNEL_ID = "MOSQUIZTO_ALERTS";
     private static final String PREF_NAME = "NOTIFICATION_PREFS";
     private static final String KEY_COUNT = "NOTIFICATION_COUNT";
-
+    private boolean hasReceivedInitialBatch = false;
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
     private final Gson gson;
@@ -77,7 +79,13 @@ public class WebSocketManager {
     public LiveData<Integer> getNotificationCount() {
         return _notificationCount;
     }
+    public LiveData<Boolean> getForceRefreshTrigger() {
+        return _forceRefreshTrigger;
+    }
 
+    public boolean hasReceivedInitialBatch() {
+        return hasReceivedInitialBatch;
+    }
     private String getNotificationKey(String type, Long referenceId) {
         return type + "_" + referenceId;
     }
@@ -121,23 +129,30 @@ public class WebSocketManager {
         stompClient.topic(notificationTopic).subscribe(message -> {
             String jsonPayload = message.getPayload();
 
+            // 1. Parse JSON Array thành List<NotificationResponse>
             Type listType = new TypeToken<List<NotificationResponse>>(){}.getType();
             try {
                 List<NotificationResponse> incomingNotifs = gson.fromJson(jsonPayload, listType);
 
                 if (incomingNotifs != null && !incomingNotifs.isEmpty()) {
-                    // Cập nhật số lượng thông báo (Badge count)
+                    // 2. Cập nhật số lượng thông báo (Badge count)
+                    if (!hasReceivedInitialBatch) {
+                        hasReceivedInitialBatch = true;
+                        Log.i("STOMP", "Received initial batch of " + incomingNotifs.size() + " notifications after reconnection");
+                        // Trigger force refresh cho ViewModel
+                        _forceRefreshTrigger.postValue(true);
+                    }
                     updateNotificationCount(incomingNotifs.size());
 
-                    // Xử lý từng thông báo cho System Tray (Đảm bảo ID khác nhau)
+                    // 3. Xử lý từng thông báo (Hiện Push Notification của máy, bắn LiveData...)
                     for (NotificationResponse notif : incomingNotifs) {
                         if (notif.getNotificationType() != null && notif.getReferenceId() != null) {
                             String key = getNotificationKey(notif.getNotificationType().name(), notif.getReferenceId());
                             unreadNotificationMap.put(key, notif.getId());
                         }
+                        _notifications.postValue(notif.getMessage());
                         handleNewIncomingNotification(notif);
                     }
-                    _notifications.postValue(incomingNotifs.get(0).getMessage());
                 }
             } catch (Exception e) {
                 Log.e("STOMP", "Error parsing notification JSON: " + jsonPayload, e);
@@ -146,9 +161,7 @@ public class WebSocketManager {
     }
 
     private void handleNewIncomingNotification(NotificationResponse notif) {
-        // Truyền thẳng cái ID gốc từ DB vào đây
-        int androidNotificationId = notif.getId() != null ? notif.getId().intValue() : (int) System.currentTimeMillis();
-        showSystemNotification(androidNotificationId, "Mosquizto", notif.getMessage());
+        showSystemNotification("Mosquizto", notif.getMessage());
     }
 
     public void incrementNotificationCount() {
@@ -171,7 +184,7 @@ public class WebSocketManager {
         
         editor.putInt(KEY_COUNT, count);
         editor.apply();
-        
+
         // CRITICAL: Update LiveData so UI can reflect changes immediately
         _notificationCount.postValue(count);
     }
@@ -184,15 +197,16 @@ public class WebSocketManager {
         }
     }
 
-    public void showSystemNotification(int notificationId, String title, String content) {
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        if (intent != null) intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    public void showSystemNotification(String title, String content) {
+        // Mở NotificationActivity khi nhấn vào thông báo
+        Intent intent = new Intent(context, NotificationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications) // Nhớ check icon này có đúng chuẩn transparent PNG chưa nhé
+                .setSmallIcon(R.drawable.ic_notifications)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -201,12 +215,26 @@ public class WebSocketManager {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            // SỬ DỤNG ID ĐỘC NHẤT
-            notificationManager.notify(notificationId, builder.build());
+            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
         }
     }
 
     public void disconnect() {
-        if (stompClient != null) stompClient.disconnect();
+        if (stompClient != null) {
+            stompClient.disconnect();
+            stompClient = null;
+        }
+
+
+        hasReceivedInitialBatch = false;
+        unreadNotificationMap.clear();
+
+        // Xóa số đếm thông báo trên icon
+        editor.putInt(KEY_COUNT, 0).apply();
+        _notificationCount.postValue(0);
+
+        // Clear LiveData
+        _forceRefreshTrigger.postValue(false);
+        Log.i("STOMP", "WebSocket disconnected & cleaned up for Logout");
     }
 }
