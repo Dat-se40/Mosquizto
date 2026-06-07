@@ -129,29 +129,38 @@ public class WebSocketManager {
         stompClient.topic(notificationTopic).subscribe(message -> {
             String jsonPayload = message.getPayload();
 
-            // 1. Parse JSON Array thành List<NotificationResponse>
             Type listType = new TypeToken<List<NotificationResponse>>(){}.getType();
             try {
                 List<NotificationResponse> incomingNotifs = gson.fromJson(jsonPayload, listType);
 
                 if (incomingNotifs != null && !incomingNotifs.isEmpty()) {
-                    // 2. Cập nhật số lượng thông báo (Badge count)
-                    if (!hasReceivedInitialBatch) {
-                        hasReceivedInitialBatch = true;
-                        Log.i("STOMP", "Received initial batch of " + incomingNotifs.size() + " notifications after reconnection");
-                        // Trigger force refresh cho ViewModel
-                        _forceRefreshTrigger.postValue(true);
-                    }
-                    updateNotificationCount(incomingNotifs.size());
 
-                    // 3. Xử lý từng thông báo (Hiện Push Notification của máy, bắn LiveData...)
+                    // Lọc và lưu ID vào map (Giữ nguyên logic của bạn)
                     for (NotificationResponse notif : incomingNotifs) {
                         if (notif.getNotificationType() != null && notif.getReferenceId() != null) {
                             String key = getNotificationKey(notif.getNotificationType().name(), notif.getReferenceId());
                             unreadNotificationMap.put(key, notif.getId());
                         }
-                        _notifications.postValue(notif.getMessage());
-                        handleNewIncomingNotification(notif);
+                    }
+
+                    if (!hasReceivedInitialBatch) {
+                        // TRƯỜNG HỢP 1: Tải đợt đầu tiên lúc mới kết nối
+                        hasReceivedInitialBatch = true;
+                        updateNotificationCount(incomingNotifs.size());
+                        Log.i("STOMP", "Received initial batch of " + incomingNotifs.size() + " notifications");
+                        _forceRefreshTrigger.postValue(true);
+                       // TODO: flush 1 loạt về
+                    } else {
+                        // TRƯỜNG HỢP 2: REAL-TIME PING (Đang dùng app thì có thông báo tới)
+                        updateNotificationCount(incomingNotifs.size());
+
+                        // Hiện Push Notification của hệ thống Android
+                        for (NotificationResponse notif : incomingNotifs) {
+                            handleNewIncomingNotification(notif);
+                        }
+
+                        // Bắn sự kiện ra UI để hiện Snackbar(để hỏi xem có load lại dữ liệu ko)
+                        _notifications.postValue(incomingNotifs.get(0).getMessage());
                     }
                 }
             } catch (Exception e) {

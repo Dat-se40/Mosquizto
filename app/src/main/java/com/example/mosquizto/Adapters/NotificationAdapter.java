@@ -79,6 +79,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (listener != null) listener.onItemClick(item);
         });
 
+        // TODO: dùng vistor pattern hoặc statery pattern nếu sau này mở rộng nhiều loại thông báo hơn nữa
         if (holder.getItemViewType() == TYPE_INVITE && item instanceof ShareCollectionResponse) {
             InviteViewHolder inviteHolder = (InviteViewHolder) holder;
             ShareCollectionResponse invite = (ShareCollectionResponse) item;

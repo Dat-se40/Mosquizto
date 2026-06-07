@@ -25,6 +25,7 @@ import com.example.mosquizto.Util.NotificationWrapper;
 import com.example.mosquizto.ViewModels.NotificationViewModel;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.snackbar.Snackbar;
 
 import javax.inject.Inject;
 
@@ -165,6 +166,20 @@ public class NotificationActivity extends AppCompatActivity {
                     badge.clearNumber();
                     badge.setVisible(false);
                 }
+            }
+        });
+        webSocketManager.getNotifications().observe(this, message -> {
+            if (message != null && !message.isEmpty()) {
+                // Hiện Snackbar thông báo có dữ liệu mới ở cạnh dưới màn hình
+                Snackbar.make(findViewById(android.R.id.content), R.string.have_new_notification, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.reload, v -> {
+                            // Khi user bấm "Tải lại", ta mới gọi ViewModel để fetch lại data
+                            viewModel.fetchAllNotifications();
+                            if (rvNotifications != null) {
+                                rvNotifications.smoothScrollToPosition(0);
+                            }
+                        })
+                        .show();
             }
         });
     }
