@@ -1,8 +1,9 @@
 package com.example.mosquizto.Dto.response;
 
+import com.example.mosquizto.Util.SearchResultWrapper;
 import com.google.gson.annotations.SerializedName;
 
-public class SearchResultItem {
+public class SearchCollectionResultItem implements SearchResultWrapper {
 
     @SerializedName("id")
     private Long id;
@@ -20,7 +21,7 @@ public class SearchResultItem {
     private String createdByUsername;
 
     @SerializedName("count")
-    private double count;
+    private Double count;
 
     // ===== Getters =====
     public Long getId() { return id; }
@@ -28,9 +29,14 @@ public class SearchResultItem {
     public String getDescription() { return description; }
     public boolean isVisibility() { return visibility; }
     public String getCreatedByUsername() { return createdByUsername; }
-    public double getCount() { return count; }
+    public Double getCount() { return count; }
 
     public String getSubtitle() {
         return count + " thuật ngữ • " + createdByUsername;
+    }
+
+    @Override
+    public int getType() {
+        return 1;
     }
 }

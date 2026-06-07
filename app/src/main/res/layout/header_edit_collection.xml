@@ -3,16 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
     <EditText
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tiêu đề"
+        android:hint="@string/et_title"
         android:background="@null"
         android:textSize="20sp"
-        android:textStyle="bold"
         android:textColor="@color/text_color_primary"
         android:textColorHint="@color/search_bar_hint"/>
 
@@ -27,11 +26,13 @@
         android:id="@+id/et_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mô tả"
+        android:hint="@string/et_description"
         android:background="@null"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textColor="@color/text_color_primary"
-        android:textColorHint="@color/search_bar_hint"/>
+        android:textColorHint="@color/search_bar_hint"
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="false"/>
 
     <View
         android:layout_width="match_parent"

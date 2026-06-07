@@ -64,10 +64,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private String author;
     private ViewPager2 viewPagerFlashcards;
     private RecyclerView rvTerms;
-    private ExtendedFloatingActionButton fabStudy;
+    private android.widget.Button fabStudy;
     private NestedScrollView nestedScrollView;
     private TextView tvSetTitle;
-
     private TermListAdapter termListAdapter;
 
     private List<CollectionItemResponse> originalItems = new ArrayList<>();
@@ -137,7 +136,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (toolbar != null) {
                 setSupportActionBar(toolbar);
                 if (getSupportActionBar() != null) {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
                 }
                 toolbar.setNavigationOnClickListener(v -> finish());
@@ -168,9 +167,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
             if (nestedScrollView != null && viewPagerFlashcards != null && fabStudy != null) {
                 nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     if (scrollY > viewPagerFlashcards.getBottom()) {
-                        fabStudy.show();
+                        fabStudy.setVisibility(View.VISIBLE);
                     } else {
-                        fabStudy.hide();
+                        fabStudy.setVisibility(View.GONE);
                     }
                 });
             }
@@ -183,12 +182,15 @@ public class StudySetDetailActivity extends AppCompatActivity {
             View btnOptions = findViewById(R.id.btnOptions);
             if (btnOptions != null) btnOptions.setOnClickListener(v -> showOptionsBottomSheet());
 
-            // ── FLASHCARD navigate (Từ nhánh feature/flashcard) ───────────────
             View rowFlashcard = findViewById(R.id.cardFlashcardsGame);
             if (rowFlashcard != null) {
                 rowFlashcard.setOnClickListener(v -> openFlashcardActivity());
             }
-            // ─────────────────────────────────────────────────────────────────
+
+            View cardLearnGame = findViewById(R.id.cardLearnGame);
+            if (cardLearnGame != null) {
+                cardLearnGame.setOnClickListener(v -> showLearnModeBottomSheet());
+            }
 
             TabLayout tabLayout = findViewById(R.id.tabLayoutTerms);
             if (tabLayout != null) {
@@ -301,7 +303,46 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
         if (viewPagerFlashcards != null) {
             FlashcardCarouselAdapter pagerAdapter = new FlashcardCarouselAdapter(this, originalItems);
+            pagerAdapter.setOnZoomClickListener(new FlashcardCarouselAdapter.OnZoomClickListener() {
+                @Override
+                public void onZoomClick() {
+                    openFlashcardActivity(); // Mở màn hình học Flashcards lớn
+                }
+            });
+
             viewPagerFlashcards.setAdapter(pagerAdapter);
+
+            // ================== THÊM ĐOẠN LOGIC CAROUSEL VÀO ĐÂY ==================
+            viewPagerFlashcards.setOffscreenPageLimit(3); // Tải sẵn các thẻ kế bên
+
+            // Tạo hiệu ứng thu nhỏ (Scale) các thẻ nằm ở hai bên rìa
+            ViewPager2.PageTransformer transformer = (page, position) -> {
+                float r = 1 - Math.abs(position);
+                page.setScaleY(0.85f + r * 0.15f); // Thẻ ở giữa tỷ lệ 1.0, hai bên thu về 0.85
+                page.setScaleX(0.90f + r * 0.10f);
+            };
+            viewPagerFlashcards.setPageTransformer(transformer);
+
+            // Liên kết ViewPager2 với TabLayout để tạo dấu chấm nhảy theo lượt lướt
+            TabLayout tabLayoutIndicator = findViewById(R.id.tabLayoutIndicator);
+            if (tabLayoutIndicator != null) {
+                new com.google.android.material.tabs.TabLayoutMediator(tabLayoutIndicator, viewPagerFlashcards,
+                        (tab, position) -> {
+                            // Không viết chữ lên tab, để trống để hiển thị dạng chấm tròn drawable
+                        }).attach();
+            }
+            // =====================================================================
+        }
+
+        // Đổ tổng số lượng từ lên màn hình
+        TextView tvTotalCardsCount = findViewById(R.id.tvTotalCardsCount);
+        if (tvTotalCardsCount != null && originalItems != null) {
+            tvTotalCardsCount.setText(originalItems.size() + " từ");
+        }
+
+        TextView tvAuthorName = findViewById(R.id.tvAuthorName);
+        if (tvAuthorName != null && author != null) {
+            tvAuthorName.setText(author);
         }
 
         if (termListAdapter != null) {

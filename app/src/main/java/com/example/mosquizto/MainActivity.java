@@ -1,101 +1,150 @@
 package com.example.mosquizto;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mosquizto.Activities.CreateCollectionActivity;
 import com.example.mosquizto.Activities.StudySetDetailActivity;
 import com.example.mosquizto.Dialogs.CreateFolderDialog;
 import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Event.LoginSuccessEvent;
 import com.example.mosquizto.Fragments.HomeFragment;
 import com.example.mosquizto.Fragments.LibraryFragment;
+import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.ViewModels.MainViewModel;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.example.mosquizto.Activities.ProfilePage;
 import dagger.hilt.android.AndroidEntryPoint;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
+
 import com.example.mosquizto.Fragments.SearchFragment;
 import com.example.mosquizto.Util.FragmentTag;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
+    @Inject
+    public SessionManager sessionManager; // Inject để xài
+    private MainViewModel viewModel ;
 
+    private StompClient stompClient;
     private Fragment homeFragment;
     private Fragment searchFragment;
     private Fragment libraryFragment;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
-            Class<?> valueAnimatorClass = Class.forName("android.animation.ValueAnimator");
-            Method setDurationScaleMethod = valueAnimatorClass.getDeclaredMethod("setDurationScale", float.class);
-            setDurationScaleMethod.invoke(null, 1.0f);
-        } catch (Exception e) {
-            e.printStackTrace(); // Có thể bị chặn trên các bản Android rất mới do hạn chế Reflection
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        setupNavigation();
+        observeNotifications();
+
+        EventBus.getDefault().register(this);
+        if (sessionManager.isLoggedIn()) {
+            viewModel.connectStomp(sessionManager.getAccessToken());
         }
+    }
+
+    private void observeNotifications() {
+        viewModel.getNotifications().observe(this, message ->
+        {
+        });
+        viewModel.getNotificationCount().observe(this, count ->
+        {
+            BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
+            if (badge != null) {
+                badge.setVisible(count > 0);
+                badge.setNumber(count);
+            }
+        });
+    }
+
+    private void setupNavigation() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
                     getSupportFragmentManager().popBackStack();
                 } else {
-                    finish(); // Thoát app nếu không còn Fragment nào để lùi
+                    finish();
                 }
             }
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-
-        if (savedInstanceState == null) {
-            bottomNav.setSelectedItemId(R.id.nav_home);
-            switchToFragment(FragmentTag.home);
-        }
+        bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.nav_home);
+        switchToFragment(FragmentTag.home);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_home) {
-                switchToFragment(FragmentTag.home); // Dùng hàm của master
+                switchToFragment(FragmentTag.home);
                 return true;
             } else if (id == R.id.nav_create) {
-                showCreateMenu(); // Của bạn: Hiện Popup, không chuyển màu tab
+                showCreateMenu();
                 return false;
             } else if (id == R.id.nav_library) {
-                switchToLibrary(); // Của bạn nhưng được tối ưu theo master
+                switchToLibrary();
                 return true;
             } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(MainActivity.this, ProfilePage.class));
-                return false; // Chuyển trang, không đổi màu tab
+                // Khi click vào Profile thì ẩn chấm đỏ đi
+                BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
+                if (badge != null) {
+                    badge.setVisible(false);
+                }
+                startActivity(new Intent(this, ProfilePage.class));
+                return false;
             }
             return false;
         });
     }
-
     public void switchToFragment(FragmentTag tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment targetFragment = null;
-        String tagStr = tag.name();
+        String tagStr;
 
         switch (tag) {
             case home:
+                tagStr = getString(R.string.tag_home);
                 if (homeFragment == null) homeFragment = new HomeFragment();
                 targetFragment = homeFragment;
                 break;
             case search:
+                tagStr = getString(R.string.tag_search);
                 if (searchFragment == null) searchFragment = new SearchFragment();
                 targetFragment = searchFragment;
                 break;
-            // Nếu bạn có thêm 'library' vào enum FragmentTag, bạn có thể đưa nó vào switch này
+            default:
+                tagStr = tag.name();
+                break;
         }
 
         if (targetFragment != null) {
@@ -108,19 +157,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchToLibrary() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-
-        // Chỉ tạo mới 1 lần duy nhất, các lần sau dùng lại để chạy mượt
         if (libraryFragment == null) {
             libraryFragment = new LibraryFragment();
         }
 
+        String tagLibrary = getString(R.string.tag_library);
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, libraryFragment, "library")
-                .addToBackStack("library")
+                .replace(R.id.fragment_container, libraryFragment, tagLibrary)
+                .addToBackStack(tagLibrary)
                 .commit();
     }
-
-    // Hàm của bạn: Hiện Menu tạo mới
     public void showCreateMenu() {
         View v = getLayoutInflater().inflate(R.layout.dialog_create_menu, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -135,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         // Bấm Tạo Thư Mục (Folder) -> Mở Dialog
         v.findViewById(R.id.option_folder).setOnClickListener(view -> {
             CreateFolderDialog folderDialog = new CreateFolderDialog();
-            folderDialog.show(getSupportFragmentManager(), "FolderDialog");
+            folderDialog.show(getSupportFragmentManager(), getString(R.string.tag_folder_dialog));
             dialog.dismiss();
         });
 
@@ -155,9 +201,30 @@ public class MainActivity extends AppCompatActivity {
     public void GoToStudySetActivity(Context context , Integer id , String title, String author)
     {
         Intent intent = new Intent(context, StudySetDetailActivity.class);
-        intent.putExtra("COLLECTION_ID", id != null ? id : -1);
-        intent.putExtra("COLLECTION_TITLE", title);
-        intent.putExtra("AUTHOR", author);
+        intent.putExtra(getString(R.string.intent_key_collection_id), id != null ? id : -1);
+        intent.putExtra(getString(R.string.intent_key_collection_title), title);
+        intent.putExtra(getString(R.string.intent_key_author), author);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (stompClient != null && stompClient.isConnected()) {
+            stompClient.disconnect();
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onLoginEvent(LoginSuccessEvent event) {
+        Log.i(getString(R.string.log_tag_ws), "Login event received, connecting STOMP...");
+        viewModel.connectStomp(event.token);
+        EventBus.getDefault().removeStickyEvent(event);
     }
 }

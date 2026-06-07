@@ -1,15 +1,18 @@
 package com.example.mosquizto.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,9 +21,12 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
+import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -36,26 +42,25 @@ public class ProfilePage extends AppCompatActivity {
 
     @Inject
     public SessionManager sessionManager;
-
+    @Inject
+    public WebSocketManager webSocketManager;
     @Inject
     UserApi userApi;
+    
+    private BadgeDrawable badge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-        // Đã sửa lỗi: Trả về đúng giao diện activity_profile (nhánh đang sửa bị nhầm thành activity_register)
         setContentView(R.layout.activity_profile);
 
-        // Xử lý giao diện tràn viền (Edge-to-Edge) từ Master
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.btnBack).getRootView(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Xử lý khi bấm nút Back cứng trên điện thoại từ Master
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -67,25 +72,40 @@ public class ProfilePage extends AppCompatActivity {
 
         initViews();
         setupListeners();
-
-        // Gọi API để lấy thông tin mới nhất từ server (từ nhánh của bạn)
         loadUserProfile();
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private void initViews() {
         tvUserName = findViewById(R.id.tvUsername);
         imgProfile = findViewById(R.id.ivAvatar);
 
-        // Hiển thị ngay lập tức tên User từ SessionManager để UI không bị trống khi đợi API
         if (sessionManager.getCurrUser() != null) {
             tvUserName.setText(sessionManager.getCurrUser().getUsername());
-        } else {
-            Log.d("ProfilePage", "User is null in SessionManager");
         }
+
+        ImageView icNotification = findViewById(R.id.ic_notification);
+        FrameLayout badgeContainer = findViewById(R.id.notificationBadgeContainer);
+        
+        if (icNotification != null && badgeContainer != null) {
+            badge = BadgeDrawable.create(this);
+            badge.setMaxCharacterCount(3);
+            // Use ContextCompat to be safe
+            badge.setBackgroundColor(ContextCompat.getColor(this, R.color.error_red));
+            
+            // Attach badge to the icon within its FrameLayout container
+            BadgeUtils.attachBadgeDrawable(badge, icNotification, badgeContainer);
+        }
+
+        webSocketManager.getNotificationCount().observe(this, count -> {
+            if (badge != null && count != null) {
+                badge.setNumber(count);
+                badge.setVisible(count > 0);
+            }
+        });
     }
 
     private void setupListeners() {
-        // Nút Back trên giao diện app
         findViewById(R.id.btnBack).setOnClickListener(v -> {
             getOnBackPressedDispatcher().onBackPressed();
         });
@@ -94,16 +114,26 @@ public class ProfilePage extends AppCompatActivity {
             Intent intent = new Intent(ProfilePage.this, SettingsActivity.class);
             startActivity(intent);
         });
+        
+        findViewById(R.id.btn_logout).setOnClickListener(v -> {
+            sessionManager.logout();
+            Intent intent = new Intent(ProfilePage.this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
+        });
+        
+        findViewById(R.id.menuActivity).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, NotificationActivity.class);
+            startActivity(intent);
+        });
     }
 
-    // Hàm lấy dữ liệu mới nhất từ nhánh của bạn
     private void loadUserProfile() {
         userApi.getMyProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
+            public void onResponse(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     UserResponse currentUserData = response.body().getData();
-                    // Cập nhật lại giao diện với dữ liệu mới nhất từ server
                     if (currentUserData != null && currentUserData.getUsername() != null) {
                         tvUserName.setText(currentUserData.getUsername());
 
@@ -111,19 +141,14 @@ public class ProfilePage extends AppCompatActivity {
                         userToSave.setUsername(currentUserData.getUsername());
                         userToSave.setEmail(currentUserData.getEmail());
 
-                        String currentToken = sessionManager.getAccessToken(); // Hoặc getAccessToken() tùy tên hàm bạn đặt
-                        String currentRefreshToken = sessionManager.getRefreshToken(); // Hàm lấy refresh token
-
-                        sessionManager.saveSession(currentToken, userToSave, currentRefreshToken);
+                        sessionManager.saveSession(sessionManager.getAccessToken(), userToSave, sessionManager.getRefreshToken());
                     }
-                } else {
-                    Toast.makeText(ProfilePage.this, "Không thể tải thông tin profile", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
-                Toast.makeText(ProfilePage.this, "Lỗi lấy thông tin: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Throwable t) {
+                Log.e("ProfilePage", "Error loading profile", t);
             }
         });
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/multiChoiceLayout"
@@ -9,14 +9,15 @@
     android:layout_marginTop="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="3dp"
-    app:strokeWidth="0dp">
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/quizlet_border">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp"
-        android:background="@color/white">
+        android:background="@color/background_white">
 
         <TextView
             android:id="@+id/tvQuestionNumber"
@@ -84,4 +85,4 @@
             android:textSize="16sp"
             android:textColor="@color/text_color_primary" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView >

@@ -9,6 +9,7 @@ import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
+import com.example.mosquizto.Dto.response.ShareCollectionResponse;
 import com.example.mosquizto.Dto.response.StarredCollectionItemResponse;
 import com.example.mosquizto.Models.Collection;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -90,6 +92,28 @@ public interface CollectionApi {
 
     @POST("reports/collections/{collectionId}")
     Call<ApiResponse<CollectionReportResponse>> reportCollection(@Path("collectionId") int collectionId, @Body CollectionReportRequest request);
+    @GET("recommendation/collections")
+    Call<ApiResponse<PageResponse<CollectionResponse>>> recommendCollection(@Query("page") int page , @Query("size") int size);
 
+    // Lấy danh sách Report
+    @GET("reports/collections") // Sửa lại path theo Controller của bạn
+    Call<ApiResponse<List<CollectionReportResponse>>> getMyPendingReports();
 
+    // Xử lý Report
+    @PATCH("reports/{reportId}")
+    Call<ApiResponse<Void>> processReport(
+            @Path("reportId") Long reportId,
+            @Query("status") String status // Dùng String (vd: "DISMISSED", "RESOLVED")
+    );
+
+    // Lấy danh sách Lời mời
+    @GET("user-collection/invitations")
+    Call<ApiResponse<List<ShareCollectionResponse>>> getMyInvitations();
+
+    // Xử lý Lời mời
+    @PATCH("user-collection/respond/invitation")
+    Call<ApiResponse<Void>> respondToInvitation(
+            @Query("collectionId") Integer collectionId,
+            @Query("accessStatus") String accessStatus
+    );
 }

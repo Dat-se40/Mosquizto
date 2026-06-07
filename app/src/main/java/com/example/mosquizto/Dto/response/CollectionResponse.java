@@ -1,10 +1,11 @@
 package com.example.mosquizto.Dto.response;
 
 import com.example.mosquizto.Models.Collection;
+import com.example.mosquizto.Util.SearchResultWrapper;
 
 import java.util.Date;
 
-public class CollectionResponse {
+public class CollectionResponse implements SearchResultWrapper {
     private Integer id;
     private String title;
     private String description;
@@ -96,5 +97,10 @@ public class CollectionResponse {
         this.userId = userId;
         this.userName = userName;
         this.count = count;
+    }
+
+    @Override
+    public int getType() {
+        return 1;
     }
 }

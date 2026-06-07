@@ -1,9 +1,10 @@
 package com.example.mosquizto.Dto.response;
 
+import com.example.mosquizto.Util.SearchResultWrapper;
 import com.example.mosquizto.Util.UserStatus;
 import java.io.Serializable;
 
-public class UserResponse implements Serializable {
+public class UserResponse implements Serializable , SearchResultWrapper {
     private Long id;
     private String fullName;
     private String email;
@@ -35,5 +36,10 @@ public class UserResponse implements Serializable {
                 ", createdAt='" + createdAt + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
                 '}';
+    }
+
+    @Override
+    public int getType() {
+        return 2;
     }
 }

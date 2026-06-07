@@ -3,6 +3,7 @@ package com.example.mosquizto.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,11 +46,24 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         FolderSummaryResponse folder = folders.get(position);
         // Bind dữ liệu folder vào từng dòng UI.
         holder.tvFolderName.setText(folder.getName());
+
+        if (folder.getName() != null && !folder.getName().isEmpty()) {
+            holder.tvCreatorName.setText("by " + folder.getName());
+        } else {
+            holder.tvCreatorName.setText("by anonymous");
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onFolderClicked(folder);
             }
         });
+
+        if (holder.btnFolderMore != null) {
+            holder.btnFolderMore.setOnClickListener(v -> {
+                // Thêm logic hiển thị PopupMenu xử lý Xóa/Sửa ở đây nếu cần
+            });
+        }
     }
 
     @Override
@@ -59,11 +73,14 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvFolderName;
+        TextView tvCreatorName;
+        ImageView btnFolderMore;
 
         ViewHolder(View itemView) {
             super(itemView);
-            // Giữ reference tới view con để bind nhanh hơn.
             tvFolderName = itemView.findViewById(R.id.tvFolderName);
+            tvCreatorName = itemView.findViewById(R.id.tvCreatorName);
+            btnFolderMore = itemView.findViewById(R.id.btnFolderMore);
         }
     }
 }

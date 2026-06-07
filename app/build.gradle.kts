@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
 }
-
 android {
     namespace = "com.example.mosquizto"
     compileSdk = 36
@@ -56,6 +55,7 @@ dependencies {
     
     implementation(libs.work.runtime)
     implementation(libs.hilt.work)
+    implementation(libs.play.services.maps3d)
     ksp(libs.hilt.work.compiler) // Add this to fix CompleteSessionWorker instantiation error
     
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
@@ -86,4 +86,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("org.greenrobot:eventbus:3.3.1")
 }

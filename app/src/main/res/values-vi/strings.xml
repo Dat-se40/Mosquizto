@@ -286,4 +286,53 @@
     <string name="username_must_not_be_empty">Tên người dùng không được để trống</string>
     <string name="username_must_not_exceed_100_characters">Tên người dùng không được vượt quá 100 ký tự</string>
     <string name="tv_library_title">Thư viện</string>
+
+    <string name="progress_completed">Đã hoàn thành %1$d%%</string>
+    <string name="tvCollectionDetails">%1$d thẻ • bởi %2$s</string>
+
+    <string name="notification_title">Thông báo</string>
+    <string name="no_notifications">Bạn không có thông báo nào</string>
+
+    <string name="invite_message">%1$s đã mời bạn tham gia học phần %2$s với quyền %3$s</string>
+    <string name="report_message">Học %1$s phần của bạn đã bị báo cáo.\nLý do: %2$s. \n Mô tả chi tiết: %3$s</string>
+
+    <string name="invite_accept">Đồng ý</string>
+    <string name="invite_denied">Từ chối</string>
+    <string name="report_revised">Đã sửa đổi</string>
+
+    <!-- Main Activity refactor -->
+    <string name="log_tag_ws" translatable="false">WS</string>
+    <string name="log_tag_stomp" translatable="false">STOMP</string>
+    <string name="log_tag_stomp_msg" translatable="false">STOMP_MSG</string>
+    <string name="tag_home" translatable="false">home</string>
+    <string name="tag_search" translatable="false">search</string>
+    <string name="tag_library" translatable="false">library</string>
+    <string name="tag_folder_dialog" translatable="false">FolderDialog</string>
+    <string name="ws_base_url" translatable="false">ws://10.0.2.2:8080</string>
+    <string name="ws_endpoint" translatable="false">/ws-connection</string>
+    <string name="ws_topic_invitation" translatable="false">/user/queue/invitation</string>
+    <string name="ws_topic_report" translatable="false">/user/queue/report</string>
+    <string name="msg_login_event" translatable="false">Discover broadcast success. Connect with token: %1$s</string>
+    <string name="msg_stomp_connected" translatable="false">Establish STOMP connection successfully </string>
+    <string name="msg_stomp_error" translatable="false">Network fail: </string>
+    <string name="msg_stomp_closed" translatable="false">STOMP has been closed</string>
+    <string name="msg_stomp_notification" translatable="false">Notification: %1$s</string>
+    <string name="msg_stomp_receive_error" translatable="false">Error while receiving message: </string>
+    <string name="notification_prefix" translatable="false">🔔 </string>
+    <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
+    <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
+    <string name="intent_key_author" translatable="false">AUTHOR</string>
+
+    <string name="tvTotalCardsCount">%1$d thẻ</string>
+    <string name="editStudySet">Sửa học phần</string>
+
+    <string name="tvNotifications">Thông báo</string>
+    <string name="tvInviteContent">%1$s đã mời bạn tham gia học phần %2$s làm %3$s</string>
+    <string name="tvReportContent">Học phần %1$s của bạn đã bị báo cáo.\nLý do: %2$s.</string>
+    <string name="welcome_back">"Chào mừng "</string>
+
+    <string name="followers_following">%1$d người theo dõi • %2$d Đang theo dõi</string>
+    <string name="follow">Theo dõi</string>
+    <string name="btnHideUser">Ẩn người dùng này</string>
+    <string name="btnReportUser">Báo cáo vi phạm</string>
 </resources>

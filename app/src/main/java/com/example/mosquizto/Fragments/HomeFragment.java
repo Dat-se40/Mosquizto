@@ -2,10 +2,8 @@ package com.example.mosquizto.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,38 +24,32 @@ import com.example.mosquizto.Activities.MemoryGameActivity;
 import com.example.mosquizto.Activities.ProfilePage;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
-import com.example.mosquizto.Dto.response.StudySessionResponse;
+import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.MainActivity;
-import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Adapters.BasedOnRecentAdapter;
 import com.example.mosquizto.Adapters.JumpBackInAdapter;
 import com.example.mosquizto.Adapters.RecentAdapter;
-import com.example.mosquizto.Dto.response.ApiResponse;
-import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Util.FragmentTag;
 import com.example.mosquizto.Util.GameMode;
+import com.example.mosquizto.ViewModels.HomeViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
+
+    private HomeViewModel viewModel;
 
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
     private JumpBackInAdapter jumpAdapter;
     private RecentAdapter recentAdapter;
     private BasedOnRecentAdapter basedAdapter;
     private MainActivity mainActivity;
-
-    @Inject StudyApi studyApi;
-    @Inject CollectionApi collectionApi;
 
     private ImageView imgView;
     private EditText etSearch;
@@ -77,19 +70,32 @@ public class HomeFragment extends Fragment {
     private List<CollectionItemResponse> quickMcqQueue = new ArrayList<>();
     private int quickMcqCurrentIndex = 0;
     private String correctQuickAnswer;
-    
+
     private final Handler mcqHandler = new Handler(Looper.getMainLooper());
+    private String oldPlayBtnText = "";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        initViews(view);
+        createListener();
+        setupEmptyRecyclerViews();
+        initQuickMcqViews(view);
+        initRandomGameViews(view);
+
+        // Khởi tạo ViewModel sau khi View đã sẵn sàng
+        initViewModel();
+
+        return view;
+    }
+
+    private void initViews(View view) {
         View ivAvatar = view.findViewById(R.id.iv_avatar);
         if (ivAvatar != null) {
             ivAvatar.setOnClickListener(v -> startActivity(new Intent(getContext(), ProfilePage.class)));
         }
-
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
@@ -99,16 +105,79 @@ public class HomeFragment extends Fragment {
         if (getActivity() instanceof MainActivity) {
             mainActivity = (MainActivity) getActivity();
         }
+    }
 
-        createListener();
-        setupEmptyRecyclerViews();
-        initQuickMcqViews(view);
-        initRandomGameViews(view);
+    private void initViewModel() {
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        fetchJumpBackIn();
-        fetchRecents();
+        // Đăng ký các bộ lắng nghe LiveData thay đổi từ ViewModel
+        viewModel.jumpBackIn.observe(getViewLifecycleOwner(), sessions -> {
+            if (sessions != null) jumpAdapter.setSessions(sessions);
+        });
 
-        return view;
+        viewModel.recents.observe(getViewLifecycleOwner(), recents -> {
+            if (recents != null) {
+                cachedRecentCollections = recents;
+                recentAdapter.setCollections(recents);
+                recentAdapter.notifyDataSetChanged();
+
+                // Tạo phân luồng xử lý nhẹ để giao diện hiển thị danh sách trước không bị khựng
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    pickRandomCollectionForMcq();
+                    setupRandomGameSection();
+                });
+            }
+        });
+
+        viewModel.recommended.observe(getViewLifecycleOwner(), collections -> {
+            if (collections != null) {
+                basedAdapter.setCollections(collections);
+                basedAdapter.notifyDataSetChanged();
+            }
+        });
+
+        viewModel.mcqItems.observe(getViewLifecycleOwner(), items -> {
+            if (items != null) {
+                totalCollectionItems = items;
+                setupQuickMcqPlan(items);
+            } else {
+                if (multiChoiceLayout != null) multiChoiceLayout.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.isMcqLoading.observe(getViewLifecycleOwner(), loading -> {
+            if (btnReloadMcq != null) {
+                btnReloadMcq.setEnabled(!loading);
+                btnReloadMcq.setAlpha(loading ? 0.5f : 1.0f);
+            }
+        });
+
+        viewModel.randomGameItems.observe(getViewLifecycleOwner(), items -> {
+            if (items != null && !items.isEmpty()) {
+                Intent intent = new Intent(getContext(), MemoryGameActivity.class);
+                intent.putExtra("COLLECTION_ID", currentRandomGameCollection.getId());
+                intent.putExtra("GAME_MODE", currentRandomGameMode.name());
+                intent.putParcelableArrayListExtra("ITEMS_LIST", new ArrayList<>(items));
+                startActivity(intent);
+
+                // Xóa trạng thái ngay lập tức tránh việc quay lại màn hình Home bị kích hoạt trùng lặp
+                viewModel.clearRandomGameItems();
+            } else if (items != null) {
+                Toast.makeText(getContext(), "Bộ học phần rỗng", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.isRandomGameLoading.observe(getViewLifecycleOwner(), loading -> {
+            if (btnPlayRandomGame != null) {
+                btnPlayRandomGame.setEnabled(!loading);
+                if (loading) {
+                    oldPlayBtnText = btnPlayRandomGame.getText().toString();
+                    btnPlayRandomGame.setText("...");
+                } else if (!oldPlayBtnText.isEmpty()) {
+                    btnPlayRandomGame.setText(oldPlayBtnText);
+                }
+            }
+        });
     }
 
     private void initQuickMcqViews(View view) {
@@ -162,80 +231,30 @@ public class HomeFragment extends Fragment {
         recentAdapter.SetOnCloclickListener(new RecentAdapter.OnCollectionActionListener() {
             @Override public void onEdit(CollectionResponse item, int position) {}
             @Override public void onShare(CollectionResponse item, int position) {}
-            @Override public void onDelete(CollectionResponse item, int position)
-            {
-                deleteRecentItem(item.getId(),position);
+            @Override public void onDelete(CollectionResponse item, int position) {
+                viewModel.deleteRecentItem(item.getId());
             }
         });
         rvRecents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         rvRecents.setAdapter(recentAdapter);
 
         basedAdapter = new BasedOnRecentAdapter(null);
+        basedAdapter.setItemCollectionClickedListener(new OnItemCollectionClickedListener() {
+            @Override
+            public void OnItemClicked(CollectionResponse item) {
+                if (mainActivity != null) mainActivity.GoToStudySetActivity(getContext(), item);
+            }
+        });
         rvBasedOnRecent.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvBasedOnRecent.setAdapter(basedAdapter);
-
         rvJumpBackIn.setItemAnimator(null);
         rvRecents.setItemAnimator(null);
         rvBasedOnRecent.setItemAnimator(null);
     }
 
-    private void deleteRecentItem(Integer id, int listViewPosition) {
-        collectionApi.deleteRecentOpenedCollection(id).enqueue(new Callback<ApiResponse<Void>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-                if (!isAdded() || getView() == null) return;
-                if (response.isSuccessful()) {
-                    recentAdapter.removeItem(listViewPosition);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void fetchJumpBackIn() {
-        studyApi.getJumpBackIn().enqueue(new Callback<ApiResponse<List<StudySessionResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<StudySessionResponse>>> call, @NonNull Response<ApiResponse<List<StudySessionResponse>>> response) {
-                if (!isAdded() || getView() == null) return;
-                if (response.isSuccessful() && response.body() != null) {
-                    jumpAdapter.setSessions(response.body().getData());
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<StudySessionResponse>>> call, @NonNull Throwable t) {
-                Log.e("HomeFragment", "Lỗi JumpBackIn: " + t.getMessage());
-            }
-        });
-    }
-
-    private void fetchRecents() {
-        collectionApi.getRecentOpenedCollections().enqueue(new Callback<ApiResponse<List<CollectionResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<CollectionResponse>>> call, @NonNull Response<ApiResponse<List<CollectionResponse>>> response) {
-                if (!isAdded() || getView() == null) return;
-                if (response.isSuccessful() && response.body() != null) {
-                    cachedRecentCollections = response.body().getData();
-                    recentAdapter.setCollections(cachedRecentCollections);
-                    recentAdapter.notifyDataSetChanged();
-
-                    pickRandomCollectionForMcq();
-                    setupRandomGameSection();
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<CollectionResponse>>> call, @NonNull Throwable t) {
-                Log.e("HomeFragment", "Lỗi Recents: " + t.getMessage());
-            }
-        });
-    }
-
     private void setupRandomGameSection() {
         if (!isAdded() || getView() == null) return;
-        
+
         if (cachedRecentCollections != null && !cachedRecentCollections.isEmpty()) {
             int randomIndex = (int) (Math.random() * cachedRecentCollections.size());
             currentRandomGameCollection = cachedRecentCollections.get(randomIndex);
@@ -284,86 +303,17 @@ public class HomeFragment extends Fragment {
 
     private void playRandomGame() {
         if (currentRandomGameCollection == null) return;
-
-        btnPlayRandomGame.setEnabled(false);
-        String oldText = btnPlayRandomGame.getText().toString();
-        btnPlayRandomGame.setText("...");
-
-        collectionApi.getCollectionItemById(currentRandomGameCollection.getId()).enqueue(new Callback<ApiResponse<List<CollectionItemResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<CollectionItemResponse>>> call, @NonNull Response<ApiResponse<List<CollectionItemResponse>>> response) {
-                if (!isAdded()) return;
-                btnPlayRandomGame.setEnabled(true);
-                btnPlayRandomGame.setText(oldText);
-
-                if (response.isSuccessful() && response.body() != null) {
-                    List<CollectionItemResponse> items = response.body().getData();
-                    if (items != null && !items.isEmpty()) {
-                        Intent intent = new Intent(getContext(), MemoryGameActivity.class);
-                        intent.putExtra("COLLECTION_ID", currentRandomGameCollection.getId());
-                        intent.putExtra("GAME_MODE", currentRandomGameMode.name());
-                        intent.putParcelableArrayListExtra("ITEMS_LIST", new ArrayList<>(items));
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getContext(), "Empty set", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<CollectionItemResponse>>> call, @NonNull Throwable t) {
-                if (!isAdded()) return;
-                btnPlayRandomGame.setEnabled(true);
-                btnPlayRandomGame.setText(oldText);
-                Toast.makeText(getContext(), "Error loading game", Toast.LENGTH_SHORT).show();
-            }
-        });
+        viewModel.fetchItemsForRandomGame(currentRandomGameCollection.getId());
     }
 
     private void pickRandomCollectionForMcq() {
         if (cachedRecentCollections != null && !cachedRecentCollections.isEmpty()) {
             int randomIndex = (int) (Math.random() * cachedRecentCollections.size());
             CollectionResponse randomCollection = cachedRecentCollections.get(randomIndex);
-
-            if (btnReloadMcq != null) {
-                btnReloadMcq.setEnabled(false);
-                btnReloadMcq.setAlpha(0.5f);
-            }
-
-            fetchItemsForQuickMcq(randomCollection.getId());
+            viewModel.fetchItemsForQuickMcq(randomCollection.getId());
         } else {
             if (multiChoiceLayout != null) multiChoiceLayout.setVisibility(View.GONE);
         }
-    }
-
-    private void fetchItemsForQuickMcq(Integer collectionId) {
-        collectionApi.getCollectionItemById(collectionId).enqueue(new Callback<ApiResponse<List<CollectionItemResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<CollectionItemResponse>>> call, @NonNull Response<ApiResponse<List<CollectionItemResponse>>> response) {
-                if (!isAdded()) return;
-                if (btnReloadMcq != null) {
-                    btnReloadMcq.setEnabled(true);
-                    btnReloadMcq.setAlpha(1.0f);
-                }
-
-                if (response.isSuccessful() && response.body() != null) {
-                    totalCollectionItems = response.body().getData();
-                    setupQuickMcqPlan(totalCollectionItems);
-                } else {
-                    if (multiChoiceLayout != null) multiChoiceLayout.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<CollectionItemResponse>>> call, @NonNull Throwable t) {
-                if (!isAdded()) return;
-                if (btnReloadMcq != null) {
-                    btnReloadMcq.setEnabled(true);
-                    btnReloadMcq.setAlpha(1.0f);
-                }
-                if (multiChoiceLayout != null) multiChoiceLayout.setVisibility(View.GONE);
-            }
-        });
     }
 
     private void setupQuickMcqPlan(List<CollectionItemResponse> items) {
@@ -479,7 +429,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetchJumpBackIn();
-        fetchRecents();
+        // Chỉ gọi tải khi màn hình mở lên, nhờ biến cờ trong ViewModel bảo vệ, dữ liệu sẽ tải song song cực mượt
+        if (viewModel != null) {
+            viewModel.fetchAllData();
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.mosquizto.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,13 +23,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mosquizto.Activities.StudySetDetailActivity;
+import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Dto.response.SearchCollectionResultItem;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Adapters.RecentSearchAdapter;
 import com.example.mosquizto.Adapters.SearchResultAdapter;
 import com.example.mosquizto.Adapters.SuggestionAdapter;
-import com.example.mosquizto.Dto.response.SearchResultItem;
+import com.example.mosquizto.Util.SearchResultWrapper;
 import com.example.mosquizto.ViewModels.SearchViewModel;
 
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ public class SearchFragment extends Fragment {
 
     private EditText etSearch;
     private ImageView ivClear;
-    private ImageView ivCamera;
     private TextView tvCancel;
     private TextView tvClearAll;
 
@@ -64,6 +62,7 @@ public class SearchFragment extends Fragment {
     private SearchResultAdapter searchResultAdapter;
     private MainActivity mainActivity;
     private com.google.android.material.chip.ChipGroup cgSearchType;
+
 
     @Nullable
     @Override
@@ -142,14 +141,24 @@ public class SearchFragment extends Fragment {
 
         searchResultAdapter = new SearchResultAdapter(new ArrayList<>(), new SearchResultAdapter.OnResultClickListener() {
             @Override
-            public void onResultClick(SearchResultItem item) {
+            public void onResultClick(SearchResultWrapper item) {
                 if(mainActivity != null)
-                    mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(item.getId()), item.getTitle(), item.getCreatedByUsername());
+                {
+                    if (item.getType() == SearchResultAdapter.TYPE_COLLECTION)
+                    {
+                        SearchCollectionResultItem collectionResponse = (SearchCollectionResultItem) item ;
+                        mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(collectionResponse.getId()), collectionResponse.getTitle(), collectionResponse.getCreatedByUsername());
+                    }else if (item.getType() == SearchResultAdapter.TYPE_USER)
+                    {
+                        // TODO: Chuyển đến trang profile
+                    }
+                }
+
             }
 
             @Override
-            public void onMoreClick(SearchResultItem item) {
-                Toast.makeText(getContext(), "More: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+            public void onMoreClick(SearchResultWrapper item) {
+                //Toast.makeText(getContext(), "More: " + item.getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
         rvSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -188,7 +197,6 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString().trim();
                 ivClear.setVisibility(query.isEmpty() ? View.GONE : View.VISIBLE);
-                ivCamera.setVisibility(query.isEmpty() ? View.VISIBLE : View.GONE);
                 viewModel.onQueryChanged(query);
             }
 

@@ -1,6 +1,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF" />
+    <solid android:color="@color/background_white" />
     <stroke android:width="3dp"
-        android:color="#4CAF50" />
+        android:color="@color/quizlet_green" />
     <corners android:radius="8dp" />
 </shape>

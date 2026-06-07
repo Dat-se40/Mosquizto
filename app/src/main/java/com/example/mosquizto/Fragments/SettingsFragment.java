@@ -76,12 +76,6 @@ public class SettingsFragment extends Fragment {
         if (switchSound != null) switchSound.setChecked(true);
         if (switchHaptic != null) switchHaptic.setChecked(true);
 
-        // Logout
-        View btnLogout = view.findViewById(R.id.btnLogout);
-        if (btnLogout != null) {
-            btnLogout.setOnClickListener(v -> showLogoutDialog());
-        }
-
         // Xóa tài khoản
         View btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
         if (btnDeleteAccount != null) {
