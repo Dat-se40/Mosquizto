@@ -43,6 +43,10 @@
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />
 
+        <activity android:name=".Activities.OtherUserProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto" />
+
         <activity
             android:name=".Activities.SettingsActivity"
             android:exported="false"

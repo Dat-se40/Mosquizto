@@ -150,7 +150,10 @@ public class SearchFragment extends Fragment {
                         mainActivity.GoToStudySetActivity(getContext(), Math.toIntExact(collectionResponse.getId()), collectionResponse.getTitle(), collectionResponse.getCreatedByUsername());
                     }else if (item.getType() == SearchResultAdapter.TYPE_USER)
                     {
-                        // TODO: Chuyển đến trang profile
+                        com.example.mosquizto.Dto.response.UserResponse user = (com.example.mosquizto.Dto.response.UserResponse) item;
+                        android.content.Intent intent = new android.content.Intent(getContext(), com.example.mosquizto.Activities.OtherUserProfileActivity.class);
+                        intent.putExtra("intent_key_username", user.getUsername());
+                        startActivity(intent);
                     }
                 }
 
