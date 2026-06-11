@@ -341,8 +341,28 @@ public class StudySetDetailActivity extends AppCompatActivity {
         }
 
         TextView tvAuthorName = findViewById(R.id.tvAuthorName);
+        ImageView imgAuthorAvatar = findViewById(R.id.imgAuthorAvatar);
         if (tvAuthorName != null && author != null) {
             tvAuthorName.setText(author);
+            
+            View.OnClickListener authorClickListener = v -> {
+                if (sessionManager.getCurrUser() != null) {
+                    boolean isOwner = author.equals(sessionManager.getCurrUser().getUsername());
+                    Intent intent;
+                    if (isOwner) {
+                        intent = new Intent(StudySetDetailActivity.this, ProfilePage.class);
+                    } else {
+                        intent = new Intent(StudySetDetailActivity.this, OtherUserProfileActivity.class);
+                        intent.putExtra("intent_key_username", author);
+                    }
+                    startActivity(intent);
+                }
+            };
+            
+            tvAuthorName.setOnClickListener(authorClickListener);
+            if (imgAuthorAvatar != null) {
+                imgAuthorAvatar.setOnClickListener(authorClickListener);
+            }
         }
 
         if (termListAdapter != null) {

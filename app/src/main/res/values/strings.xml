@@ -344,4 +344,6 @@
     <string name="btnHideUser">Hide this user</string>
     <string name="btnReportUser">Report this user</string>
     <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="following_label">Following</string>
 </resources>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import retrofit2.Response;
 public class ProfilePage extends AppCompatActivity {
 
     private TextView tvUserName;
+    private TextView tvFollowStats;
     private ImageView imgProfile;
 
     @Inject
@@ -72,13 +74,23 @@ public class ProfilePage extends AppCompatActivity {
 
         initViews();
         setupListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadUserProfile();
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     private void initViews() {
         tvUserName = findViewById(R.id.tvUsername);
+        tvFollowStats = findViewById(R.id.tvFollowStats);
         imgProfile = findViewById(R.id.ivAvatar);
+
+        if (tvFollowStats != null) {
+            tvFollowStats.setVisibility(View.GONE);
+        }
 
         if (sessionManager.getCurrUser() != null) {
             tvUserName.setText(sessionManager.getCurrUser().getUsername());
@@ -136,6 +148,17 @@ public class ProfilePage extends AppCompatActivity {
                     UserResponse currentUserData = response.body().getData();
                     if (currentUserData != null && currentUserData.getUsername() != null) {
                         tvUserName.setText(currentUserData.getUsername());
+
+                        if (tvFollowStats != null) {
+                            String stats = getString(R.string.followers_following, currentUserData.getFollowingCount(), currentUserData.getFollowersCount());
+                            tvFollowStats.setText(stats);
+                            tvFollowStats.setVisibility(View.VISIBLE);
+                            tvFollowStats.setOnClickListener(v -> {
+                                Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
+                                intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0); // Open Followers tab by default
+                                startActivity(intent);
+                            });
+                        }
 
                         User userToSave = new User();
                         userToSave.setUsername(currentUserData.getUsername());

@@ -44,4 +44,10 @@ public interface UserApi {
 
     @DELETE("user/follow/{username}")
     Call<ApiResponse<Void>> unfollowUser(@Path("username") String username);
+
+    @GET("user/followers")
+    Call<ApiResponse<PageResponse<UserResponse>>> getFollowers(@Query("page") int page, @Query("size") int size);
+
+    @GET("user/following")
+    Call<ApiResponse<PageResponse<UserResponse>>> getFollowing(@Query("page") int page, @Query("size") int size);
 }

@@ -145,7 +145,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     private void updateFollowUI() {
         if (profileData == null) return;
 
-        String stats = getString(R.string.followers_following, profileData.getFollowersCount(), profileData.getFollowingCount());
+        String stats = getString(R.string.followers_following, profileData.getFollowingCount(), profileData.getFollowersCount());
         tvFollowStats.setText(stats);
 
         if (profileData.isFollowed()) {
