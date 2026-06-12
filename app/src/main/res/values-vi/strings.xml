@@ -335,4 +335,17 @@
     <string name="follow">Theo dõi</string>
     <string name="btnHideUser">Ẩn người dùng này</string>
     <string name="btnReportUser">Báo cáo vi phạm</string>
+
+    <string name="streak_current_title">Chuỗi hiện tại</string>
+    <string name="streak_days_label">ngày liên tiếp</string>
+    <string name="streak_studied_today">✓ Đã học hôm nay</string>
+    <string name="streak_stats_title">Thống kê học tập</string>
+    <string name="streak_longest_label">Chuỗi dài nhất</string>
+    <string name="streak_total_days_label">Tổng ngày học</string>
+    <string name="streak_total_sessions_label">Tổng phiên học</string>
+    <string name="streak_completed_sessions_label">Phiên hoàn thành</string>
+    <string name="streak_last_studied_title">Lần học gần nhất</string>
+    <string name="streak_next_milestone_label">Mốc tiếp theo</string>
+    <string name="streak_next_milestone_value">Còn %d ngày</string>
+    <string name="streak_next_milestone_none">Đã đạt mốc cao nhất</string>
 </resources>
