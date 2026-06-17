@@ -335,6 +335,8 @@
     <string name="follow">Theo dõi</string>
     <string name="btnHideUser">Ẩn người dùng này</string>
     <string name="btnReportUser">Báo cáo vi phạm</string>
+    <string name="have_new_notification">Có thông báo mới</string>
+    <string name="reload">Tải lại </string>
     <string name="following">Đang theo dõi</string>
     <string name="followers">Người theo dõi</string>
     <string name="following_label">Đang theo dõi</string>

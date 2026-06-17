@@ -25,6 +25,7 @@ import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
 import com.google.android.material.badge.BadgeDrawable;
@@ -47,6 +48,8 @@ public class ProfilePage extends AppCompatActivity {
     public SessionManager sessionManager;
     @Inject
     public WebSocketManager webSocketManager;
+    @Inject
+    LogoutManager logoutManager;
     @Inject
     UserApi userApi;
     
@@ -111,9 +114,13 @@ public class ProfilePage extends AppCompatActivity {
         }
 
         webSocketManager.getNotificationCount().observe(this, count -> {
-            if (badge != null && count != null) {
+            if (badge == null || count == null) return;
+            if (count > 0) {
+                badge.setVisible(true);
                 badge.setNumber(count);
-                badge.setVisible(count > 0);
+            } else {
+                badge.clearNumber();
+                badge.setVisible(false);
             }
         });
     }
@@ -129,7 +136,7 @@ public class ProfilePage extends AppCompatActivity {
         });
         
         findViewById(R.id.btn_logout).setOnClickListener(v -> {
-            sessionManager.logout();
+            logoutManager.logout();
             Intent intent = new Intent(ProfilePage.this, WelcomeActivity.class);
             startActivity(intent);
             finish();

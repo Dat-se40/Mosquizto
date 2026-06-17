@@ -16,6 +16,7 @@ import com.example.mosquizto.Activities.WelcomeActivity;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Util.AboutDialogHelper;
 import com.example.mosquizto.Util.ThemeManager;
@@ -33,6 +34,9 @@ public class SettingsFragment extends Fragment {
 
     @Inject
     WebSocketManager webSocketManager;
+
+    @Inject
+    LogoutManager logoutManager;
 
     @Nullable
     @Override
@@ -129,7 +133,7 @@ public class SettingsFragment extends Fragment {
                 .setTitle("Đăng xuất")
                 .setMessage("Bạn có chắc muốn đăng xuất không?")
                 .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                    sessionManager.clearSession();
+                    logoutManager.logout();
                     navigateToWelcome();
                 })
                 .setNegativeButton("Huỷ", null)
@@ -141,7 +145,7 @@ public class SettingsFragment extends Fragment {
                 .setTitle("Xóa tài khoản")
                 .setMessage("Hành động này không thể hoàn tác. Toàn bộ dữ liệu sẽ bị xóa vĩnh viễn.")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    sessionManager.clearSession();
+                    logoutManager.logout();
                     navigateToWelcome();
                 })
                 .setNegativeButton("Huỷ", null)

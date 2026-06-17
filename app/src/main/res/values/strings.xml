@@ -343,6 +343,8 @@
     <string name="follow">Follow</string>
     <string name="btnHideUser">Hide this user</string>
     <string name="btnReportUser">Report this user</string>
+    <string name="have_new_notification">New notifications</string>
+    <string name="reload">Reload </string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
     <string name="following_label">Following</string>

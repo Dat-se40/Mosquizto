@@ -25,10 +25,4 @@ public class MainViewModel extends ViewModel {
     public void connectStomp(String token) {
         webSocketManager.connect(token);
     }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        webSocketManager.disconnect();
-    }
 }
