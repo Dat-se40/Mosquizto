@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mosquizto.Activities.WelcomeActivity;
 import com.example.mosquizto.Models.User;
+import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Util.AboutDialogHelper;
@@ -29,6 +30,9 @@ public class SettingsFragment extends Fragment {
 
     @Inject
     SessionManager sessionManager;
+
+    @Inject
+    WebSocketManager webSocketManager;
 
     @Nullable
     @Override
@@ -71,6 +75,13 @@ public class SettingsFragment extends Fragment {
         SwitchMaterial switchNotification = view.findViewById(R.id.switchNotification);
         SwitchMaterial switchSound        = view.findViewById(R.id.switchSound);
         SwitchMaterial switchHaptic       = view.findViewById(R.id.switchHaptic);
+
+        // Push notifications
+        if (switchNotification != null) {
+            switchNotification.setChecked(webSocketManager.isPushNotificationEnabled());
+            switchNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    webSocketManager.setPushNotificationEnabled(isChecked));
+        }
 
         if (switchSound  != null) switchSound.setChecked(true);
         if (switchHaptic != null) switchHaptic.setChecked(true);

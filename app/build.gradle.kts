@@ -1,11 +1,10 @@
-import org.gradle.kotlin.dsl.dependencies
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
 }
+
 android {
     namespace = "com.example.mosquizto"
     compileSdk = 36
@@ -29,14 +28,22 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures {
         compose = true
         viewBinding = true
     }
+}
+
+// Force Gradle to use a full JDK (including jlink) via Toolchains.
+// This solves the "jlink executable does not exist" issue by ignoring the IDE's JRE.
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -56,7 +63,7 @@ dependencies {
     implementation(libs.work.runtime)
     implementation(libs.hilt.work)
     implementation(libs.play.services.maps3d)
-    ksp(libs.hilt.work.compiler) // Add this to fix CompleteSessionWorker instantiation error
+    ksp(libs.hilt.work.compiler)
     
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
@@ -82,8 +89,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     
     // Lifecycle (ViewModel & LiveData)
-    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
-    implementation ("androidx.lifecycle:lifecycle-livedata:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.10.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")

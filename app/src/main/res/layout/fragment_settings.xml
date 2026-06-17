@@ -163,7 +163,8 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -171,7 +172,8 @@
                     android:layout_weight="1"
                     android:text="@string/settings_create_password"
                     android:textColor="@color/text_color_primary"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp"
+                    />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -340,7 +342,7 @@
                     android:id="@+id/switchNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false" />
+                    android:checked="true" />
             </LinearLayout>
 
             <View
