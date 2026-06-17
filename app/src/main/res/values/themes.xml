@@ -95,4 +95,11 @@
         <item name="android:paddingBottom">8dp</item>
         <item name="cornerRadius">8dp</item>
     </style>
+
+    <!-- Setting dialog -->
+    <style name="AboutDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">92%</item>
+        <item name="android:windowMinWidthMinor">92%</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
 </resources>

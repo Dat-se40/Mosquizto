@@ -13,6 +13,9 @@ public class UserResponse implements Serializable , SearchResultWrapper {
     private String role;
     private String createdAt;
     private String updatedAt;
+    private long followersCount;
+    private long followingCount;
+    private boolean followed;
 
     // Getters
     public Long getId() { return id; }
@@ -23,6 +26,9 @@ public class UserResponse implements Serializable , SearchResultWrapper {
     public String getRole() { return role; }
     public String getCreatedAt() { return createdAt; }
     public String getUpdatedAt() { return updatedAt; }
+    public long getFollowersCount() { return followersCount; }
+    public long getFollowingCount() { return followingCount; }
+    public boolean isFollowed() { return followed; }
 
     @Override
     public String toString() {

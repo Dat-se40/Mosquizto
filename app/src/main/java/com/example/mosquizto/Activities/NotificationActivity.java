@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -18,12 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mosquizto.Adapters.NotificationAdapter;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.ShareCollectionResponse;
+import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.NotificationWrapper;
 import com.example.mosquizto.ViewModels.NotificationViewModel;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.snackbar.Snackbar;
 
 import javax.inject.Inject;
 
@@ -59,7 +61,7 @@ public class NotificationActivity extends AppCompatActivity {
         pbLoading = findViewById(R.id.pbLoading);
         layoutEmpty = findViewById(R.id.layoutEmpty);
 
-        ImageButton btnBack = findViewById(R.id.btnBack);
+        View btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }
@@ -70,24 +72,47 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onAcceptInvite(ShareCollectionResponse invite, int position) {
                 if (invite.getCollectionId() != null) {
-                    viewModel.respondInvitation(invite.getCollectionId(), "ENABLE");
-                    webSocketManager.readNotification();
+                    viewModel.respondInvitation(invite, "ENABLE");
                 }
             }
 
             @Override
             public void onDenyInvite(ShareCollectionResponse invite, int position) {
                 if (invite.getCollectionId() != null) {
-                    viewModel.respondInvitation(invite.getCollectionId(), "DENIED");
-                    webSocketManager.readNotification();
+                    viewModel.respondInvitation(invite, "DENIED");
                 }
             }
 
             @Override
             public void onDismissReport(CollectionReportResponse report, int position) {
                 if (report.getId() != null) {
-                    viewModel.dismissReport(report.getId().longValue());
-                    webSocketManager.readNotification();
+                    viewModel.dismissReport(report);
+                }
+            }
+
+            @Override
+            public void onItemClick(NotificationWrapper item) {
+                String currentUsername = sessionManager.getCurrUser() != null ? sessionManager.getCurrUser().getUsername() : null;
+
+                viewModel.markAsRead(item);
+
+                if (item instanceof ShareCollectionResponse) {
+                    ShareCollectionResponse invite = (ShareCollectionResponse) item;
+                    if (invite.getCollectionId() != null) {
+                        MainActivity.GoToStudySetActivity(NotificationActivity.this,
+                                invite.getCollectionId(),
+                                invite.getTitle(),
+                                null);
+                    }
+                } else if (item instanceof CollectionReportResponse) {
+                    CollectionReportResponse report = (CollectionReportResponse) item;
+                    if (report.getCollectionId() != null) {
+                        String title = sessionManager.getCollectionTitle(report.getCollectionId());
+                        MainActivity.GoToStudySetActivity(NotificationActivity.this,
+                                report.getCollectionId(),
+                                title,
+                                currentUsername);
+                    }
                 }
             }
         });
@@ -95,7 +120,6 @@ public class NotificationActivity extends AppCompatActivity {
         rvNotifications.setLayoutManager(new LinearLayoutManager(this));
         rvNotifications.setAdapter(adapter);
     }
-
     @SuppressLint("UnsafeOptInUsageError")
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
@@ -132,8 +156,27 @@ public class NotificationActivity extends AppCompatActivity {
 
         webSocketManager.getNotificationCount().observe(this, count -> {
             if (badge != null && count != null) {
-                badge.setNumber(count);
-                badge.setVisible(count > 0);
+                if (count > 0) {
+                    badge.setVisible(true);
+                    badge.setNumber(count);
+                } else {
+                    badge.clearNumber();
+                    badge.setVisible(false);
+                }
+            }
+        });
+        webSocketManager.getNotifications().observe(this, message -> {
+            if (message != null && !message.isEmpty()) {
+                // Hiện Snackbar thông báo có dữ liệu mới ở cạnh dưới màn hình
+                Snackbar.make(findViewById(android.R.id.content), R.string.have_new_notification, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.reload, v -> {
+                            // Khi user bấm "Tải lại", ta mới gọi ViewModel để fetch lại data
+                            viewModel.fetchAllNotifications();
+                            if (rvNotifications != null) {
+                                rvNotifications.smoothScrollToPosition(0);
+                            }
+                        })
+                        .show();
             }
         });
     }

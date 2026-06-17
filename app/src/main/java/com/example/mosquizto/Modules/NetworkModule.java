@@ -8,6 +8,13 @@ import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Network.itf.NotificationApi;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -29,13 +36,31 @@ public class NetworkModule {
                 .addInterceptor(authInterceptor)
                 .build();
     }
+
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
+    public Gson provideGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> {
+                    String dateString = json.getAsString();
+                    if (dateString.contains("+") || dateString.endsWith("Z")) {
+                        // Handle ISO_OFFSET_DATE_TIME if necessary, but LocalDateTime usually doesn't have offset.
+                        // However, if the server sends it, we might need to handle it.
+                        // For now, let's try standard parse.
+                        return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_DATE_TIME);
+                    }
+                    return LocalDateTime.parse(dateString);
+                })
+                .create();
+    }
+
+    @Provides
+    @Singleton
+    public Retrofit provideRetrofit(OkHttpClient okHttpClient, Gson gson) {
         return new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/")
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
     @Provides
@@ -59,5 +84,11 @@ public class NetworkModule {
     @Singleton
     public FolderApi provideFolderApi(Retrofit retrofit) {
         return retrofit.create(FolderApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public NotificationApi provideNotificationApi(Retrofit retrofit) {
+        return retrofit.create(NotificationApi.class);
     }
 }

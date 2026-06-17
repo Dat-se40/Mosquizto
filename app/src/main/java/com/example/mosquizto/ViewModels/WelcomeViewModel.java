@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 
 import javax.inject.Inject;
@@ -32,10 +33,13 @@ public class WelcomeViewModel extends ViewModel {
     public LiveData<String> UserName = userName ;
     private final SessionManager sessionManager ;
     private final UserApi userApi ;
+    private final LogoutManager logoutManager;
+
     @Inject
-    public WelcomeViewModel(SessionManager sessionManager, UserApi userApi)  {
+    public WelcomeViewModel(SessionManager sessionManager, UserApi userApi, LogoutManager logoutManager)  {
         this.sessionManager = sessionManager;
         this.userApi = userApi;
+        this.logoutManager = logoutManager;
     }
 //    public void onGoogleClicked() {
 //        _navigateTo.setValue("register");
@@ -64,7 +68,7 @@ public class WelcomeViewModel extends ViewModel {
                 {
                     //Ko có user profile do token hết hạn
                     _errorMessage.postValue("You are not logged in");
-                    sessionManager.logout();
+                    logoutManager.logout();
                     userName.setValue("");
                     Log.e("DEBUG_WELCOME", "API Error: " + response.code());
                 }
@@ -81,7 +85,7 @@ public class WelcomeViewModel extends ViewModel {
         if(!sessionManager.isLoggedIn())
         {
            // _errorMessage.postValue("You are not logged in");
-            sessionManager.logout();
+            logoutManager.logout();
             userName.setValue("");
         }else if(sessionManager != null && sessionManager.getCurrUser() != null)
         {

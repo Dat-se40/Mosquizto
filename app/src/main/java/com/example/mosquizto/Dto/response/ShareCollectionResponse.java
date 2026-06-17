@@ -15,6 +15,7 @@ public class ShareCollectionResponse implements NotificationWrapper {
     String inviteAt ;
     CollectionRole collectionRole ;
     AccessStatus accessStatus ;
+    private Long notificationId;
 
     public AccessStatus getAccessStatus() {
         return accessStatus;
@@ -83,5 +84,15 @@ public class ShareCollectionResponse implements NotificationWrapper {
     @Override
     public int getType() {
         return 1;
+    }
+
+    @Override
+    public Long getNotificationId() {
+        return notificationId;
+    }
+
+    @Override
+    public void setNotificationId(Long id) {
+        this.notificationId = id;
     }
 }

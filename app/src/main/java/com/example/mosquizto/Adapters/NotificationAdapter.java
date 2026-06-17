@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "NotificationAdapter";
     private static final int TYPE_INVITE = 1;
     private static final int TYPE_REPORT = 2;
 
@@ -39,6 +41,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onAcceptInvite(ShareCollectionResponse invite, int position);
         void onDenyInvite(ShareCollectionResponse invite, int position);
         void onDismissReport(CollectionReportResponse report, int position);
+        void onItemClick(NotificationWrapper item);
     }
 
     public NotificationAdapter(List<NotificationWrapper> notifications, SessionManager sessionManager, OnNotificationActionListener listener) {
@@ -74,6 +77,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         int colorInt = ContextCompat.getColor(context, R.color.noti_accent_color);
 
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(item);
+        });
+
+        // TODO: dùng vistor pattern hoặc statery pattern nếu sau này mở rộng nhiều loại thông báo hơn nữa
         if (holder.getItemViewType() == TYPE_INVITE && item instanceof ShareCollectionResponse) {
             InviteViewHolder inviteHolder = (InviteViewHolder) holder;
             ShareCollectionResponse invite = (ShareCollectionResponse) item;
@@ -109,10 +117,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             CollectionReportResponse report = (CollectionReportResponse) item;
 
             String collectionTitle = "Unknown";
-            if (sessionManager != null && report.getCollectionId() != null) {
-                String title = sessionManager.getCollectionTitle(report.getCollectionId());
-                if (title != null) {
-                    collectionTitle = title;
+            Integer collectionId = report.getCollectionId();
+            if (collectionId == null) {
+                Log.w(TAG, "report title: collectionId=null, reportId=" + report.getId()
+                        + " -> using fallback");
+            } else if (sessionManager == null) {
+                Log.w(TAG, "report title: sessionManager=null, collectionId=" + collectionId
+                        + " -> using fallback");
+            } else {
+                String cachedTitle = sessionManager.getCollectionTitle(collectionId);
+                if (cachedTitle == null || cachedTitle.trim().isEmpty()) {
+                    Log.w(TAG, "report title: cache miss, collectionId=" + collectionId
+                            + ", reportId=" + report.getId() + " -> using fallback");
+                } else {
+                    collectionTitle = cachedTitle;
+                    Log.d(TAG, "report title: cache hit, collectionId=" + collectionId
+                            + " -> \"" + cachedTitle + "\"");
                 }
             }
 

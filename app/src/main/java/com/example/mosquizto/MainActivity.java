@@ -71,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
         if (sessionManager.isLoggedIn()) {
             viewModel.connectStomp(sessionManager.getAccessToken());
         }
+        Integer initialCount = viewModel.getNotificationCount().getValue();
+        if (initialCount != null && initialCount > 0) {
+            BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_profile);
+            badge.setVisible(true);
+            badge.setNumber(initialCount);
+        }
     }
 
     private void observeNotifications() {
@@ -79,10 +85,13 @@ public class MainActivity extends AppCompatActivity {
         });
         viewModel.getNotificationCount().observe(this, count ->
         {
-            BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
-            if (badge != null) {
-                badge.setVisible(count > 0);
+            BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.nav_profile);
+            if (count != null && count > 0) {
+                badge.setVisible(true);
                 badge.setNumber(count);
+            } else {
+                badge.setVisible(false);
+                badge.clearNumber();
             }
         });
     }
@@ -115,11 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 switchToLibrary();
                 return true;
             } else if (id == R.id.nav_profile) {
-                // Khi click vào Profile thì ẩn chấm đỏ đi
-                BadgeDrawable badge = bottomNav.getBadge(R.id.nav_profile);
-                if (badge != null) {
-                    badge.setVisible(false);
-                }
                 startActivity(new Intent(this, ProfilePage.class));
                 return false;
             }
@@ -188,23 +192,23 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void GoToStudySetActivity(Context context , CollectionResponse item)
+    public static void GoToStudySetActivity(Context context , CollectionResponse item)
     {
         GoToStudySetActivity(context , item.getId(), item.getTitle(), item.getUserName());
     }
 
-    public void GoToStudySetActivity(Context context , Integer id , String title)
+    public static void GoToStudySetActivity(Context context , Integer id , String title)
     {
         GoToStudySetActivity(context, id, title, null);
     }
 
-    public void GoToStudySetActivity(Context context , Integer id , String title, String author)
+    public static void GoToStudySetActivity(Context context , Integer id , String title, String author)
     {
         Intent intent = new Intent(context, StudySetDetailActivity.class);
-        intent.putExtra(getString(R.string.intent_key_collection_id), id != null ? id : -1);
-        intent.putExtra(getString(R.string.intent_key_collection_title), title);
-        intent.putExtra(getString(R.string.intent_key_author), author);
-        startActivity(intent);
+        intent.putExtra(context.getString(R.string.intent_key_collection_id), id != null ? id : -1);
+        intent.putExtra(context.getString(R.string.intent_key_collection_title), title);
+        intent.putExtra(context.getString(R.string.intent_key_author), author);
+        context.startActivity(intent);
     }
 
     @Override
