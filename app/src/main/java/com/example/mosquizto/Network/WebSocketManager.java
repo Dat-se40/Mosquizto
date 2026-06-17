@@ -42,9 +42,11 @@ public class WebSocketManager {
     private static final String CHANNEL_ID = "MOSQUIZTO_ALERTS";
     private static final String PREF_NAME = "NOTIFICATION_PREFS";
     private static final String KEY_COUNT = "NOTIFICATION_COUNT";
+    private static final String KEY_PUSH_ENABLED = "PUSH_NOTIFICATIONS_ENABLED";
 
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
+    private boolean pushNotificationsEnabled;
 
     @Inject
     public WebSocketManager(@ApplicationContext Context context) {
@@ -54,6 +56,8 @@ public class WebSocketManager {
         this.editor = sharedPreferences.edit();
         
         createNotificationChannel();
+
+        pushNotificationsEnabled = sharedPreferences.getBoolean(KEY_PUSH_ENABLED, true);
         
         // 2. Set initial value to LiveData from saved preferences
         int savedCount = sharedPreferences.getInt(KEY_COUNT, 0);
@@ -66,6 +70,15 @@ public class WebSocketManager {
 
     public LiveData<Integer> getNotificationCount() {
         return _notificationCount;
+    }
+
+    public boolean isPushNotificationEnabled() {
+        return pushNotificationsEnabled;
+    }
+
+    public void setPushNotificationEnabled(boolean enabled) {
+        pushNotificationsEnabled = enabled;
+        editor.putBoolean(KEY_PUSH_ENABLED, enabled).apply();
     }
 
     @SuppressLint("CheckResult")
@@ -144,6 +157,8 @@ public class WebSocketManager {
     }
 
     public void showSystemNotification(String title, String content) {
+        if (!pushNotificationsEnabled) return;
+
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         if (intent != null) intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 

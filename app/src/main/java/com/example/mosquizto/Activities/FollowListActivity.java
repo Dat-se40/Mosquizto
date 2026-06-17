@@ -138,13 +138,14 @@ public class FollowListActivity extends AppCompatActivity {
     }
 
     private void setupTabs() {
-        TabLayout.Tab tabFollowers = tabLayout.newTab().setText(R.string.followers);
         TabLayout.Tab tabFollowing = tabLayout.newTab().setText(R.string.following_label);
+        TabLayout.Tab tabFollowers = tabLayout.newTab().setText(R.string.followers);
+
 
         tabLayout.addTab(tabFollowers);
         tabLayout.addTab(tabFollowing);
 
-        TabLayout.Tab targetTab = initialTabIndex == 1 ? tabFollowing : tabFollowers;
+        TabLayout.Tab targetTab = initialTabIndex == 1 ? tabFollowers :tabFollowing;
         targetTab.select();
         tvTitle.setText(targetTab.getText());
     }
@@ -165,7 +166,7 @@ public class FollowListActivity extends AppCompatActivity {
         showLoading(true);
         adapter.updateData(new ArrayList<>());
 
-        if (tabIndex == 0) {
+        if (tabIndex == 1) {
             currentApiCall = userApi.getFollowing(1, 100);
             tvEmpty.setText("Bạn chưa có người theo dõi nào");
         } else {

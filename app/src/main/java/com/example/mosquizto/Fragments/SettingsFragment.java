@@ -14,8 +14,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mosquizto.Activities.WelcomeActivity;
 import com.example.mosquizto.Models.User;
+import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.AboutDialogHelper;
 import com.example.mosquizto.Util.ThemeManager;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -28,6 +30,9 @@ public class SettingsFragment extends Fragment {
 
     @Inject
     SessionManager sessionManager;
+
+    @Inject
+    WebSocketManager webSocketManager;
 
     @Nullable
     @Override
@@ -48,7 +53,7 @@ public class SettingsFragment extends Fragment {
         User currentUser = sessionManager.getCurrUser();
         if (currentUser != null) {
             if (tvUsername != null) tvUsername.setText(currentUser.getUsername());
-            if (tvEmail != null) tvEmail.setText(currentUser.getEmail());
+            if (tvEmail    != null) tvEmail.setText(currentUser.getEmail());
         }
 
         // Back button
@@ -61,9 +66,8 @@ public class SettingsFragment extends Fragment {
         SwitchMaterial switchDarkMode = view.findViewById(R.id.switchDarkMode);
         if (switchDarkMode != null) {
             switchDarkMode.setChecked(ThemeManager.isDarkMode(requireContext()));
-            switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                ThemeManager.setDarkMode(requireContext(), isChecked);
-            });
+            switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    ThemeManager.setDarkMode(requireContext(), isChecked));
         }
 
         // Other Switches (Using SwitchMaterial to match XML)
@@ -72,8 +76,14 @@ public class SettingsFragment extends Fragment {
         SwitchMaterial switchSound        = view.findViewById(R.id.switchSound);
         SwitchMaterial switchHaptic       = view.findViewById(R.id.switchHaptic);
 
-        // Giá trị mặc định hoặc từ SharedPreferences nếu có
-        if (switchSound != null) switchSound.setChecked(true);
+        // Push notifications
+        if (switchNotification != null) {
+            switchNotification.setChecked(webSocketManager.isPushNotificationEnabled());
+            switchNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    webSocketManager.setPushNotificationEnabled(isChecked));
+        }
+
+        if (switchSound  != null) switchSound.setChecked(true);
         if (switchHaptic != null) switchHaptic.setChecked(true);
 
         // Xóa tài khoản
@@ -81,8 +91,39 @@ public class SettingsFragment extends Fragment {
         if (btnDeleteAccount != null) {
             btnDeleteAccount.setOnClickListener(v -> showDeleteDialog());
         }
+
+        // ── About: dialogs ───────────────────────────────────────────
+
+        // 1. Chính sách quyền riêng tư
+        View itemPrivacy = view.findViewById(R.id.itemPrivacy);
+        if (itemPrivacy != null) {
+            itemPrivacy.setOnClickListener(v ->
+                    AboutDialogHelper.showPrivacyPolicy(requireContext()));
+        }
+
+        // 2. Điều khoản dịch vụ
+        View itemTerms = view.findViewById(R.id.itemTerms);
+        if (itemTerms != null) {
+            itemTerms.setOnClickListener(v ->
+                    AboutDialogHelper.showTermsOfService(requireContext()));
+        }
+
+        // 3. Giấy phép mã nguồn mở
+        View itemOpenSource = view.findViewById(R.id.itemOpenSource);
+        if (itemOpenSource != null) {
+            itemOpenSource.setOnClickListener(v ->
+                    AboutDialogHelper.showOpenSourceLicenses(requireContext()));
+        }
+
+        // 4. Trung tâm hỗ trợ
+        View itemSupport = view.findViewById(R.id.itemSupport);
+        if (itemSupport != null) {
+            itemSupport.setOnClickListener(v ->
+                    AboutDialogHelper.showSupportCenter(requireContext()));
+        }
     }
 
+    // ── Dialogs tài khoản ─────────────────────────────────────────────
     private void showLogoutDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Đăng xuất")

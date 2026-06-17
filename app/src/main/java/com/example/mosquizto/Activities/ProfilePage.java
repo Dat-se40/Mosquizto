@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.User;
@@ -138,41 +139,77 @@ public class ProfilePage extends AppCompatActivity {
             Intent intent = new Intent(ProfilePage.this, NotificationActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.tvSeeAll).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, AchievementActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.cardStreakStart).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, AchievementActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadUserProfile() {
-        userApi.getMyProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Response<ApiResponse<UserResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    UserResponse currentUserData = response.body().getData();
-                    if (currentUserData != null && currentUserData.getUsername() != null) {
-                        tvUserName.setText(currentUserData.getUsername());
+//        userApi.getMyProfile().enqueue(new Callback<ApiResponse<UserResponse>>() {
+//            @Override
+//            public void onResponse(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Response<ApiResponse<UserResponse>> response) {
+//                if (response.isSuccessful() && response.body() != null) {
+//                    UserResponse currentUserData = response.body().getData();
+//                    if (currentUserData != null && currentUserData.getUsername() != null) {
+//                        tvUserName.setText(currentUserData.getUsername());
+//
+//                        if (tvFollowStats != null) {
+//                            String stats = getString(R.string.followers_following, currentUserData.getFollowersCount(),currentUserData.getFollowingCount());
+//                            tvFollowStats.setText(stats);
+//                            tvFollowStats.setVisibility(View.VISIBLE);
+//                            tvFollowStats.setOnClickListener(v -> {
+//                                Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
+//                                intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0); // Open Followers tab by default
+//                                startActivity(intent);
+//                            });
+//                        }
+//
+//                        User userToSave = new User();
+//                        userToSave.setUsername(currentUserData.getUsername());
+//                        userToSave.setEmail(currentUserData.getEmail());
+//
+//                        sessionManager.saveSession(sessionManager.getAccessToken(), userToSave, sessionManager.getRefreshToken());
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Throwable t) {
+//                Log.e("ProfilePage", "Error loading profile", t);
+//            }
+//        });
 
-                        if (tvFollowStats != null) {
-                            String stats = getString(R.string.followers_following, currentUserData.getFollowingCount(), currentUserData.getFollowersCount());
-                            tvFollowStats.setText(stats);
-                            tvFollowStats.setVisibility(View.VISIBLE);
-                            tvFollowStats.setOnClickListener(v -> {
-                                Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
-                                intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0); // Open Followers tab by default
-                                startActivity(intent);
-                            });
-                        }
+      userApi.getUserProfile(sessionManager.getCurrUser().getUsername()).enqueue(new Callback<ApiResponse<OtherUserProfileResponse>>() {
+          @Override
+          public void onResponse(Call<ApiResponse<OtherUserProfileResponse>> call, Response<ApiResponse<OtherUserProfileResponse>> response) {
+              if (response.isSuccessful() && response.body() != null)
+              {
+                  // other này là mình :v
+                  OtherUserProfileResponse userProfile = response.body().getData();
+                  if(userProfile == null) return ;
+                  tvUserName.setText(response.body().getData().getUsername());
+                  String stats = getString(R.string.followers_following, userProfile.getFollowersCount(),userProfile.getFollowingCount());
+                  tvFollowStats.setText(stats);
+                  tvFollowStats.setVisibility(View.VISIBLE);
+                  tvFollowStats.setOnClickListener(v -> {
+                    Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
+                    intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0); // Open Followers tab by default
+                    startActivity(intent);
+                  });
+              }
+          }
 
-                        User userToSave = new User();
-                        userToSave.setUsername(currentUserData.getUsername());
-                        userToSave.setEmail(currentUserData.getEmail());
+          @Override
+          public void onFailure(Call<ApiResponse<OtherUserProfileResponse>> call, Throwable t) {
 
-                        sessionManager.saveSession(sessionManager.getAccessToken(), userToSave, sessionManager.getRefreshToken());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<UserResponse>> call, @NonNull Throwable t) {
-                Log.e("ProfilePage", "Error loading profile", t);
-            }
-        });
+          }
+      });
     }
 }

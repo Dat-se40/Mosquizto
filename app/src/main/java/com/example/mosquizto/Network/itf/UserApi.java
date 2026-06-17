@@ -8,6 +8,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Dto.response.StreakResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
@@ -36,8 +37,10 @@ public interface UserApi {
     Call<ApiResponse<PageResponse<UserResponse>>> searchUser(@Query("keyword") String keyword ,
                                                                   @Query("page") int page, @Query("size") int size);
 
+    @GET("user/streak")
+    Call<ApiResponse<StreakResponse>> getUserStreak();
     @GET("user/profile/{username}")
-    Call<ApiResponse<OtherUserProfileResponse>> getUserProfile(@Path("username") String username);
+Call<ApiResponse<OtherUserProfileResponse>> getUserProfile(@Path("username") String username);
 
     @POST("user/follow/{username}")
     Call<ApiResponse<Void>> followUser(@Path("username") String username);

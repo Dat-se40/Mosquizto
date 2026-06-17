@@ -128,6 +128,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                 Log.e("OtherUserProfileAct", "Failure loading profile", t);
             }
         });
+
     }
 
     private void bindProfileData() {
@@ -145,12 +146,12 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     private void updateFollowUI() {
         if (profileData == null) return;
 
-        String stats = getString(R.string.followers_following, profileData.getFollowingCount(), profileData.getFollowersCount());
+        String stats = getString(R.string.followers_following, profileData.getFollowersCount(),profileData.getFollowingCount());
         tvFollowStats.setText(stats);
 
         if (profileData.isFollowed()) {
             btnFollow.setText(R.string.following);
-            
+
             // Set Followed State colors (Secondary button style: grey/variant background, dark/white text)
             int bgColor = ContextCompat.getColor(this, R.color.app_button_secondary_background);
             int textColor = ContextCompat.getColor(this, R.color.app_button_secondary_text);

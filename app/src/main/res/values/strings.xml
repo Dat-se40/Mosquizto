@@ -346,4 +346,140 @@
     <string name="following">Following</string>
     <string name="followers">Followers</string>
     <string name="following_label">Following</string>
+
+    <string name="streak_current_title">Current Streak</string>
+    <string name="streak_days_label">consecutive days</string>
+    <string name="streak_studied_today">✓ Studied today</string>
+    <string name="streak_stats_title">Learning Statistics</string>
+    <string name="streak_longest_label">Longest Streak</string>
+    <string name="streak_total_days_label">Total days studied</string>
+    <string name="streak_total_sessions_label">Total sessions</string>
+    <string name="streak_completed_sessions_label">Completed sessions</string>
+    <string name="streak_last_studied_title">Last Studied</string>
+    <string name="streak_next_milestone_label">Next Milestone</string>
+    <string name="streak_next_milestone_value">%d days left</string>
+    <string name="streak_next_milestone_none">Highest milestone reached</string>
+
+    <!-- About dialogs -->
+    <string name="about_dialog_close">Close</string>
+    <string name="about_dialog_close_desc">Close dialog</string>
+    <string name="about_app_version" translatable="false">1.0.0</string>
+
+    <string name="about_privacy_policy_title">Privacy Policy</string>
+    <string name="about_privacy_policy_content"><![CDATA[
+<b>Last updated: June 1, 2025</b><br/><br/>
+<b>1. Information we collect</b><br/>
+Mosquizto collects the following information when you use the app:<br/>
+• <b>Account information:</b> Username and email address when you register.<br/>
+• <b>Study content:</b> Flashcard sets, questions, answers, and notes you create.<br/>
+• <b>Learning data:</b> Study progress, quiz scores, and learning statistics.<br/>
+• <b>Device information:</b> Operating system, app version, and crash logs.<br/><br/>
+<b>2. How we use your information</b><br/>
+Collected information is used to:<br/>
+• Provide and improve a personalized learning experience.<br/>
+• Sync your learning progress across your devices.<br/>
+• Send study reminder notifications.<br/>
+• Analyze and fix technical issues.<br/><br/>
+<b>3. Information sharing</b><br/>
+We <b>do not sell</b> your personal information. Information is only shared when:<br/>
+• You choose to share a flashcard set publicly with the community.<br/>
+• Required by law from a competent authority.<br/><br/>
+<b>4. Data security</b><br/>
+Mosquizto applies industry-standard security measures such as HTTPS encryption and password hashing to protect your data.<br/><br/>
+<b>5. Your rights</b><br/>
+You can edit your account information or delete your account at any time in Settings. When you delete your account, all of your learning data will be permanently removed.<br/><br/>
+<b>6. Contact</b><br/>
+For privacy questions, please contact:<br/>
+📧 privacy@mosquizto.app
+    ]]></string>
+
+    <string name="about_terms_title">Terms of Service</string>
+    <string name="about_terms_content"><![CDATA[
+<b>Last updated: June 1, 2025</b><br/><br/>
+Welcome to <b>Mosquizto</b> — a smart flashcard learning app. By using the app, you agree to the terms below.<br/><br/>
+<b>1. Terms of use</b><br/>
+• You must be at least 13 years old to create a Mosquizto account.<br/>
+• Each user may only have one account.<br/>
+• You are responsible for keeping your login credentials secure.<br/><br/>
+<b>2. User content</b><br/>
+• You retain full ownership of the flashcard sets and study content you create.<br/>
+• When you share content publicly, you grant Mosquizto permission to display that content in the app for the learning community.<br/>
+• Uploading copyrighted, harmful, or inappropriate content is strictly prohibited.<br/><br/>
+<b>3. Community guidelines</b><br/>
+Mosquizto is a learning space. Users <b>must not</b>:<br/>
+• Copy or redistribute content belonging to another user without permission.<br/>
+• Use the app for commercial purposes without a separate agreement.<br/>
+• Intentionally attack, disrupt the system, or harm other users.<br/><br/>
+<b>4. Features and services</b><br/>
+• Mosquizto provides flashcard creation, quizzes, offline study, and cloud sync.<br/>
+• We may change, suspend, or discontinue some features without prior notice.<br/><br/>
+<b>5. Account termination</b><br/>
+We may suspend or delete accounts that violate these terms. You may also delete your account at any time in Settings.<br/><br/>
+<b>6. Contact</b><br/>
+📧 support@mosquizto.app
+    ]]></string>
+
+    <string name="about_oss_title">Open Source Licenses</string>
+    <string name="about_oss_content"><![CDATA[
+Mosquizto is built with the help of the following open source libraries. We appreciate and acknowledge the open source community.<br/><br/>
+<b>Dagger Hilt</b><br/>
+Version: 2.48 | License: Apache 2.0<br/>
+Dependency injection library for managing lifecycle and dependencies in Android apps.<br/>
+<i>Copyright © Google LLC</i><br/><br/>
+<b>Retrofit 2</b><br/>
+Version: 2.9.0 | License: Apache 2.0<br/>
+HTTP client library used to communicate with the Mosquizto backend API.<br/>
+<i>Copyright © Square, Inc.</i><br/><br/>
+<b>OkHttp</b><br/>
+Version: 4.11.0 | License: Apache 2.0<br/>
+HTTP &amp; HTTP/2 client for Android, used together with Retrofit.<br/>
+<i>Copyright © Square, Inc.</i><br/><br/>
+<b>Glide</b><br/>
+Version: 4.16.0 | License: BSD, MIT, Apache 2.0<br/>
+High-performance image loading and display library for Android.<br/>
+<i>Copyright © Google LLC</i><br/><br/>
+<b>Material Components for Android</b><br/>
+Version: 1.11.0 | License: Apache 2.0<br/>
+Material Design UI components — Switch, Card, Button, and more.<br/>
+<i>Copyright © Google LLC</i><br/><br/>
+<b>Room Persistence Library</b><br/>
+Version: 2.6.1 | License: Apache 2.0<br/>
+Local storage library (SQLite) used to save flashcard sets offline.<br/>
+<i>Copyright © Google LLC</i><br/><br/>
+<b>Gson</b><br/>
+Version: 2.10.1 | License: Apache 2.0<br/>
+Library for converting JSON ↔ Java objects.<br/>
+<i>Copyright © Google LLC</i><br/><br/>
+<b>Lottie</b><br/>
+Version: 6.1.0 | License: Apache 2.0<br/>
+Library for rendering JSON-based animations in the app UI.<br/>
+<i>Copyright © Airbnb, Inc.</i><br/><br/>
+─────────────────────<br/>
+Full license texts are available at:<br/>
+https://opensource.org/licenses/Apache-2.0
+    ]]></string>
+
+    <string name="about_support_title">Help Center</string>
+    <string name="about_support_content"><![CDATA[
+<b>We are always here to help!</b><br/><br/>
+<b>🔹 Frequently asked questions</b><br/><br/>
+<b>I forgot my password. What should I do?</b><br/>
+Tap &quot;Forgot password&quot; on the login screen. We will send a reset link to your registered email address.<br/><br/>
+<b>How do I study offline?</b><br/>
+Turn on the <i>Save offline</i> switch in Settings → Offline study. Your flashcard sets will be downloaded and available without an internet connection.<br/><br/>
+<b>Does my learning data sync across devices?</b><br/>
+Yes! Your study progress and flashcard sets automatically sync through your Mosquizto account when you are online.<br/><br/>
+<b>How do I share a flashcard set with friends?</b><br/>
+Open a set → tap the Share icon → choose &quot;Share link&quot; or &quot;Make public&quot; so others can study with you.<br/><br/>
+<b>How do I delete my account?</b><br/>
+Go to Settings → scroll to the bottom → tap <i>Delete account</i>. This action cannot be undone.<br/><br/>
+─────────────────────<br/><br/>
+<b>📬 Contact us directly</b><br/>
+Cannot find an answer? The Mosquizto support team is ready to help:<br/><br/>
+• <b>Email:</b> support@mosquizto.app<br/>
+• <b>Response time:</b> 24–48 business hours<br/>
+• <b>Supported languages:</b> Vietnamese &amp; English<br/><br/>
+App version: <b>%1$s</b><br/>
+© 2025 Mosquizto Team. All rights reserved.
+    ]]></string>
 </resources>
