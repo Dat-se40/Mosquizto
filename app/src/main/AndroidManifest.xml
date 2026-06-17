@@ -49,6 +49,11 @@
             android:theme="@style/Theme.Mosquizto" />
 
         <activity
+            android:name=".Activities.AchievementActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Mosquizto" />
+
+        <activity
             android:name=".Activities.NotificationActivity"
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />

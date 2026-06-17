@@ -126,6 +126,16 @@ public class ProfilePage extends AppCompatActivity {
             Intent intent = new Intent(ProfilePage.this, NotificationActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.tvSeeAll).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, AchievementActivity.class);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.cardStreakStart).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfilePage.this, AchievementActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadUserProfile() {

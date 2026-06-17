@@ -343,4 +343,17 @@
     <string name="follow">Follow</string>
     <string name="btnHideUser">Hide this user</string>
     <string name="btnReportUser">Report this user</string>
+
+    <string name="streak_current_title">Current Streak</string>
+    <string name="streak_days_label">consecutive days</string>
+    <string name="streak_studied_today">✓ Studied today</string>
+    <string name="streak_stats_title">Learning Statistics</string>
+    <string name="streak_longest_label">Longest Streak</string>
+    <string name="streak_total_days_label">Total days studied</string>
+    <string name="streak_total_sessions_label">Total sessions</string>
+    <string name="streak_completed_sessions_label">Completed sessions</string>
+    <string name="streak_last_studied_title">Last Studied</string>
+    <string name="streak_next_milestone_label">Next Milestone</string>
+    <string name="streak_next_milestone_value">%d days left</string>
+    <string name="streak_next_milestone_none">Highest milestone reached</string>
 </resources>

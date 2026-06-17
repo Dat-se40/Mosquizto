@@ -90,4 +90,7 @@
     <color name="star_active">#F5A623</color>
     <color name="transparent">#00000000</color>
 
+    <!-- ── Streak ──────────────────────────────────────────── -->
+    <color name="streak_orange">#FF6B00</color>
+
 </resources>

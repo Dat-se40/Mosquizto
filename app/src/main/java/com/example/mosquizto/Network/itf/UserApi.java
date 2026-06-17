@@ -8,6 +8,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Dto.response.StreakResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Dto.response.UserResponse;
 
@@ -32,4 +33,7 @@ public interface UserApi {
     @GET("user/search")
     Call<ApiResponse<PageResponse<UserResponse>>> searchUser(@Query("keyword") String keyword ,
                                                                   @Query("page") int page, @Query("size") int size);
+
+    @GET("user/streak")
+    Call<ApiResponse<StreakResponse>> getUserStreak();
 }
