@@ -4,7 +4,9 @@ package com.example.mosquizto.Network.itf;
 import com.example.mosquizto.Dto.request.LoginRequest;
 import com.example.mosquizto.Dto.request.ResetPasswordRequest;
 import com.example.mosquizto.Dto.request.SignupRequest;
+import com.example.mosquizto.Dto.request.UpdateAvatarRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
+import com.example.mosquizto.Dto.response.AvatarResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
@@ -17,6 +19,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -53,4 +56,11 @@ Call<ApiResponse<OtherUserProfileResponse>> getUserProfile(@Path("username") Str
 
     @GET("user/following")
     Call<ApiResponse<PageResponse<UserResponse>>> getFollowing(@Query("page") int page, @Query("size") int size);
+
+    @GET("user/avatar")
+    Call<ApiResponse<AvatarResponse>> getMyAvatar() ;
+
+    @PATCH("user/avatar")
+    Call<ApiResponse<String>> updateAvatar(@Body UpdateAvatarRequest request);
 }
+

@@ -76,6 +76,7 @@ public class User {
         user.setStatus(response.getStatus());
         user.setRole(response.getRole());
         user.setPassword(password);
+        user.setAvatarUrl(response.getImgUri());
         return user;
     }
 

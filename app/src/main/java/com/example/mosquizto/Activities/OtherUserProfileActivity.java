@@ -1,11 +1,9 @@
 package com.example.mosquizto.Activities;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +27,7 @@ import com.example.mosquizto.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -40,7 +39,8 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class OtherUserProfileActivity extends AppCompatActivity {
 
-    private String username;
+    private String fullName;
+    private String userName ;
     private OtherUserProfileResponse profileData;
 
     private TextView tvProfileName;
@@ -65,13 +65,13 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         });
 
         // Get username from Intent
-        username = getIntent().getStringExtra("intent_key_username");
-        if (username == null || username.isEmpty()) {
+        userName = getIntent().getStringExtra("intent_key_username");
+        fullName = getIntent().getStringExtra("intent_key_full_name");
+        if (userName == null || userName.isEmpty()) {
             Toast.makeText(this, "Không tìm thấy người dùng", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
         initViews();
         setupListeners();
         setupViewPager();
@@ -86,7 +86,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
 
         // Hide follow button initially until profile data is loaded
         btnFollow.setVisibility(View.GONE);
-        tvProfileName.setText(username);
+        tvProfileName.setText(fullName);
     }
 
     private void setupListeners() {
@@ -101,7 +101,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         ViewPager2 viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        OtherUserProfilePagerAdapter pagerAdapter = new OtherUserProfilePagerAdapter(this, username);
+        OtherUserProfilePagerAdapter pagerAdapter = new OtherUserProfilePagerAdapter(this, userName,fullName);
         viewPager.setAdapter(pagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -110,7 +110,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile() {
-        userApi.getUserProfile(username).enqueue(new Callback<ApiResponse<OtherUserProfileResponse>>() {
+        userApi.getUserProfile(userName).enqueue(new Callback<ApiResponse<OtherUserProfileResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<OtherUserProfileResponse>> call, @NonNull Response<ApiResponse<OtherUserProfileResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
@@ -141,6 +141,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
 
         updateFollowUI();
         btnFollow.setVisibility(View.VISIBLE);
+        displayAvatar(profileData.getImgUri());
     }
 
     private void updateFollowUI() {
@@ -183,7 +184,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         profileData.setFollowersCount(newFollowers);
         updateFollowUI();
 
-        Call<ApiResponse<Void>> call = newFollowed ? userApi.followUser(username) : userApi.unfollowUser(username);
+        Call<ApiResponse<Void>> call = newFollowed ? userApi.followUser(userName) : userApi.unfollowUser(userName);
         call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Void>> call, @NonNull Response<ApiResponse<Void>> response) {
@@ -223,5 +224,16 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+    private void displayAvatar(String imgUri) {
+        if (imgUri != null && !imgUri.isEmpty()) {
+            Picasso.get()
+                    .load(imgUri)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .error(R.drawable.ic_default_avatar)
+                    .into(ivAvatar);
+        } else {
+            ivAvatar.setImageResource(R.drawable.ic_default_avatar);
+        }
     }
 }

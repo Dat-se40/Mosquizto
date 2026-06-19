@@ -2,6 +2,7 @@ package com.example.mosquizto.Modules;
 
 import android.content.Context;
 
+import com.example.mosquizto.Network.itf.MediaApi;
 import com.example.mosquizto.Services.AuthInterceptor;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.StudyApi;
@@ -90,5 +91,11 @@ public class NetworkModule {
     @Singleton
     public NotificationApi provideNotificationApi(Retrofit retrofit) {
         return retrofit.create(NotificationApi.class);
+    }
+    @Provides
+    @Singleton
+    public MediaApi provideMediaApi(Retrofit retrofit)
+    {
+        return retrofit.create(MediaApi.class);
     }
 }
