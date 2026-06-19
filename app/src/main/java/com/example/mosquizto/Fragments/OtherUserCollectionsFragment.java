@@ -38,8 +38,10 @@ import retrofit2.Response;
 public class OtherUserCollectionsFragment extends Fragment {
 
     private static final String ARG_USERNAME = "username";
-
+    private static final String ARG_FULL_NAME = "fullname" ;
     private String username;
+    private String fullName;
+
     private RecyclerView rv;
     private SearchResultAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -47,10 +49,11 @@ public class OtherUserCollectionsFragment extends Fragment {
     @Inject
     CollectionApi collectionApi;
 
-    public static OtherUserCollectionsFragment newInstance(String username) {
+    public static OtherUserCollectionsFragment newInstance(String username, String fullName) {
         OtherUserCollectionsFragment fragment = new OtherUserCollectionsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_USERNAME, username);
+        args.putString(ARG_FULL_NAME, fullName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,6 +63,8 @@ public class OtherUserCollectionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             username = getArguments().getString(ARG_USERNAME);
+            fullName = getArguments().getString(ARG_FULL_NAME);
+            Log.e(OtherUserCollectionsFragment.class.getName(), "Username: " + username + " Fullname: " + fullName);
         }
     }
 
@@ -123,7 +128,12 @@ public class OtherUserCollectionsFragment extends Fragment {
                     List<SearchCollectionResultItem> hits = response.body().getData().getHits();
                     List<SearchResultWrapper> items = new ArrayList<>();
                     if (hits != null) {
-                        items.addAll(hits);
+                        hits.forEach(item ->
+                        {
+                            if(item.getCreatedByUsername().equals(username))
+                                items.add(item) ;
+                        });
+                       // items.addAll(hits);
                     }
                     adapter.updateData(items);
                 } else {

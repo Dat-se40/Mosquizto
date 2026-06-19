@@ -94,6 +94,7 @@ public class FollowListActivity extends AppCompatActivity {
                 if (item instanceof UserResponse) {
                     UserResponse user = (UserResponse) item;
                     String targetUsername = user.getUsername();
+                    String targetFullName = user.getFullName();
                     if (targetUsername != null) {
                         Intent intent;
                         if (sessionManager.getCurrUser() != null && targetUsername.equals(sessionManager.getCurrUser().getUsername())) {
@@ -101,6 +102,7 @@ public class FollowListActivity extends AppCompatActivity {
                         } else {
                             intent = new Intent(FollowListActivity.this, OtherUserProfileActivity.class);
                             intent.putExtra("intent_key_username", targetUsername);
+                            intent.putExtra("intent_key_full_name" ,targetFullName);
                         }
                         startActivity(intent);
                     }
