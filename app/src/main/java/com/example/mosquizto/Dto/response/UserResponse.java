@@ -8,6 +8,7 @@ public class UserResponse implements Serializable , SearchResultWrapper {
     private Long id;
     private String fullName;
     private String email;
+    private String imgUri;
     private String username;
     private UserStatus status;
     private String role;
@@ -29,6 +30,14 @@ public class UserResponse implements Serializable , SearchResultWrapper {
     public long getFollowersCount() { return followersCount; }
     public long getFollowingCount() { return followingCount; }
     public boolean isFollowed() { return followed; }
+
+    public String getImgUri() {
+        return imgUri;
+    }
+
+    public void setImgUri(String imgUri) {
+        this.imgUri = imgUri;
+    }
 
     @Override
     public String toString() {

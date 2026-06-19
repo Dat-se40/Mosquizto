@@ -29,6 +29,7 @@ import com.example.mosquizto.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
@@ -141,6 +142,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
 
         updateFollowUI();
         btnFollow.setVisibility(View.VISIBLE);
+        displayAvatar(profileData.getImgUri());
     }
 
     private void updateFollowUI() {
@@ -223,5 +225,16 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+    private void displayAvatar(String imgUri) {
+        if (imgUri != null && !imgUri.isEmpty()) {
+            Picasso.get()
+                    .load(imgUri)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .error(R.drawable.ic_default_avatar)
+                    .into(ivAvatar);
+        } else {
+            ivAvatar.setImageResource(R.drawable.ic_default_avatar);
+        }
     }
 }

@@ -484,4 +484,8 @@ Cannot find an answer? The Mosquizto support team is ready to help:<br/><br/>
 App version: <b>%1$s</b><br/>
 © 2025 Mosquizto Team. All rights reserved.
     ]]></string>
+    <string name="profile_pic_updated">Image selected</string>
+    <string name="upload">Upload</string>
+    <string name="profile_pic_upload_success">Profile photo uploaded</string>
+    <string name="profile_pic_upload_failed">Failed to upload profile photo</string>
 </resources>

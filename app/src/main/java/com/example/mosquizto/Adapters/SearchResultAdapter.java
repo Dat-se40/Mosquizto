@@ -1,8 +1,10 @@
 package com.example.mosquizto.Adapters;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import com.example.mosquizto.R;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Util.SearchResultWrapper;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -80,10 +83,22 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             // Subtitle cho User: @username
             holder.tvSubtitle.setText("@" + user.getUsername());
 
-            // Bạn nhớ thêm một drawable tên ic_person (hoặc tương tự) vào thư mục res/drawable nhé
-            holder.ivThumbnail.setImageResource(R.drawable.ic_person);
-
             holder.ivMore.setVisibility(View.GONE); // Giả sử tìm user thì không cần nút 3 chấm
+            var thumbnail = holder.ivThumbnail ;
+            String imgUri = user.getImgUri() ;
+            if (imgUri != null && !imgUri.isEmpty()) {
+                holder.flThumbnail.setBackground(null);
+                Picasso.get()
+                        .load(imgUri)
+                        .placeholder(R.drawable.ic_default_avatar)
+                        .error(R.drawable.ic_default_avatar)
+                        .into(thumbnail);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    thumbnail.setImageTintBlendMode(null);
+                }
+            } else {
+                thumbnail.setImageResource(R.drawable.ic_default_avatar);
+            }
         }
 
         // Xử lý click sự kiện
@@ -111,13 +126,14 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         TextView tvTitle;
         TextView tvSubtitle;
         ImageView ivMore;
-
+        FrameLayout flThumbnail ;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivThumbnail = itemView.findViewById(R.id.ivThumbnail);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvSubtitle = itemView.findViewById(R.id.tvSubtitle);
             ivMore = itemView.findViewById(R.id.ivMore);
+            flThumbnail = itemView.findViewById(R.id.flThumbnail) ;
         }
     }
 }

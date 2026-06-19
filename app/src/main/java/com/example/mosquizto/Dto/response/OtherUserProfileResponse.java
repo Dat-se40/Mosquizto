@@ -8,6 +8,7 @@ public class OtherUserProfileResponse implements Serializable {
     private boolean followed;
     private long followersCount;
     private long followingCount;
+    private String imgUri;
 
     // Getters and Setters
     public String getFullName() {
@@ -48,6 +49,14 @@ public class OtherUserProfileResponse implements Serializable {
 
     public void setFollowingCount(long followingCount) {
         this.followingCount = followingCount;
+    }
+
+    public String getImgUri() {
+        return imgUri;
+    }
+
+    public void setImgUri(String imgUri) {
+        this.imgUri = imgUri;
     }
 
     @Override

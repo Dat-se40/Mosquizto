@@ -97,4 +97,6 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("org.greenrobot:eventbus:3.3.1")
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation("com.cloudinary:cloudinary-android:3.1.2")
 }
