@@ -342,6 +342,11 @@
     <string name="follow">Theo dõi</string>
     <string name="btnHideUser">Ẩn người dùng này</string>
     <string name="btnReportUser">Báo cáo vi phạm</string>
+    <string name="report_user_title">Báo cáo người dùng</string>
+    <string name="follow_notification_message">%1$s đã bắt đầu theo dõi bạn</string>
+    <string name="follow_notification_preview">Có người mới theo dõi bạn</string>
+    <string name="user_report_message">Tài khoản của bạn đã bị báo cáo.\nLý do: %1$s.\nChi tiết: %2$s</string>
+    <string name="user_report_message_preview">Tài khoản của bạn đã bị báo cáo.</string>
     <string name="have_new_notification">Có thông báo mới</string>
     <string name="reload">Tải lại </string>
     <string name="following">Đang theo dõi</string>

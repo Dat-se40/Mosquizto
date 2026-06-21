@@ -7,5 +7,6 @@ public enum NotificationType {
     JOIN_REQUEST_APPROVED,
     JOIN_REQUEST_DENIED,
     HAS_FOLLOWER ,
+    USER_REPORTED,
     COLLECTION_CREATED
 }

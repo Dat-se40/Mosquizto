@@ -350,6 +350,11 @@
     <string name="follow">Follow</string>
     <string name="btnHideUser">Hide this user</string>
     <string name="btnReportUser">Report this user</string>
+    <string name="report_user_title">Report user</string>
+    <string name="follow_notification_message">%1$s started following you</string>
+    <string name="follow_notification_preview">Someone started following you</string>
+    <string name="user_report_message">Your account was reported.\nReason: %1$s.\nDetails: %2$s</string>
+    <string name="user_report_message_preview">Your account was reported.</string>
     <string name="have_new_notification">New notifications</string>
     <string name="reload">Reload </string>
     <string name="following">Following</string>

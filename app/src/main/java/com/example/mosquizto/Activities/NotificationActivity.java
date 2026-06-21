@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mosquizto.Adapters.NotificationAdapter;
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
 import com.example.mosquizto.Dto.response.ShareCollectionResponse;
+import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
@@ -87,6 +88,13 @@ public class NotificationActivity extends AppCompatActivity {
             public void onDismissReport(CollectionReportResponse report, int position) {
                 if (report.getId() != null) {
                     viewModel.dismissReport(report);
+                }
+            }
+
+            @Override
+            public void onDismissUserReport(UserReportResponse report, int position) {
+                if (report.getId() != null) {
+                    viewModel.dismissUserReport(report);
                 }
             }
 

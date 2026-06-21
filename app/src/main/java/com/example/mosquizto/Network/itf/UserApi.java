@@ -5,12 +5,15 @@ import com.example.mosquizto.Dto.request.LoginRequest;
 import com.example.mosquizto.Dto.request.ResetPasswordRequest;
 import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.request.UpdateAvatarRequest;
+import com.example.mosquizto.Dto.request.UserReportRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.AvatarResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
+import com.example.mosquizto.Dto.response.FollowNotificationResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.StreakResponse;
+import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
@@ -23,6 +26,8 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+
+import java.util.List;
 
 public interface UserApi {
     @POST("auth/login")
@@ -62,5 +67,23 @@ Call<ApiResponse<OtherUserProfileResponse>> getUserProfile(@Path("username") Str
 
     @PATCH("user/avatar")
     Call<ApiResponse<String>> updateAvatar(@Body UpdateAvatarRequest request);
+
+    @GET("user/follow/notifications")
+    Call<ApiResponse<List<FollowNotificationResponse>>> getFollowNotifications();
+
+    @POST("reports/users/{username}")
+    Call<ApiResponse<UserReportResponse>> reportUser(
+            @Path("username") String username,
+            @Body UserReportRequest request
+    );
+
+    @GET("reports/users")
+    Call<ApiResponse<List<UserReportResponse>>> getMyPendingUserReports();
+
+    @PATCH("reports/users/{reportId}")
+    Call<ApiResponse<Void>> processUserReport(
+            @Path("reportId") Long reportId,
+            @Query("status") String status
+    );
 }
 
