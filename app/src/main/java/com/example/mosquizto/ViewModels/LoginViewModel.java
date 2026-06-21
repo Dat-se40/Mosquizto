@@ -101,7 +101,8 @@ public class LoginViewModel extends ViewModel {
                     sessionManager.saveSession(
                             sessionManager.getAccessToken(),
                             userProfile,
-                            sessionManager.getRefreshToken()
+                            sessionManager.getRefreshToken() ,
+                            rawData.getImgUri()
                     );
 
                     // Báo UI biết toàn bộ quá trình (Đăng nhập + Lấy Profile) đã thành công

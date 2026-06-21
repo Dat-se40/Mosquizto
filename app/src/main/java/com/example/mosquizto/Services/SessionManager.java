@@ -2,6 +2,7 @@ package com.example.mosquizto.Services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import com.example.mosquizto.Models.User;
 import com.google.gson.Gson;
 
@@ -20,7 +21,7 @@ public class SessionManager {
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String PREFIX_COLLECTION_COUNT = "COLLECTION_COUNT_";
     private static final String PREFIX_COLLECTION_AUTHOR = "COLLECTION_AUTHOR_";
-
+    private static final String KEY_IMAGE_LINK = "image_link" ;
     private static final String PREFIX_COLLECTION_TITLE = "COLLECTION_TITLE_";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -44,12 +45,13 @@ public class SessionManager {
         }
     }
 
-    public void saveSession(String token, User user, String refreshToken) {
+    public void saveSession(String token, User user, String refreshToken, String imgUri) {
         this.accessToken = token;
         this.currUser = user;
         editor.putString(KEY_TOKEN, token);
         editor.putString(KEY_USER, gson.toJson(user));
         editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.putString(KEY_IMAGE_LINK,imgUri);
         editor.putLong(KEY_LOGIN, System.currentTimeMillis());
         editor.apply();
     }
@@ -69,7 +71,26 @@ public class SessionManager {
     public String getCollectionAuthor(int collectionId) {
         return sharedPreferences.getString(PREFIX_COLLECTION_AUTHOR + collectionId, null);
     }
+    public String getUserImgUri()
+    {
+        return sharedPreferences.getString(KEY_IMAGE_LINK, null);
+    }
 
+    public void saveUserImgUri(String imgUri) {
+        editor.putString(KEY_IMAGE_LINK, imgUri);
+        editor.apply();
+    }
+
+    public String resolveCurrentUserAvatarUri() {
+        String imgUri = getUserImgUri();
+        if (!TextUtils.isEmpty(imgUri)) {
+            return imgUri;
+        }
+        if (currUser != null && !TextUtils.isEmpty(currUser.getAvatarUrl())) {
+            return currUser.getAvatarUrl();
+        }
+        return null;
+    }
     public String getAccessToken() { return accessToken; }
     public User getCurrUser() { return currUser; }
 

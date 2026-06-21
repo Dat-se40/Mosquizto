@@ -50,7 +50,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="12dp" />
 
-        <TextView
+            <TextView
             android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,16 +65,13 @@
             android:id="@+id/tvFollowStats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/followers_following"
-            android:textColor="@color/text_color_secondary"
-            android:textSize="14sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="4dp"/>
+            android:textColor="@color/text_color_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="10 followers • 5 following"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/menuSettings"

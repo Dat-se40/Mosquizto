@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +31,17 @@ import com.example.mosquizto.R;
 import com.example.mosquizto.Adapters.BasedOnRecentAdapter;
 import com.example.mosquizto.Adapters.JumpBackInAdapter;
 import com.example.mosquizto.Adapters.RecentAdapter;
+import com.example.mosquizto.Util.AvatarImageHelper;
 import com.example.mosquizto.Util.FragmentTag;
 import com.example.mosquizto.Util.GameMode;
 import com.example.mosquizto.ViewModels.HomeViewModel;
+import com.example.mosquizto.Services.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -45,13 +50,16 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel viewModel;
 
+    @Inject
+    SessionManager sessionManager;
+
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
     private JumpBackInAdapter jumpAdapter;
     private RecentAdapter recentAdapter;
     private BasedOnRecentAdapter basedAdapter;
     private MainActivity mainActivity;
 
-    private ImageView imgView;
+    private ImageView ivAvatarHome;
     private EditText etSearch;
 
     private View multiChoiceLayout;
@@ -73,7 +81,6 @@ public class HomeFragment extends Fragment {
 
     private final Handler mcqHandler = new Handler(Looper.getMainLooper());
     private String oldPlayBtnText = "";
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -84,22 +91,20 @@ public class HomeFragment extends Fragment {
         setupEmptyRecyclerViews();
         initQuickMcqViews(view);
         initRandomGameViews(view);
-
-        // Khởi tạo ViewModel sau khi View đã sẵn sàng
         initViewModel();
 
         return view;
     }
 
     private void initViews(View view) {
-        View ivAvatar = view.findViewById(R.id.iv_avatar);
-        if (ivAvatar != null) {
-            ivAvatar.setOnClickListener(v -> startActivity(new Intent(getContext(), ProfilePage.class)));
+        ivAvatarHome = view.findViewById(R.id.iv_avatar_home);
+        if (ivAvatarHome != null) {
+            ivAvatarHome.setOnClickListener(v -> startActivity(new Intent(getContext(), ProfilePage.class)));
         }
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
-        imgView = view.findViewById(R.id.iv_avatar);
+
         etSearch = view.findViewById(R.id.etSearch);
 
         if (getActivity() instanceof MainActivity) {
@@ -178,6 +183,15 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+        loadHomeAvatar();
+    }
+
+    private void loadHomeAvatar() {
+        if (sessionManager == null || ivAvatarHome == null) {
+            return;
+        }
+        AvatarImageHelper.loadInto(ivAvatarHome, sessionManager.resolveCurrentUserAvatarUri());
     }
 
     private void initQuickMcqViews(View view) {
@@ -212,7 +226,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void createListener() {
-        if (imgView != null) imgView.setOnClickListener(v -> startActivity(new Intent(getContext(), ProfilePage.class)));
         if (etSearch != null) etSearch.setOnClickListener(v -> {
             if (mainActivity != null) mainActivity.switchToFragment(FragmentTag.search);
         });
@@ -429,7 +442,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Chỉ gọi tải khi màn hình mở lên, nhờ biến cờ trong ViewModel bảo vệ, dữ liệu sẽ tải song song cực mượt
+        loadHomeAvatar();
         if (viewModel != null) {
             viewModel.fetchAllData();
         }

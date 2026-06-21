@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -34,6 +35,7 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 
 import com.example.mosquizto.Fragments.SearchFragment;
 import com.example.mosquizto.Util.FragmentTag;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,7 +126,9 @@ public class MainActivity extends AppCompatActivity {
                 switchToLibrary();
                 return true;
             } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfilePage.class));
+                Intent profileIntent = new Intent(this, ProfilePage.class);
+                profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(profileIntent);
                 return false;
             }
             return false;
@@ -194,20 +198,26 @@ public class MainActivity extends AppCompatActivity {
 
     public static void GoToStudySetActivity(Context context , CollectionResponse item)
     {
-        GoToStudySetActivity(context , item.getId(), item.getTitle(), item.getUserName());
+        GoToStudySetActivity(context, item.getId(), item.getTitle(), item.getUserName(), item.getAuthorImgUri());
     }
 
     public static void GoToStudySetActivity(Context context , Integer id , String title)
     {
-        GoToStudySetActivity(context, id, title, null);
+        GoToStudySetActivity(context, id, title, null, null);
     }
 
     public static void GoToStudySetActivity(Context context , Integer id , String title, String author)
+    {
+        GoToStudySetActivity(context, id, title, author, null);
+    }
+
+    public static void GoToStudySetActivity(Context context , Integer id , String title, String author, String authorImgUri)
     {
         Intent intent = new Intent(context, StudySetDetailActivity.class);
         intent.putExtra(context.getString(R.string.intent_key_collection_id), id != null ? id : -1);
         intent.putExtra(context.getString(R.string.intent_key_collection_title), title);
         intent.putExtra(context.getString(R.string.intent_key_author), author);
+        intent.putExtra(context.getString(R.string.intent_key_author_img_uri), authorImgUri);
         context.startActivity(intent);
     }
 

@@ -74,6 +74,12 @@
     <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
     <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
     <string name="settings_manage_storage">Quản lý dung lượng lưu trữ</string>
+    <string name="settings_clear_local_cache">Xóa bộ nhớ cục bộ</string>
+    <string name="settings_clear_local_cache_desc">Ảnh cache, dữ liệu học phần, phiên đăng nhập và socket</string>
+    <string name="settings_clear_cache_dialog_title">Xóa bộ nhớ cục bộ?</string>
+    <string name="settings_clear_cache_dialog_message">Bạn có muốn xóa bộ nhớ cục bộ trên máy không?\n\nThao tác này sẽ xóa:\n• Ảnh đã cache\n• Dữ liệu học phần đã lưu\n• Phiên đăng nhập hiện tại\n• Kết nối WebSocket\n\nBạn sẽ cần đăng nhập lại. Quá trình này có thể mất một lúc.</string>
+    <string name="settings_clear_cache_confirm">Xóa và đăng xuất</string>
+    <string name="settings_clear_cache_progress">Đang xóa bộ nhớ cục bộ…</string>
 
     <string name="settings_push_notifications">Thông báo đẩy</string>
     <string name="settings_sound_effects">Hiệu ứng âm thanh</string>
@@ -322,6 +328,7 @@
     <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
     <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
     <string name="intent_key_author" translatable="false">AUTHOR</string>
+    <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
 
     <string name="tvTotalCardsCount">%1$d thẻ</string>
     <string name="editStudySet">Sửa học phần</string>

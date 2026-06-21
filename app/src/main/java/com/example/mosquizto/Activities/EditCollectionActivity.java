@@ -1,8 +1,10 @@
 package com.example.mosquizto.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +45,7 @@ public class EditCollectionActivity extends AppCompatActivity {
     private final List<CollectionItemResponse> itemList = new ArrayList<>();
     private ProgressDialog progressDialog;
     private boolean currentVisibility = true;
-    
+    private ImageButton btnSetting ;
     // Bộ đếm nguyên tử để theo dõi các tác vụ chạy song song
     private final AtomicInteger pendingTasks = new AtomicInteger(0);
 
@@ -58,7 +60,12 @@ public class EditCollectionActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        Intent intent = getIntent();
+        var vis = intent.getStringExtra("visibility") ;
+        if(vis == null || vis.isEmpty()  || vis.equals("PUBLIC"))
+        {
+            currentVisibility = true ;
+        }else currentVisibility = false ;
         initViews();
         fetchData();
     }
@@ -87,6 +94,13 @@ public class EditCollectionActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
         findViewById(R.id.btn_save).setOnClickListener(v -> handleSaveParallel());
+        btnSetting = findViewById(R.id.btn_settings);
+        btnSetting.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, CollectionSettingsActivity.class);
+            intent.putExtra("visibility", currentVisibility ? "PUBLIC" : "PRIVATE");
+            startActivityForResult(intent, 200);
+        }) ;
     }
 
     private void fetchData() {

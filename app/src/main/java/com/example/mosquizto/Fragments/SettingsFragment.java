@@ -16,6 +16,7 @@ import com.example.mosquizto.Activities.WelcomeActivity;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Services.LocalCacheClearManager;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Util.AboutDialogHelper;
@@ -37,6 +38,11 @@ public class SettingsFragment extends Fragment {
 
     @Inject
     LogoutManager logoutManager;
+
+    @Inject
+    LocalCacheClearManager localCacheClearManager;
+
+    private AlertDialog progressDialog;
 
     @Nullable
     @Override
@@ -90,6 +96,11 @@ public class SettingsFragment extends Fragment {
         //if (switchSound  != null) switchSound.setChecked(true);
         //if (switchHaptic != null) switchHaptic.setChecked(true);
 
+        View itemStorage = view.findViewById(R.id.itemStorage);
+        if (itemStorage != null) {
+            itemStorage.setOnClickListener(v -> showClearCacheDialog());
+        }
+
         // Xóa tài khoản
         View btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
         if (btnDeleteAccount != null) {
@@ -128,6 +139,35 @@ public class SettingsFragment extends Fragment {
     }
 
     // ── Dialogs tài khoản ─────────────────────────────────────────────
+
+    private void showClearCacheDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_clear_cache_dialog_title)
+                .setMessage(R.string.settings_clear_cache_dialog_message)
+                .setPositiveButton(R.string.settings_clear_cache_confirm, (dialog, which) -> performClearLocalCache())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void performClearLocalCache() {
+        if (!isAdded()) return;
+
+        View progressView = getLayoutInflater().inflate(R.layout.dialog_clear_cache_progress, null);
+        progressDialog = new AlertDialog.Builder(requireContext())
+                .setView(progressView)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        localCacheClearManager.clearAllLocalData(success -> {
+            if (!isAdded()) return;
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            navigateToWelcome();
+        });
+    }
+
     private void showLogoutDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Đăng xuất")
@@ -157,5 +197,14 @@ public class SettingsFragment extends Fragment {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        progressDialog = null;
+        super.onDestroyView();
     }
 }

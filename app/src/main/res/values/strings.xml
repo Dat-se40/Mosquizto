@@ -64,7 +64,7 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_sec_personal_info">Personal information</string>
-    <string name="settings_sec_offline_learning">Offline learning</string>
+    <string name="settings_sec_offline_learning">Cache</string>
     <string name="settings_sec_preferences">Preferences</string>
     <string name="settings_sec_about">About</string>
 
@@ -75,6 +75,12 @@
     <string name="settings_offline_save_title">Save study sets for offline learning</string>
     <string name="settings_offline_save_desc">Your 8 most recently studied sets will be automatically downloaded</string>
     <string name="settings_manage_storage">Manage storage</string>
+    <string name="settings_clear_local_cache">Clear local storage</string>
+    <string name="settings_clear_local_cache_desc">Images, collection cache, login session, and socket</string>
+    <string name="settings_clear_cache_dialog_title">Clear local storage?</string>
+    <string name="settings_clear_cache_dialog_message">Do you want to clear local storage on this device?\n\nThis will delete:\n• Cached images \n• Saved collection data\n• Your login session\n• WebSocket connection\n\nYou will need to sign in again. This may take a moment.</string>
+    <string name="settings_clear_cache_confirm">Clear and sign out</string>
+    <string name="settings_clear_cache_progress">Clearing local storage…</string>
 
     <string name="settings_push_notifications">Push notifications</string>
     <string name="settings_sound_effects">Sound effects</string>
@@ -329,6 +335,7 @@
     <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
     <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
     <string name="intent_key_author" translatable="false">AUTHOR</string>
+    <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
 
     <string name="tvTotalCardsCount">%1$d cards</string>
     <string name="editStudySet">Edit set</string>
