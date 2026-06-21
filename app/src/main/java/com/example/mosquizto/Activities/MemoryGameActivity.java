@@ -163,7 +163,7 @@ public class MemoryGameActivity extends AppCompatActivity {
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle);
         btnContinueSummary = findViewById(R.id.btnContinueSummary);
 
-        findViewById(R.id.btnCloseGame).setOnClickListener(v -> handleClose());
+        findViewById(R.id.btnCloseGame).setOnClickListener(v -> showExitDialog());
 
         // MC Setup
         tvModeLabelMc = findViewById(R.id.tvModeLabelMc);
@@ -394,7 +394,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                 new Handler().postDelayed(MemoryGameActivity.this::moveToNext, 1000);
             } else {
                 clickedBtn.setBackgroundResource(R.drawable.bg_option_wrong);
-                tvResultMessageMc.setText(R.string.tvNotQuiteAnswer);
+                tvResultMessageMc.setText(R.string.tvNotCorrectAnswer);
                 tvResultMessageMc.setTextColor(Color.parseColor("#F44336"));
                 btnContinueMc.setVisibility(View.VISIBLE);
                 btnContinueMc.setOnClickListener(v -> moveToNext());
@@ -653,6 +653,35 @@ public class MemoryGameActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void showExitDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        android.view.View view = getLayoutInflater().inflate(R.layout.dialog_exit_confirmation, null);
+        builder.setView(view);
+
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        android.widget.TextView tvMessage = view.findViewById(R.id.tvDialogMessage);
+        android.widget.Button btnCancel = view.findViewById(R.id.btnCancelExit);
+        android.widget.Button btnExit = view.findViewById(R.id.btnConfirmExit);
+
+        tvMessage.setText(R.string.ask_to_exit);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnExit.setOnClickListener(v -> {
+            dialog.dismiss();
+            // KHÔNG GỌI finish() ở đây, mà phải gọi handleClose()
+            // để kích hoạt WorkManager lưu kết quả bài test lên Server
+            handleClose();
+        });
+
+        dialog.show();
     }
 
     private void handleClose() {

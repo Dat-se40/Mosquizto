@@ -27,13 +27,13 @@ import com.example.mosquizto.Dto.request.UpdateAvatarRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.MediaSignResponse;
 import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
-import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.Network.itf.MediaApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.AvatarImageHelper;
 import com.example.mosquizto.Util.CloudinaryHelper;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
@@ -102,19 +102,12 @@ public class ProfilePage extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Intent intent = new Intent(ProfilePage.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
 
         initViews();
         setupListeners();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         loadUserProfile();
     }
 
@@ -130,7 +123,7 @@ public class ProfilePage extends AppCompatActivity {
 
         if (sessionManager.getCurrUser() != null) {
             tvUserName.setText(sessionManager.getCurrUser().getUsername());
-            displayAvatar(sessionManager.getCurrUser().getAvatarUrl());
+            displayAvatar(sessionManager.resolveCurrentUserAvatarUri());
         }
 
         ImageView icNotification = findViewById(R.id.ic_notification);
@@ -187,6 +180,7 @@ public class ProfilePage extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ApiResponse<OtherUserProfileResponse>> call,
                                            Response<ApiResponse<OtherUserProfileResponse>> response) {
+                        if (isFinishing() || isDestroyed()) return;
                         if (!response.isSuccessful() || response.body() == null) return;
 
                         OtherUserProfileResponse userProfile = response.body().getData();
@@ -198,19 +192,22 @@ public class ProfilePage extends AppCompatActivity {
                         if (sessionManager.getCurrUser() != null) {
                             sessionManager.getCurrUser().setAvatarUrl(userProfile.getImgUri());
                         }
+                        sessionManager.saveUserImgUri(userProfile.getImgUri());
 
-                        String stats = getString(
-                                R.string.followers_following,
-                                userProfile.getFollowersCount(),
-                                userProfile.getFollowingCount()
-                        );
-                        tvFollowStats.setText(stats);
-                        tvFollowStats.setVisibility(View.VISIBLE);
-                        tvFollowStats.setOnClickListener(v -> {
-                            Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
-                            intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0);
-                            startActivity(intent);
-                        });
+                        if (tvFollowStats != null) {
+                            String stats = getString(
+                                    R.string.followers_following,
+                                    userProfile.getFollowersCount(),
+                                    userProfile.getFollowingCount()
+                            );
+                            tvFollowStats.setText(stats);
+                            tvFollowStats.setVisibility(View.VISIBLE);
+                            tvFollowStats.setOnClickListener(v -> {
+                                Intent intent = new Intent(ProfilePage.this, FollowListActivity.class);
+                                intent.putExtra(FollowListActivity.INTENT_KEY_TAB_INDEX, 0);
+                                startActivity(intent);
+                            });
+                        }
                     }
 
                     @Override
@@ -325,6 +322,7 @@ public class ProfilePage extends AppCompatActivity {
                     if (sessionManager.getCurrUser() != null) {
                         sessionManager.getCurrUser().setAvatarUrl(avatarUrl);
                     }
+                    sessionManager.saveUserImgUri(avatarUrl);
                     Snackbar.make(root, R.string.profile_pic_upload_success, Snackbar.LENGTH_SHORT).show();
                 } else {
                     Log.e(TAG, "PATCH /user/avatar failed: HTTP " + response.code());
@@ -342,14 +340,7 @@ public class ProfilePage extends AppCompatActivity {
     }
 
     private void displayAvatar(String imgUri) {
-        if (imgUri != null && !imgUri.isEmpty()) {
-            Picasso.get()
-                    .load(imgUri)
-                    .placeholder(R.drawable.ic_default_avatar)
-                    .error(R.drawable.ic_default_avatar)
-                    .into(imgProfile);
-        } else {
-            imgProfile.setImageResource(R.drawable.ic_default_avatar);
-        }
+        if (imgProfile == null) return;
+        AvatarImageHelper.loadInto(imgProfile, imgUri);
     }
 }

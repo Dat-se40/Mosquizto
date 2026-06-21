@@ -69,11 +69,17 @@
 
     <string name="settings_username">Tên người dùng</string>
     <string name="settings_email">Email</string>
-    <string name="settings_create_password">Tạo mật khẩu</string>
+    <string name="settings_reset_password">Đặt lại mật khẩu</string>
 
     <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
     <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
     <string name="settings_manage_storage">Quản lý dung lượng lưu trữ</string>
+    <string name="settings_clear_local_cache">Xóa bộ nhớ cục bộ</string>
+    <string name="settings_clear_local_cache_desc">Ảnh cache, dữ liệu học phần, phiên đăng nhập và socket</string>
+    <string name="settings_clear_cache_dialog_title">Xóa bộ nhớ cục bộ?</string>
+    <string name="settings_clear_cache_dialog_message">Bạn có muốn xóa bộ nhớ cục bộ trên máy không?\n\nThao tác này sẽ xóa:\n• Ảnh đã cache\n• Dữ liệu học phần đã lưu\n• Phiên đăng nhập hiện tại\n• Kết nối WebSocket\n\nBạn sẽ cần đăng nhập lại. Quá trình này có thể mất một lúc.</string>
+    <string name="settings_clear_cache_confirm">Xóa và đăng xuất</string>
+    <string name="settings_clear_cache_progress">Đang xóa bộ nhớ cục bộ…</string>
 
     <string name="settings_push_notifications">Thông báo đẩy</string>
     <string name="settings_sound_effects">Hiệu ứng âm thanh</string>
@@ -134,7 +140,7 @@
     <string name="tvModeLabelMatch">NỐI Ô</string>
     <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>
     <string name="tvCorrectAnswer">Chính xác!</string>
-    <string name="tvNotQuiteAnswer">Khá ổn!</string>
+    <string name="tvNotCorrectAnswer">Chưa chính xác!</string>
     <string name="tvExcellentAnswer">Xuất sắc!</string>
     <string name="edtAnswer">Nhập câu trả lời</string>
     <string name="btnDontKnow">Không biết</string>
@@ -164,7 +170,7 @@
 
     <string name="multiple_choice">Trắc nghiệm</string>
     <string name="fill_blank">Điền vào chỗ trống</string>
-    <string name="matching">Nối khớp</string>
+    <string name="matching">Nối ô</string>
     <string name="test">Bài kiểm tra</string>
     <string name="finish_and_save">Hoàn thành và lưu</string>
 
@@ -322,6 +328,7 @@
     <string name="intent_key_collection_id" translatable="false">COLLECTION_ID</string>
     <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
     <string name="intent_key_author" translatable="false">AUTHOR</string>
+    <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
 
     <string name="tvTotalCardsCount">%1$d thẻ</string>
     <string name="editStudySet">Sửa học phần</string>
@@ -335,6 +342,11 @@
     <string name="follow">Theo dõi</string>
     <string name="btnHideUser">Ẩn người dùng này</string>
     <string name="btnReportUser">Báo cáo vi phạm</string>
+    <string name="report_user_title">Báo cáo người dùng</string>
+    <string name="follow_notification_message">%1$s đã bắt đầu theo dõi bạn</string>
+    <string name="follow_notification_preview">Có người mới theo dõi bạn</string>
+    <string name="user_report_message">Tài khoản của bạn đã bị báo cáo.\nLý do: %1$s.\nChi tiết: %2$s</string>
+    <string name="user_report_message_preview">Tài khoản của bạn đã bị báo cáo.</string>
     <string name="have_new_notification">Có thông báo mới</string>
     <string name="reload">Tải lại </string>
     <string name="following">Đang theo dõi</string>
@@ -479,4 +491,9 @@ Phiên bản ứng dụng: <b>%1$s</b><br/>
     <string name="upload">Tải lên</string>
     <string name="profile_pic_upload_success">Tải ảnh đại diện thành công</string>
     <string name="profile_pic_upload_failed">Tải ảnh đại diện thất bại</string>
+
+    <string name="exit_confirm">Xác nhận thoát?</string>
+    <string name="ask_to_exit">Bạn có chắc chắn muốn thoát? \nKết quả của bạn có thể sẽ không được lưu lại.</string>
+    <string name="exit">Thoát</string>
+    <string name="ask_to_exit_2">Bạn có chắc chắn muốn thoát quá trình ôn tập thẻ ghi nhớ này không?</string>
 </resources>

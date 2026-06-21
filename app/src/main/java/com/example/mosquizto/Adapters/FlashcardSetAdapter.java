@@ -13,8 +13,8 @@ import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Event.OnItemCollectionClickedListener;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.AvatarImageHelper;
 import java.util.List;
-import com.bumptech.glide.Glide;
 public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapter.ViewHolder> {
 
     private Context context;
@@ -48,30 +48,11 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
                 onCollectionClickListener.OnItemClicked(collection);
             }
         });
-        // Cập nhật tên User
-        if (collection.getUserName() != null) {
-            // 1. Gán tên
-            holder.tvUsername.setText(collection.getUserName() != null
-                    ? collection.getUserName()
-                    : "Unknown user");
 
-            // 2. Load Avatar từ URL
-            String avatarUrl = ""; // Gọi đúng hàm getAvatarUrl() bạn đã tạo ở Model User
-
-            if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                Glide.with(context)
-                        .load(avatarUrl)
-                        .placeholder(R.drawable.ic_default_avatar) // Ảnh hiển thị trong lúc chờ load
-                        .error(R.drawable.ic_default_avatar)       // Ảnh hiển thị nếu load URL bị lỗi
-                        .into(holder.imgAvatar);
-            } else {
-                // Nếu user không có avatar URL thì set ảnh mặc định
-                holder.imgAvatar.setImageResource(R.drawable.ic_default_avatar);
-            }
-        } else {
-            holder.tvUsername.setText("Unknown user");
-            holder.imgAvatar.setImageResource(R.drawable.ic_default_avatar);
-        }
+        holder.tvUsername.setText(collection.getUserName() != null
+                ? collection.getUserName()
+                : "Unknown user");
+        AvatarImageHelper.loadInto(holder.imgAvatar, collection.getAuthorImgUri());
     }
 
     @Override

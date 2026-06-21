@@ -18,7 +18,8 @@
         android:id="@+id/btnHideUser"
         style="@style/BottomSheetMenuItem"
         android:drawableStart="@drawable/ic_visibility_off"
-        android:text="@string/btnHideUser"/>
+        android:text="@string/btnHideUser"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/btnReportUser"

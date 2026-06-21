@@ -266,4 +266,12 @@ public class WebSocketManager {
         _forceRefreshTrigger.postValue(false);
         Log.i("STOMP", "WebSocket disconnected & cleaned up for Logout");
     }
+
+    public void clearLocalPreferences() {
+        pushNotificationsEnabled = true;
+        editor.clear();
+        editor.apply();
+        _notificationCount.postValue(0);
+        _forceRefreshTrigger.postValue(false);
+    }
 }

@@ -40,6 +40,7 @@ import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.AvatarImageHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
@@ -62,6 +63,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     private int collectionId = -1;
     private String author;
+    private String authorImgUri;
+    private ImageView imgAuthorAvatar;
     private ViewPager2 viewPagerFlashcards;
     private RecyclerView rvTerms;
     private Button fabStudy;
@@ -71,6 +74,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     private List<CollectionItemResponse> originalItems = new ArrayList<>();
     private List<TermItemUIModel> uiItems = new ArrayList<>();
+    private TextView tvAuthorName;
 
     @Inject
     CollectionApi collectionApi;
@@ -107,6 +111,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 collectionId = getIntent().getIntExtra(getString(R.string.intent_key_collection_id), -1);
                 String title = getIntent().getStringExtra(getString(R.string.intent_key_collection_title));
                 author = getIntent().getStringExtra(getString(R.string.intent_key_author));
+                authorImgUri = getIntent().getStringExtra(getString(R.string.intent_key_author_img_uri));
 
                 if (author == null && collectionId != -1) {
                     author = sessionManager.getCollectionAuthor(collectionId);
@@ -119,18 +124,19 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     tvSetTitle.setText(title);
                 }
 
-                TextView tvAuthorName = findViewById(R.id.tvAuthorName);
                 if (author != null && !author.trim().isEmpty() && tvAuthorName != null) {
                     tvAuthorName.setText(author);
                 }
+                displayAuthorAvatar(authorImgUri);
 
                 setupListeners();
 
                 if (collectionId != -1) {
                     getWindow().getDecorView().post(this::fetchCollectionData);
 
-                    // BỘ LỌC CHUẨN: Chỉ gọi API Metadata khi thực sự thiếu thông tin cốt lõi (ví dụ đi từ Notification sang)
-                    if (author == null || author.trim().isEmpty() || title == null || title.trim().isEmpty()) {
+                    if (author == null || author.trim().isEmpty()
+                            || title == null || title.trim().isEmpty()
+                            || authorImgUri == null || authorImgUri.trim().isEmpty()) {
                         Log.d(TAG, "Missing metadata from intent, fetching via API...");
                         getWindow().getDecorView().post(this::fetchCollectionMetaData);
                     }
@@ -151,18 +157,16 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     CollectionResponse data = response.body().getData();
 
-                    // 1. Cập nhật và hiển thị Title tiêu đề bài học
+                    author = data.getUserName();
+                    authorImgUri = data.getAuthorImgUri();
+
                     if (tvSetTitle != null) {
                         tvSetTitle.setText(data.getTitle());
                     }
-
-                    // 2. Đồng bộ trường tác giả (Thay getAuthor() bằng hàm get tương ứng trong DTO của bạn nếu khác)
-                    author = data.getUserName();
-
-                    TextView tvAuthorName = findViewById(R.id.tvAuthorName);
                     if (tvAuthorName != null && author != null) {
                         tvAuthorName.setText(author);
                     }
+                    displayAuthorAvatar(authorImgUri);
                 }
             }
 
@@ -171,6 +175,10 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 Log.e(TAG, "fetchCollectionMetaData onFailure", t);
             }
         });
+    }
+
+    private void displayAuthorAvatar(String imgUri) {
+        AvatarImageHelper.loadInto(imgAuthorAvatar, imgUri);
     }
 
     private void initViews() {
@@ -184,6 +192,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 }
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
+            tvAuthorName = findViewById(R.id.tvAuthorName);
+            imgAuthorAvatar = findViewById(R.id.imgAuthorAvatar);
             ImageButton btnBack = findViewById(R.id.btnBack);
             if (btnBack != null) btnBack.setOnClickListener(v -> finish());
 
@@ -207,6 +217,21 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     private void setupListeners() {
         try {
+            if (tvAuthorName != null) {
+                tvAuthorName.setOnClickListener(v -> {
+                    if (author != null && !author.trim().isEmpty()) {
+                        Intent intent = new Intent(StudySetDetailActivity.this, OtherUserProfileActivity.class);
+                        // Truyền username qua OtherUserProfileActivity
+                        intent.putExtra("intent_key_username", author);
+                        // Do hiện tại biến author đang chứa username, ta có thể truyền tạm fullName cũng là author luôn
+                        // (hoặc nếu có API lấy họ tên thật thì thay thế vào đây)
+                        intent.putExtra("intent_key_full_name", author);
+
+                        startActivity(intent);
+                    }
+                });
+            }
+
             if (nestedScrollView != null && viewPagerFlashcards != null && fabStudy != null) {
                 nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     if (scrollY > viewPagerFlashcards.getBottom()) {

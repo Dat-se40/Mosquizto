@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.Dto.response.CollectionReportResponse;
+import com.example.mosquizto.Dto.response.FollowNotificationResponse;
 import com.example.mosquizto.Dto.response.ShareCollectionResponse;
+import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.AvatarImageHelper;
 import com.example.mosquizto.Util.CollectionRole;
 import com.example.mosquizto.Util.NotificationWrapper;
 
@@ -31,16 +35,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final String TAG = "NotificationAdapter";
     private static final int TYPE_INVITE = 1;
     private static final int TYPE_REPORT = 2;
+    private static final int TYPE_FOLLOW = FollowNotificationResponse.VIEW_TYPE;
+    private static final int TYPE_USER_REPORT = UserReportResponse.VIEW_TYPE;
 
     private List<NotificationWrapper> notifications;
     private OnNotificationActionListener listener;
-
     private SessionManager sessionManager;
 
     public interface OnNotificationActionListener {
         void onAcceptInvite(ShareCollectionResponse invite, int position);
         void onDenyInvite(ShareCollectionResponse invite, int position);
         void onDismissReport(CollectionReportResponse report, int position);
+        void onDismissUserReport(UserReportResponse report, int position);
         void onItemClick(NotificationWrapper item);
     }
 
@@ -60,12 +66,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == TYPE_INVITE) {
-            View view = inflater.inflate(R.layout.item_notification_invite, parent, false);
-            return new InviteViewHolder(view);
-        } else {
-            View view = inflater.inflate(R.layout.item_notification_report, parent, false);
-            return new ReportViewHolder(view);
+        switch (viewType) {
+            case TYPE_REPORT:
+                return new ReportViewHolder(inflater.inflate(R.layout.item_notification_report, parent, false));
+            case TYPE_FOLLOW:
+                return new FollowViewHolder(inflater.inflate(R.layout.item_notification_follow, parent, false));
+            case TYPE_USER_REPORT:
+                return new UserReportViewHolder(inflater.inflate(R.layout.item_notification_user_report, parent, false));
+            case TYPE_INVITE:
+            default:
+                return new InviteViewHolder(inflater.inflate(R.layout.item_notification_invite, parent, false));
         }
     }
 
@@ -74,88 +84,114 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (notifications == null || position >= notifications.size()) return;
         NotificationWrapper item = notifications.get(position);
         Context context = holder.itemView.getContext();
-
         int colorInt = ContextCompat.getColor(context, R.color.noti_accent_color);
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onItemClick(item);
-        });
-
-        // TODO: dùng vistor pattern hoặc statery pattern nếu sau này mở rộng nhiều loại thông báo hơn nữa
-        if (holder.getItemViewType() == TYPE_INVITE && item instanceof ShareCollectionResponse) {
-            InviteViewHolder inviteHolder = (InviteViewHolder) holder;
-            ShareCollectionResponse invite = (ShareCollectionResponse) item;
-            
-            String username = invite.getInviterUsername() != null ? invite.getInviterUsername() : "Someone";
-            String title = invite.getTitle() != null ? invite.getTitle() : "a collection";
-            
-            CollectionRole collectionRole = invite.getCollectionRole();
-            String role = (collectionRole != null) ? collectionRole.name() : "VIEWER";
-
-            String text = context.getString(
-                    R.string.invite_message,
-                    username,
-                    title,
-                    role
-            );
-
-            SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-            applyBoldAndColor(ssb, text, username, colorInt);
-            applyBoldAndColor(ssb, text, title, colorInt);
-            applyBold(ssb, text, role);
-
-            inviteHolder.tvInviteContent.setText(ssb);
-            inviteHolder.btnAccept.setOnClickListener(v -> {
-                if (listener != null) listener.onAcceptInvite(invite, position);
-            });
-            inviteHolder.btnDeny.setOnClickListener(v -> {
-                if (listener != null) listener.onDenyInvite(invite, position);
-            });
-
-        } else if (holder.getItemViewType() == TYPE_REPORT && item instanceof CollectionReportResponse) {
-            ReportViewHolder reportHolder = (ReportViewHolder) holder;
-            CollectionReportResponse report = (CollectionReportResponse) item;
-
-            String collectionTitle = "Unknown";
-            Integer collectionId = report.getCollectionId();
-            if (collectionId == null) {
-                Log.w(TAG, "report title: collectionId=null, reportId=" + report.getId()
-                        + " -> using fallback");
-            } else if (sessionManager == null) {
-                Log.w(TAG, "report title: sessionManager=null, collectionId=" + collectionId
-                        + " -> using fallback");
-            } else {
-                String cachedTitle = sessionManager.getCollectionTitle(collectionId);
-                if (cachedTitle == null || cachedTitle.trim().isEmpty()) {
-                    Log.w(TAG, "report title: cache miss, collectionId=" + collectionId
-                            + ", reportId=" + report.getId() + " -> using fallback");
-                } else {
-                    collectionTitle = cachedTitle;
-                    Log.d(TAG, "report title: cache hit, collectionId=" + collectionId
-                            + " -> \"" + cachedTitle + "\"");
-                }
-            }
-
-            String reason = report.getReason() != null ? report.getReason() : "No reason";
-            String description = report.getDescription() != null ? report.getDescription() : "";
-
-            String text = context.getString(
-                    R.string.report_message,
-                    collectionTitle,
-                    reason,
-                    description
-            );
-
-            SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-            applyBoldAndColor(ssb, text, collectionTitle, colorInt);
-            applyBold(ssb, text, reason);
-            applyBold(ssb, text, description);
-            
-            reportHolder.tvReportContent.setText(ssb);
-            reportHolder.btnDismiss.setOnClickListener(v -> {
-                if (listener != null) listener.onDismissReport(report, position);
+        if (item.getType() == TYPE_FOLLOW) {
+            holder.itemView.setClickable(false);
+            holder.itemView.setFocusable(false);
+            holder.itemView.setOnClickListener(null);
+        } else if (item.getType() == TYPE_USER_REPORT) {
+            holder.itemView.setClickable(false);
+            holder.itemView.setFocusable(false);
+            holder.itemView.setOnClickListener(null);
+        } else {
+            holder.itemView.setClickable(true);
+            holder.itemView.setFocusable(true);
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onItemClick(item);
             });
         }
+
+        if (holder instanceof InviteViewHolder && item instanceof ShareCollectionResponse) {
+            bindInvite((InviteViewHolder) holder, (ShareCollectionResponse) item, context, colorInt, position);
+        } else if (holder instanceof ReportViewHolder && item instanceof CollectionReportResponse) {
+            bindCollectionReport((ReportViewHolder) holder, (CollectionReportResponse) item, context, colorInt, position);
+        } else if (holder instanceof FollowViewHolder && item instanceof FollowNotificationResponse) {
+            bindFollow((FollowViewHolder) holder, (FollowNotificationResponse) item, context, colorInt);
+        } else if (holder instanceof UserReportViewHolder && item instanceof UserReportResponse) {
+            bindUserReport((UserReportViewHolder) holder, (UserReportResponse) item, context, colorInt, position);
+        }
+    }
+
+    private void bindInvite(InviteViewHolder inviteHolder, ShareCollectionResponse invite, Context context, int colorInt, int position) {
+        String username = invite.getInviterUsername() != null ? invite.getInviterUsername() : "Someone";
+        String title = invite.getTitle() != null ? invite.getTitle() : "a collection";
+        CollectionRole collectionRole = invite.getCollectionRole();
+        String role = (collectionRole != null) ? collectionRole.name() : "VIEWER";
+
+        String text = context.getString(R.string.invite_message, username, title, role);
+        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+        applyBoldAndColor(ssb, text, username, colorInt);
+        applyBoldAndColor(ssb, text, title, colorInt);
+        applyBold(ssb, text, role);
+
+        inviteHolder.tvInviteContent.setText(ssb);
+        inviteHolder.btnAccept.setOnClickListener(v -> {
+            if (listener != null) listener.onAcceptInvite(invite, position);
+        });
+        inviteHolder.btnDeny.setOnClickListener(v -> {
+            if (listener != null) listener.onDenyInvite(invite, position);
+        });
+    }
+
+    private void bindCollectionReport(ReportViewHolder reportHolder, CollectionReportResponse report, Context context, int colorInt, int position) {
+        String collectionTitle = "Unknown";
+        Integer collectionId = report.getCollectionId();
+        if (collectionId == null) {
+            Log.w(TAG, "report title: collectionId=null, reportId=" + report.getId());
+        } else if (sessionManager != null) {
+            String cachedTitle = sessionManager.getCollectionTitle(collectionId);
+            if (cachedTitle != null && !cachedTitle.trim().isEmpty()) {
+                collectionTitle = cachedTitle;
+            }
+        }
+
+        String reason = report.getReason() != null ? report.getReason() : "No reason";
+        String description = report.getDescription() != null ? report.getDescription() : "";
+        String text = context.getString(R.string.report_message, collectionTitle, reason, description);
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+        applyBoldAndColor(ssb, text, collectionTitle, colorInt);
+        applyBold(ssb, text, reason);
+        applyBold(ssb, text, description);
+
+        reportHolder.tvReportContent.setText(ssb);
+        reportHolder.btnDismiss.setOnClickListener(v -> {
+            if (listener != null) listener.onDismissReport(report, position);
+        });
+    }
+
+    private void bindFollow(FollowViewHolder followHolder, FollowNotificationResponse follow, Context context, int colorInt) {
+        String displayName = follow.getDisplayName();
+        String text = context.getString(R.string.follow_notification_message, displayName);
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+        applyBoldAndColor(ssb, text, displayName, colorInt);
+        followHolder.tvFollowContent.setText(ssb);
+
+        if (follow.getFollowedAt() != null && !follow.getFollowedAt().isEmpty()) {
+            followHolder.tvFollowTime.setVisibility(View.VISIBLE);
+            followHolder.tvFollowTime.setText(follow.getFollowedAt());
+        } else {
+            followHolder.tvFollowTime.setVisibility(View.GONE);
+        }
+
+        AvatarImageHelper.loadInto(followHolder.ivFollowerAvatar, follow.getFollowerImgUri());
+    }
+
+    private void bindUserReport(UserReportViewHolder reportHolder, UserReportResponse report, Context context, int colorInt, int position) {
+        String reason = report.getReason() != null ? report.getReason() : "No reason";
+        String description = report.getDescription() != null ? report.getDescription() : "";
+        String text = context.getString(R.string.user_report_message, reason, description);
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+        applyBold(ssb, text, reason);
+        applyBold(ssb, text, description);
+        reportHolder.tvUserReportContent.setText(ssb);
+
+        reportHolder.btnDismissUserReport.setOnClickListener(v -> {
+            if (listener != null) listener.onDismissUserReport(report, position);
+        });
     }
 
     @Override
@@ -176,12 +212,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (target == null || target.isEmpty()) return;
         int start = fullText.indexOf(target);
         if (start >= 0) {
-            ssb.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    start,
-                    start + target.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+            ssb.setSpan(new StyleSpan(Typeface.BOLD), start, start + target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -189,18 +220,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (target == null || target.isEmpty()) return;
         int start = fullText.indexOf(target);
         if (start >= 0) {
-            ssb.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    start,
-                    start + target.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
-            ssb.setSpan(
-                    new ForegroundColorSpan(color),
-                    start,
-                    start + target.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+            ssb.setSpan(new StyleSpan(Typeface.BOLD), start, start + target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new ForegroundColorSpan(color), start, start + target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -224,6 +245,28 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             tvReportContent = itemView.findViewById(R.id.tvReportContent);
             btnDismiss = itemView.findViewById(R.id.btnDismiss);
+        }
+    }
+
+    static class FollowViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivFollowerAvatar;
+        TextView tvFollowContent, tvFollowTime;
+
+        FollowViewHolder(View itemView) {
+            super(itemView);
+            ivFollowerAvatar = itemView.findViewById(R.id.ivFollowerAvatar);
+            tvFollowContent = itemView.findViewById(R.id.tvFollowContent);
+            tvFollowTime = itemView.findViewById(R.id.tvFollowTime);
+        }
+    }
+
+    static class UserReportViewHolder extends RecyclerView.ViewHolder {
+        TextView tvUserReportContent, btnDismissUserReport;
+
+        UserReportViewHolder(View itemView) {
+            super(itemView);
+            tvUserReportContent = itemView.findViewById(R.id.tvUserReportContent);
+            btnDismissUserReport = itemView.findViewById(R.id.btnDismissUserReport);
         }
     }
 }

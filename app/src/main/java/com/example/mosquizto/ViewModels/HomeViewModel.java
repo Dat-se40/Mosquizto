@@ -12,6 +12,7 @@ import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Dto.response.StudySessionResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.StudyApi;
+import com.example.mosquizto.Services.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +51,12 @@ public class HomeViewModel extends ViewModel {
     public LiveData<Boolean> isRandomGameLoading = _isRandomGameLoading;
 
     private boolean isDataLoaded = false;
-
+    SessionManager sessionManager;
     @Inject
-    public HomeViewModel(StudyApi studyApi, CollectionApi collectionApi) {
+    public HomeViewModel(StudyApi studyApi, CollectionApi collectionApi , SessionManager sessionManager) {
         this.studyApi = studyApi;
         this.collectionApi = collectionApi;
+        this.sessionManager = sessionManager;
     }
 
     // Kích hoạt đồng thời 3 luồng tải dữ liệu bất đồng bộ độc lập
@@ -171,5 +173,9 @@ public class HomeViewModel extends ViewModel {
 
     public void clearRandomGameItems() {
         _randomGameItems.setValue(null);
+    }
+
+    public String getAvatar() {
+        return sessionManager.getUserImgUri() ;
     }
 }

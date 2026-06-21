@@ -13,6 +13,7 @@ public class CollectionResponse implements SearchResultWrapper {
     private Long userId;
 
     private String userName;
+    private String authorImgUri;
     private Date createdAt;
     private Date updatedAt;
     private Integer count ;
@@ -97,6 +98,27 @@ public class CollectionResponse implements SearchResultWrapper {
         this.userId = userId;
         this.userName = userName;
         this.count = count;
+    }
+
+    public CollectionResponse(Integer id, String title, String description, Boolean visibility, Long userId, String userName, String authorImgUri, Date createdAt, Date updatedAt, Integer count) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.visibility = visibility;
+        this.userId = userId;
+        this.userName = userName;
+        this.authorImgUri = authorImgUri;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.count = count;
+    }
+
+    public String getAuthorImgUri() {
+        return authorImgUri;
+    }
+
+    public void setAuthorImgUri(String authorImgUri) {
+        this.authorImgUri = authorImgUri;
     }
 
     @Override

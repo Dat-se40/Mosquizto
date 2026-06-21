@@ -3,7 +3,10 @@ package com.example.mosquizto.Activities;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +16,7 @@ import com.google.android.material.button.MaterialButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,8 +24,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mosquizto.Adapters.OtherUserProfilePagerAdapter;
+import com.example.mosquizto.Dto.request.UserReportRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
+import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.Network.itf.UserApi;
 import com.example.mosquizto.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -219,12 +225,69 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         });
 
         bottomSheetView.findViewById(R.id.btnReportUser).setOnClickListener(v -> {
-            Toast.makeText(this, R.string.msg_dev_mode, Toast.LENGTH_SHORT).show();
             dialog.dismiss();
+            showReportUserDialog();
         });
 
         dialog.show();
     }
+
+    private void showReportUserDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_report_collection, null);
+        AlertDialog reportDialog = builder.create();
+
+        if (reportDialog.getWindow() != null) {
+            reportDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView tvTitle = view.findViewById(R.id.tvReportDialogTitle);
+        if (tvTitle != null) {
+            tvTitle.setText(R.string.report_user_title);
+        }
+
+        android.widget.RadioGroup rgReasons = view.findViewById(R.id.rgReportReasons);
+        EditText edtDescription = view.findViewById(R.id.edtReportDescription);
+        Button btnCancel = view.findViewById(R.id.btnCancelReport);
+        Button btnSubmit = view.findViewById(R.id.btnSubmitReport);
+
+        btnCancel.setOnClickListener(v -> reportDialog.dismiss());
+        btnSubmit.setOnClickListener(v -> {
+            int selectedId = rgReasons.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(this, R.string.msg_report_select_reason, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String reason = ((android.widget.RadioButton) view.findViewById(selectedId)).getText().toString();
+            String description = edtDescription.getText().toString().trim();
+            sendUserReport(new UserReportRequest(reason, description), reportDialog);
+        });
+
+        reportDialog.setView(view);
+        reportDialog.show();
+    }
+
+    private void sendUserReport(UserReportRequest request, AlertDialog reportDialog) {
+        userApi.reportUser(userName, request).enqueue(new Callback<ApiResponse<UserReportResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<UserReportResponse>> call,
+                                   @NonNull Response<ApiResponse<UserReportResponse>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_success, Toast.LENGTH_SHORT).show();
+                    reportDialog.dismiss();
+                } else {
+                    Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<UserReportResponse>> call, @NonNull Throwable t) {
+                Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_error, Toast.LENGTH_SHORT).show();
+                Log.e("OtherUserProfileAct", "sendUserReport failed", t);
+            }
+        });
+    }
+
     private void displayAvatar(String imgUri) {
         if (imgUri != null && !imgUri.isEmpty()) {
             Picasso.get()

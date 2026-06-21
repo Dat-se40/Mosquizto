@@ -40,7 +40,7 @@
                 android:clickable="true"/>
 
             <ImageView
-                android:id="@+id/iv_avatar"
+                android:id="@+id/iv_avatar_home"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
@@ -147,7 +147,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nhập môn mạng máy t..."
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_color_primary"

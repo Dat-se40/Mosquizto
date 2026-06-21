@@ -45,6 +45,7 @@
 
         <activity android:name=".Activities.ProfilePage"
             android:exported="false"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Mosquizto" />
 
         <activity android:name=".Activities.OtherUserProfileActivity"
