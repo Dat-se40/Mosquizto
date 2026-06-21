@@ -69,7 +69,7 @@
 
     <string name="settings_username">Tên người dùng</string>
     <string name="settings_email">Email</string>
-    <string name="settings_create_password">Tạo mật khẩu</string>
+    <string name="settings_reset_password">Đặt lại mật khẩu</string>
 
     <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
     <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
@@ -134,7 +134,7 @@
     <string name="tvModeLabelMatch">NỐI Ô</string>
     <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>
     <string name="tvCorrectAnswer">Chính xác!</string>
-    <string name="tvNotQuiteAnswer">Khá ổn!</string>
+    <string name="tvNotCorrectAnswer">Chưa chính xác!</string>
     <string name="tvExcellentAnswer">Xuất sắc!</string>
     <string name="edtAnswer">Nhập câu trả lời</string>
     <string name="btnDontKnow">Không biết</string>
@@ -164,7 +164,7 @@
 
     <string name="multiple_choice">Trắc nghiệm</string>
     <string name="fill_blank">Điền vào chỗ trống</string>
-    <string name="matching">Nối khớp</string>
+    <string name="matching">Nối ô</string>
     <string name="test">Bài kiểm tra</string>
     <string name="finish_and_save">Hoàn thành và lưu</string>
 
@@ -479,4 +479,9 @@ Phiên bản ứng dụng: <b>%1$s</b><br/>
     <string name="upload">Tải lên</string>
     <string name="profile_pic_upload_success">Tải ảnh đại diện thành công</string>
     <string name="profile_pic_upload_failed">Tải ảnh đại diện thất bại</string>
+
+    <string name="exit_confirm">Xác nhận thoát?</string>
+    <string name="ask_to_exit">Bạn có chắc chắn muốn thoát? \nKết quả của bạn có thể sẽ không được lưu lại.</string>
+    <string name="exit">Thoát</string>
+    <string name="ask_to_exit_2">Bạn có chắc chắn muốn thoát quá trình ôn tập thẻ ghi nhớ này không?</string>
 </resources>

@@ -71,6 +71,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     private List<CollectionItemResponse> originalItems = new ArrayList<>();
     private List<TermItemUIModel> uiItems = new ArrayList<>();
+    private TextView tvAuthorName;
 
     @Inject
     CollectionApi collectionApi;
@@ -184,6 +185,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 }
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
+            tvAuthorName = findViewById(R.id.tvAuthorName);
             ImageButton btnBack = findViewById(R.id.btnBack);
             if (btnBack != null) btnBack.setOnClickListener(v -> finish());
 
@@ -207,6 +209,21 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     private void setupListeners() {
         try {
+            if (tvAuthorName != null) {
+                tvAuthorName.setOnClickListener(v -> {
+                    if (author != null && !author.trim().isEmpty()) {
+                        Intent intent = new Intent(StudySetDetailActivity.this, OtherUserProfileActivity.class);
+                        // Truyền username qua OtherUserProfileActivity
+                        intent.putExtra("intent_key_username", author);
+                        // Do hiện tại biến author đang chứa username, ta có thể truyền tạm fullName cũng là author luôn
+                        // (hoặc nếu có API lấy họ tên thật thì thay thế vào đây)
+                        intent.putExtra("intent_key_full_name", author);
+
+                        startActivity(intent);
+                    }
+                });
+            }
+
             if (nestedScrollView != null && viewPagerFlashcards != null && fabStudy != null) {
                 nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     if (scrollY > viewPagerFlashcards.getBottom()) {

@@ -75,10 +75,10 @@ public class SettingsFragment extends Fragment {
         }
 
         // Other Switches (Using SwitchMaterial to match XML)
-        SwitchMaterial switchOffline      = view.findViewById(R.id.switchOffline);
+        //SwitchMaterial switchOffline      = view.findViewById(R.id.switchOffline);
         SwitchMaterial switchNotification = view.findViewById(R.id.switchNotification);
-        SwitchMaterial switchSound        = view.findViewById(R.id.switchSound);
-        SwitchMaterial switchHaptic       = view.findViewById(R.id.switchHaptic);
+        //SwitchMaterial switchSound        = view.findViewById(R.id.switchSound);
+        //SwitchMaterial switchHaptic       = view.findViewById(R.id.switchHaptic);
 
         // Push notifications
         if (switchNotification != null) {
@@ -87,8 +87,8 @@ public class SettingsFragment extends Fragment {
                     webSocketManager.setPushNotificationEnabled(isChecked));
         }
 
-        if (switchSound  != null) switchSound.setChecked(true);
-        if (switchHaptic != null) switchHaptic.setChecked(true);
+        //if (switchSound  != null) switchSound.setChecked(true);
+        //if (switchHaptic != null) switchHaptic.setChecked(true);
 
         // Xóa tài khoản
         View btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);

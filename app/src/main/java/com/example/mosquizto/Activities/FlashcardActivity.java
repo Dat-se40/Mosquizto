@@ -10,8 +10,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,7 @@ public class FlashcardActivity extends AppCompatActivity
     private View        progressFill;
 
     private final List<Flashcard> flashcards = new ArrayList<>();
+    private final List<Flashcard> originalFlashcards = new ArrayList<>();
     private int currentIndex = 0;
     private boolean isFlipped = false;
 
@@ -122,6 +125,7 @@ public class FlashcardActivity extends AppCompatActivity
         }
 
         boolean forceNoShuffle = getIntent().getBooleanExtra("force_no_shuffle", false);
+        originalFlashcards.addAll(flashcards);
         if (shuffleCards && !forceNoShuffle) Collections.shuffle(flashcards);
 
         // Nếu có start_index, nhảy thẳng đến thẻ đó
@@ -165,7 +169,7 @@ public class FlashcardActivity extends AppCompatActivity
     }
 
     private void setupClickListeners() {
-        btnClose.setOnClickListener(v -> finish());
+        btnClose.setOnClickListener(v -> showExitDialog());
 
         btnSettings.setOnClickListener(v -> {
             if (isAnimating) return;
@@ -418,7 +422,7 @@ public class FlashcardActivity extends AppCompatActivity
                 flipCard();
             }
 
-            // Bước 2: sau 4.5s mới swipe — dùng runnable mới, không reuse cái cũ
+            // Bước 2: sau 2s mới swipe — dùng runnable mới, không reuse cái cũ
             autoPlayHandler.postDelayed(() -> {
                 if (isFinishing() || isDestroyed() || !isAutoPlaying) return;
                 if (isAnimating) {
@@ -429,11 +433,11 @@ public class FlashcardActivity extends AppCompatActivity
                 swipeCard(true);
                 // Lên lịch thẻ tiếp theo sau khi swipe xong
                 // swipeCard có duration 350ms, đợi nó xong rồi mới schedule
-                autoPlayHandler.postDelayed(() -> scheduleNextAutoPlay(), 4500 + 350);
-            }, 5500);
+                autoPlayHandler.postDelayed(() -> scheduleNextAutoPlay(), 1000);
+            }, 2000);
         };
 
-        autoPlayHandler.postDelayed(autoPlayRunnable, 4500);
+        autoPlayHandler.postDelayed(autoPlayRunnable, 2000);
     }
 
     private void stopAutoPlay() {
@@ -449,11 +453,53 @@ public class FlashcardActivity extends AppCompatActivity
         if (tvSwipeHint != null) tvSwipeHint.setText(R.string.auto_scroll_is_off);
     }
 
+    private void showExitDialog() {
+        // Tạo dialog từ Builder
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        // Nạp custom layout
+        View view = getLayoutInflater().inflate(R.layout.dialog_exit_confirmation, null);
+        builder.setView(view);
+
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+
+        // Làm trong suốt background mặc định để lộ viền bo góc của custom layout
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // Ánh xạ các view trong dialog
+        TextView tvMessage = view.findViewById(R.id.tvDialogMessage);
+        Button btnCancel = view.findViewById(R.id.btnCancelExit);
+        Button btnExit = view.findViewById(R.id.btnConfirmExit);
+
+        // Customize nội dung text riêng cho Flashcard (vì Flashcard không lưu kết quả lên server)
+        tvMessage.setText(R.string.ask_to_exit_2);
+
+        // Bắt sự kiện cho nút
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnExit.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish(); // Thoát khỏi Activity
+        });
+
+        dialog.show();
+    }
+
     @Override
     public void onSettingsChanged(boolean showTermFirst, boolean ttsEnabled, boolean shuffle) {
         this.showTermFirst = showTermFirst;
         this.ttsEnabled    = ttsEnabled;
-        this.shuffleCards  = shuffle;
+        if (this.shuffleCards != shuffle) {
+            this.shuffleCards = shuffle;
+            // Reset lại danh sách từ bản gốc
+            flashcards.clear();
+            flashcards.addAll(originalFlashcards);
+
+            if (shuffle) {
+                Collections.shuffle(flashcards);
+            }
+            currentIndex = 0; // Quay về thẻ đầu tiên khi đổi chế độ trộn
+        }
         isFlipped   = false;
         isAnimating = false;
         showCurrentCard();
