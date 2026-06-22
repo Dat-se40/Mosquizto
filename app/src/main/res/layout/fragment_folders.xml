@@ -25,7 +25,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:paddingHorizontal="24dp"
-        android:text="Bạn chưa có thư mục nào"
+        android:text="@string/default_recycleview_empty_fragment_folders"
         android:textColor="@color/text_color_secondary"
         android:textSize="16sp"
         android:visibility="gone" />

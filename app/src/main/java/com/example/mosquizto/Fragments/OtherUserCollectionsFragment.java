@@ -46,6 +46,7 @@ public class OtherUserCollectionsFragment extends Fragment {
     private RecyclerView rv;
     private SearchResultAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvEmptyCollections;
 
     @Inject
     CollectionApi collectionApi;
@@ -75,6 +76,7 @@ public class OtherUserCollectionsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_flashcard_sets, container, false);
         
         rv = v.findViewById(R.id.recycler_flashcard_sets);
+        tvEmptyCollections = v.findViewById(R.id.tvEmptyCollections);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
 
@@ -137,8 +139,11 @@ public class OtherUserCollectionsFragment extends Fragment {
                        // items.addAll(hits);
                     }
                     adapter.updateData(items);
+                    updateEmptyState(items);
                 } else {
                     String message = ApiErrorHelper.extractMessage(response);
+                    adapter.updateData(new ArrayList<>());
+                    updateEmptyState(new ArrayList<>());
                     Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
                     Log.e("OtherUserColFrag", "Failed response: " + message);
                 }
@@ -149,9 +154,28 @@ public class OtherUserCollectionsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (!isAdded()) return;
 
+                adapter.updateData(new ArrayList<>());
+                updateEmptyState(new ArrayList<>());
                 Toast.makeText(getContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
                 Log.e("OtherUserColFrag", "API failure", t);
             }
         });
+    }
+
+    private void updateEmptyState(List<SearchResultWrapper> items) {
+        if (tvEmptyCollections == null || rv == null) return;
+
+        boolean isEmpty = items == null || items.isEmpty();
+        if (isEmpty) {
+            String displayName = (fullName != null && !fullName.trim().isEmpty())
+                    ? fullName.trim()
+                    : (username != null ? username : getString(R.string.unknown_collection));
+            tvEmptyCollections.setText(getString(R.string.default_recycleview_empty_other_user_collections, displayName));
+            tvEmptyCollections.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.GONE);
+        } else {
+            tvEmptyCollections.setVisibility(View.GONE);
+            rv.setVisibility(View.VISIBLE);
+        }
     }
 }

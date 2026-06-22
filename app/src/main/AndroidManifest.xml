@@ -39,6 +39,12 @@
             android:theme="@style/Theme.Mosquizto" />
 
         <activity
+            android:name=".Activities.ResetPasswordFlowActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Mosquizto" />
+
+        <activity
             android:name=".Activities.RSPassNoti"
             android:exported="false"
             android:theme="@style/Theme.Mosquizto" />

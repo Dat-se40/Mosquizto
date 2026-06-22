@@ -58,7 +58,7 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CollectionResponse collection = collectionList.get(position);
 
-        holder.tvTitle.setText(collection.getTitle() != null ? collection.getTitle() : "Untitled");
+        holder.tvTitle.setText(collection.getTitle() != null ? collection.getTitle() : context.getString(R.string.unknown_collection));
 
         int itemCount = collection.getCount() != null ? collection.getCount() : 0;
         holder.tvItemCount.setText(holder.itemView.getContext().getResources()
@@ -77,7 +77,7 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
 
         boolean isOwner = isOwnedByCurrentUser(collection);
         if (holder.ivAction != null) {
-            if (isOwner && deleteListener != null) {
+            if (deleteListener != null) {
                 holder.ivAction.setVisibility(View.VISIBLE);
                 holder.ivAction.setOnClickListener(v -> {
                     PopupMenu popupMenu = new PopupMenu(holder.itemView.getContext(), holder.ivAction);

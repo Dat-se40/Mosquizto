@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/textView_ResetPass"
+                android:text="@string/forgot_password_title"
                 android:textColor="@color/text_color_primary"
                 android:textSize="40sp" />
 
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/textView_NoteResetPass"
+                android:text="@string/forgot_password_note"
                 android:textColor="@color/text_color_secondary"
                 android:textSize="22sp"
                 android:layout_marginEnd="40dp"
@@ -68,15 +68,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_btn"
-                android:text="@string/btn_SendLink"
+                android:text="@string/forgot_password_send_otp"
                 android:textColor="@color/app_on_primary"
                 android:textSize="23sp"
                 android:textStyle="bold"
                 app:backgroundTint="@null"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="350dp"
+                android:layout_marginTop="48dp"
                 android:layout_marginEnd="40dp"
                 android:enabled="false"/>
+
+            <ProgressBar
+                android:id="@+id/progress_reset_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:visibility="gone" />
 
 
         </LinearLayout>

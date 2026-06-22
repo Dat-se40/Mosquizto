@@ -171,10 +171,10 @@ public class FollowListActivity extends AppCompatActivity {
 
         if (tabIndex == 1) {
             currentApiCall = userApi.getFollowing(1, 100);
-            tvEmpty.setText("Bạn chưa có người theo dõi nào");
+            tvEmpty.setText(R.string.default_recycleview_empty_activity_follow_list_following);
         } else {
             currentApiCall = userApi.getFollowers(1, 100);
-            tvEmpty.setText("Bạn chưa theo dõi người dùng nào");
+            tvEmpty.setText(R.string.default_recycleview_empty_activity_follow_list_followers);
         }
 
         currentApiCall.enqueue(new Callback<ApiResponse<PageResponse<UserResponse>>>() {
