@@ -1,14 +1,15 @@
 package com.example.mosquizto.Activities;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,9 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mosquizto.R;
 import com.example.mosquizto.ViewModels.ResetPassViewModel;
@@ -31,6 +30,7 @@ public class ResetPass extends AppCompatActivity {
     private ImageButton btnBack;
     private EditText etMailReset;
     private Button btnSendLink;
+    private ProgressBar progressBar;
 
     private ResetPassViewModel resetPassViewModel ;
     @Override
@@ -62,20 +62,28 @@ public class ResetPass extends AppCompatActivity {
         btnBack = findViewById(R.id.imageButton_back);
         etMailReset = findViewById(R.id.editText_MailReset);
         btnSendLink = findViewById(R.id.btn_SendLink);
+        progressBar = findViewById(R.id.progress_reset_password);
         resetPassViewModel = new ViewModelProvider(this).get(ResetPassViewModel.class);
 
-        resetPassViewModel.errorMessage.observe(this, msg ->
-        {
-            Toast.makeText(this,msg, Toast.LENGTH_LONG).show();
+        resetPassViewModel.errorMessage.observe(this, msg -> {
+            if (msg != null && !msg.isEmpty()) {
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            }
         });
-        resetPassViewModel.isResetLinkSet.observe(this,isSent ->
-        {
-            if(isSent){
+        resetPassViewModel.isOtpSent.observe(this, isSent -> {
+            if (Boolean.TRUE.equals(isSent)) {
+                resetPassViewModel.consumeOtpSent();
                 String email = etMailReset.getText().toString().trim();
-                Intent intent = new Intent(ResetPass.this, RSPassNoti.class);
-                intent.putExtra("user_email", email);
+                Intent intent = new Intent(ResetPass.this, ResetPasswordFlowActivity.class);
+                intent.putExtra(ResetPasswordFlowActivity.EXTRA_EMAIL, email);
                 startActivity(intent);
             }
+        });
+        resetPassViewModel.isLoading.observe(this, loading -> {
+            boolean isLoading = Boolean.TRUE.equals(loading);
+            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            etMailReset.setEnabled(!isLoading);
+            updateSendButtonState();
         });
     }
 
@@ -88,14 +96,8 @@ public class ResetPass extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String email = s.toString().trim();
-                if (!email.isEmpty()) {
-                    btnSendLink.setEnabled(true);
-                    btnSendLink.setAlpha(1.0f);
-                } else {
-                    btnSendLink.setEnabled(false);
-                    btnSendLink.setAlpha(0.5f);
-                }
+                etMailReset.setError(null);
+                updateSendButtonState();
             }
 
             @Override
@@ -104,11 +106,24 @@ public class ResetPass extends AppCompatActivity {
 
         btnSendLink.setOnClickListener(v -> {
             String email = etMailReset.getText().toString().trim();
-            resetPassViewModel.ForgetPassword(email);
-//            Intent intent = new Intent(ResetPass.this, RSPassNoti.class);
-//            intent.putExtra("user_email", email);
-//            startActivity(intent);
-//
+            if (!isValidEmail(email)) {
+                etMailReset.setError(getString(R.string.forgot_password_invalid_email));
+                etMailReset.requestFocus();
+                return;
+            }
+            resetPassViewModel.sendOtp(email);
         });
+    }
+
+    private void updateSendButtonState() {
+        String email = etMailReset.getText().toString().trim();
+        boolean loading = Boolean.TRUE.equals(resetPassViewModel.isLoading.getValue());
+        boolean enabled = !loading && !email.isEmpty();
+        btnSendLink.setEnabled(enabled);
+        btnSendLink.setAlpha(enabled ? 1.0f : 0.5f);
+    }
+
+    private boolean isValidEmail(String email) {
+        return !email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

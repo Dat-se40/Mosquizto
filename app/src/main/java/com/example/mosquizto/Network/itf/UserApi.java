@@ -2,21 +2,25 @@ package com.example.mosquizto.Network.itf;
 
 
 import com.example.mosquizto.Dto.request.LoginRequest;
+import com.example.mosquizto.Dto.request.ResetPasswordRequest;
 import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.request.UpdateAvatarRequest;
 import com.example.mosquizto.Dto.request.UserReportRequest;
+import com.example.mosquizto.Dto.request.VerifyCodeRequest;
 import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.AvatarResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Dto.response.FollowNotificationResponse;
 import com.example.mosquizto.Dto.response.LoginResponse;
 import com.example.mosquizto.Dto.response.PageResponse;
+import com.example.mosquizto.Dto.response.ResetPasswordTokenResponse;
 import com.example.mosquizto.Dto.response.StreakResponse;
 import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
 import com.example.mosquizto.Dto.response.UserResponse;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -32,7 +36,11 @@ public interface UserApi {
     @POST("auth/login")
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
     @POST("auth/forgot-password")
-    Call<ApiResponse<String>> forgotPassword(@Body String email);
+    Call<ApiResponse<Void>> forgotPassword(@Body RequestBody email);
+    @POST("auth/verify-code-forgot-password")
+    Call<ApiResponse<ResetPasswordTokenResponse>> verifyForgotPasswordCode(@Body VerifyCodeRequest request);
+    @POST("auth/reset-password")
+    Call<ApiResponse<Void>> resetPassword(@Body ResetPasswordRequest request);
     @POST("auth/register")
     Call<ApiResponse<String>> signUp(@Body SignupRequest signupRequest);
     @POST("auth/logout")
