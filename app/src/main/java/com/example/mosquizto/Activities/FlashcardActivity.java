@@ -55,6 +55,11 @@ public class FlashcardActivity extends AppCompatActivity
     private Runnable           autoPlayRunnable;
     private boolean            isAutoPlaying = false;
 
+    // ── Auto-play timing ────────────────────────────────────────────────────
+    private static final long FRONT_DURATION = 4000;
+    private static final long BACK_DURATION  = 4000;
+    private static final long SWIPE_DURATION = 350;
+
     private GestureDetector gestureDetector;
     private static final int SWIPE_THRESHOLD          = 80;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
@@ -73,9 +78,8 @@ public class FlashcardActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Chỉ cancel handler để tránh leak, không gọi stopAutoPlayByUser()
-        if (autoPlayHandler != null && autoPlayRunnable != null) {
-            autoPlayHandler.removeCallbacks(autoPlayRunnable);
+        if (autoPlayHandler != null) {
+            autoPlayHandler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -101,10 +105,6 @@ public class FlashcardActivity extends AppCompatActivity
     }
 
     private void loadFlashcardsFromIntent() {
-        // Đọc "terms"/"definitions" — key này được dùng cho cả:
-        // 1) Session đầu từ StudySetDetailActivity (full list)
-        // 2) Session "Tiếp tục ôn" (chỉ learning subset)
-        // 3) Session "Đặt lại" (full list, lấy từ orig_terms)
         ArrayList<String> terms       = getIntent().getStringArrayListExtra("terms");
         ArrayList<String> definitions = getIntent().getStringArrayListExtra("definitions");
 
@@ -115,7 +115,6 @@ public class FlashcardActivity extends AppCompatActivity
             }
         }
 
-        // Fallback sample data — chỉ khi không có dữ liệu nào
         if (flashcards.isEmpty()) {
             flashcards.add(new Flashcard("honor",               "(v/n) vinh danh/ danh dự"));
             flashcards.add(new Flashcard("complex/complicated", "(adj) phức tạp"));
@@ -128,7 +127,6 @@ public class FlashcardActivity extends AppCompatActivity
         originalFlashcards.addAll(flashcards);
         if (shuffleCards && !forceNoShuffle) Collections.shuffle(flashcards);
 
-        // Nếu có start_index, nhảy thẳng đến thẻ đó
         int startIndex = getIntent().getIntExtra("start_index", 0);
         if (startIndex > 0 && startIndex < flashcards.size()) {
             currentIndex = startIndex;
@@ -141,7 +139,15 @@ public class FlashcardActivity extends AppCompatActivity
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                if (!isAnimating) flipCard();
+                if (!isAnimating) {
+                    flipCard();
+
+                    if (isAutoPlaying && autoPlayHandler != null) {
+                        // Hủy timer cũ, đặt lại 4s cho mặt sau
+                        autoPlayHandler.removeCallbacksAndMessages(null);
+                        autoPlayHandler.postDelayed(runnableSwipe, BACK_DURATION);
+                    }
+                }
                 return true;
             }
 
@@ -182,7 +188,6 @@ public class FlashcardActivity extends AppCompatActivity
             if (isAnimating) return;
             if (currentIndex > 0) {
                 currentIndex--;
-                // Hoàn tác trạng thái thẻ vừa quay lại
                 Flashcard prevCard = flashcards.get(currentIndex);
                 if (prevCard.getStatus() == Flashcard.STATUS_KNOWN) {
                     knownCount--;
@@ -243,6 +248,11 @@ public class FlashcardActivity extends AppCompatActivity
     private void swipeCard(boolean known) {
         isAnimating = true;
 
+        // Hủy timer auto-play đang chạy (tránh double-trigger)
+        if (autoPlayHandler != null) {
+            autoPlayHandler.removeCallbacksAndMessages(null);
+        }
+
         Flashcard card = flashcards.get(currentIndex);
         if (known) {
             card.setStatus(Flashcard.STATUS_KNOWN);
@@ -257,15 +267,10 @@ public class FlashcardActivity extends AppCompatActivity
         float targetX  = known ? screenW * 1.5f : -screenW * 1.5f;
         float rotation = known ? 20f : -20f;
 
-        // CẬP NHẬT MÀU VIỀN: VUỐT PHẢI = XANH LÁ, VUỐT TRÁI = CAM
-        int strokeColor;
-        if (known) {
-            strokeColor = android.graphics.Color.parseColor("#4CAF50"); // Đổi thành màu xanh lá cây khi biết
-        } else {
-            strokeColor = android.graphics.Color.parseColor("#FF9800"); // Giữ màu viền cam khi đang học
-        }
+        int strokeColor = known
+                ? android.graphics.Color.parseColor("#4CAF50")
+                : android.graphics.Color.parseColor("#FF9800");
 
-        // Ép kiểu sang MaterialCardView để cập nhật màu viền (stroke)
         if (cardFront instanceof com.google.android.material.card.MaterialCardView) {
             ((com.google.android.material.card.MaterialCardView) cardFront)
                     .setStrokeColor(android.content.res.ColorStateList.valueOf(strokeColor));
@@ -286,11 +291,20 @@ public class FlashcardActivity extends AppCompatActivity
             @Override public void onAnimationEnd(Animator animation) {
                 if (isFinishing() || isDestroyed()) return;
 
+                int nextIndex = swipedIndex + 1;
+                currentIndex  = nextIndex;
+
+                // Check trước, nếu là card cuối thì openSummary luôn, không reset UI
+                if (currentIndex >= flashcards.size()) {
+                    openSummary();
+                    return;
+                }
+
+                // Chỉ reset UI nếu còn card tiếp theo
                 cardContainer.setTranslationX(0f);
                 cardContainer.setAlpha(1f);
                 cardContainer.setRotation(0f);
 
-                // Trả về viền màu xám mặc định của hệ thống khi thẻ tiếp theo xuất hiện
                 int defaultStroke = getColor(R.color.quizlet_border);
                 if (cardFront instanceof com.google.android.material.card.MaterialCardView) {
                     ((com.google.android.material.card.MaterialCardView) cardFront)
@@ -303,14 +317,11 @@ public class FlashcardActivity extends AppCompatActivity
 
                 isAnimating = false;
                 updateCounters();
+                isFlipped = false;
+                showCurrentCard();
 
-                int nextIndex = swipedIndex + 1;
-                currentIndex  = nextIndex;
-                if (currentIndex >= flashcards.size()) {
-                    openSummary();
-                } else {
-                    isFlipped = false;
-                    showCurrentCard();
+                if (isAutoPlaying && autoPlayHandler != null) {
+                    scheduleAutoPlayForCurrentCard();
                 }
             }
 
@@ -323,6 +334,7 @@ public class FlashcardActivity extends AppCompatActivity
 
     private void showCurrentCard() {
         if (flashcards.isEmpty() || currentIndex >= flashcards.size()) return;
+        isFlipped = false;
         Flashcard card = flashcards.get(currentIndex);
         tvFrontContent.setText(showTermFirst ? card.getTerm()       : card.getDefinition());
         tvBackContent .setText(showTermFirst ? card.getDefinition() : card.getTerm());
@@ -332,6 +344,7 @@ public class FlashcardActivity extends AppCompatActivity
         cardFront.setRotationY(0f);
         cardBack .setRotationY(0f);
 
+        // FIX: dùng currentIndex + 1 để hiện đúng từ thẻ đầu tiên
         tvCounter  .setText((currentIndex + 1) + " / " + flashcards.size());
         tvSwipeHint.setText(getString(R.string.hint_tap_to_flip));
 
@@ -341,14 +354,14 @@ public class FlashcardActivity extends AppCompatActivity
 
     private void updateProgress() {
         if (progressFill == null || flashcards.isEmpty()) return;
-        // Dùng progress_background làm chuẩn width, không dùng parent
         View progressBg = findViewById(R.id.progress_background);
         if (progressBg == null) return;
         progressBg.post(() -> {
             if (isFinishing() || isDestroyed()) return;
             int bgWidth = progressBg.getWidth();
             if (bgWidth == 0) return;
-            float ratio = (float) currentIndex / flashcards.size();
+            // FIX: dùng currentIndex + 1 để progress đúng ngay từ thẻ 1
+            float ratio = (float) (currentIndex + 1) / flashcards.size();
             progressFill.getLayoutParams().width = (int)(bgWidth * ratio);
             progressFill.requestLayout();
         });
@@ -360,7 +373,6 @@ public class FlashcardActivity extends AppCompatActivity
     }
 
     private void openSummary() {
-        // Build list learning từ flashcards hiện tại (chính xác sau shuffle)
         ArrayList<String> learningTerms = new ArrayList<>();
         ArrayList<String> learningDefs  = new ArrayList<>();
         for (Flashcard f : flashcards) {
@@ -370,9 +382,6 @@ public class FlashcardActivity extends AppCompatActivity
             }
         }
 
-        // Lấy full list gốc để truyền cho nút "Đặt lại"
-        // Ưu tiên "orig_terms" nếu session này là "Tiếp tục ôn"
-        // fallback về "terms" nếu đây là session đầu từ StudySetDetailActivity
         ArrayList<String> origTerms = getIntent().getStringArrayListExtra("orig_terms");
         if (origTerms == null) origTerms = getIntent().getStringArrayListExtra("terms");
         ArrayList<String> origDefs = getIntent().getStringArrayListExtra("orig_defs");
@@ -382,68 +391,79 @@ public class FlashcardActivity extends AppCompatActivity
         intent.putExtra("total",    flashcards.size());
         intent.putExtra("known",    knownCount);
         intent.putExtra("learning", learningCount);
-        // List chỉ chứa thẻ đang học → cho nút "Tiếp tục ôn"
         intent.putStringArrayListExtra("learning_terms", learningTerms);
         intent.putStringArrayListExtra("learning_defs",  learningDefs);
-        // Full list gốc → cho nút "Đặt lại"
         intent.putStringArrayListExtra("orig_terms", origTerms);
         intent.putStringArrayListExtra("orig_defs",  origDefs);
         startActivity(intent);
         finish();
     }
 
+    // ── Auto-play ────────────────────────────────────────────────────────────
+
     private void startAutoPlay() {
         isAutoPlaying = true;
         btnNext.setImageResource(R.drawable.ic_pause);
         tvSwipeHint.setText(R.string.auto_scroll_is_on);
-        if (autoPlayHandler == null) autoPlayHandler = new android.os.Handler();
 
-        if (autoPlayRunnable != null) {
-            autoPlayHandler.removeCallbacks(autoPlayRunnable);
+        if (autoPlayHandler == null) {
+            autoPlayHandler = new android.os.Handler();
         }
 
-        scheduleNextAutoPlay();
+        autoPlayHandler.removeCallbacksAndMessages(null);
+
+        if (isFlipped) {
+            // Đang ở mặt sau → chỉ đếm 4s rồi swipe
+            autoPlayHandler.postDelayed(runnableSwipe, BACK_DURATION);
+        } else {
+            // Đang ở mặt trước → chu kỳ bình thường
+            scheduleAutoPlayForCurrentCard();
+        }
     }
 
-    private void scheduleNextAutoPlay() {
-        if (!isAutoPlaying) return;
+    /**
+     * Mỗi khi gọi hàm này = bắt đầu chu kỳ mới cho card hiện tại:
+     *   4s mặt trước → flip → 4s mặt sau → swipe
+     * Hủy mọi callback cũ trước khi đặt lịch mới.
+     */
+    private void scheduleAutoPlayForCurrentCard() {
+        if (!isAutoPlaying || autoPlayHandler == null) return;
 
-        autoPlayRunnable = () -> {
-            if (isFinishing() || isDestroyed() || !isAutoPlaying) return;
+        autoPlayHandler.removeCallbacksAndMessages(null);
 
-            // Nếu đang animate (user vừa swipe tay) → đợi thêm 1s rồi thử lại
-            if (isAnimating) {
-                scheduleNextAutoPlay();
-                return;
-            }
+        // --- Bước 1: 4s mặt trước → flip ---
+        autoPlayHandler.postDelayed(runnableFlip, FRONT_DURATION);
+    }
 
-            // Bước 1: lật thẻ nếu chưa lật
+    private final Runnable runnableFlip = new Runnable() {
+        @Override
+        public void run() {
+            if (!isAutoPlaying || isAnimating || isFinishing() || isDestroyed()) return;
+
+            // Chỉ flip nếu đang ở mặt trước
             if (!isFlipped) {
                 flipCard();
             }
 
-            // Bước 2: sau 2s mới swipe — dùng runnable mới, không reuse cái cũ
-            autoPlayHandler.postDelayed(() -> {
-                if (isFinishing() || isDestroyed() || !isAutoPlaying) return;
-                if (isAnimating) {
-                    // Vẫn đang animate → hoãn lại
-                    scheduleNextAutoPlay();
-                    return;
-                }
-                swipeCard(true);
-                // Lên lịch thẻ tiếp theo sau khi swipe xong
-                // swipeCard có duration 350ms, đợi nó xong rồi mới schedule
-                autoPlayHandler.postDelayed(() -> scheduleNextAutoPlay(), 1000);
-            }, 2000);
-        };
+            // --- Bước 2: 4s mặt sau → swipe ---
+            autoPlayHandler.postDelayed(runnableSwipe, BACK_DURATION);
+        }
+    };
 
-        autoPlayHandler.postDelayed(autoPlayRunnable, 2000);
-    }
+    private final Runnable runnableSwipe = new Runnable() {
+        @Override
+        public void run() {
+            if (!isAutoPlaying || isAnimating || isFinishing() || isDestroyed()) return;
+            swipeCard(true);
+            // scheduleAutoPlayForCurrentCard() sẽ được gọi trong swipeCard()
+            // sau khi animation xong và currentIndex đã tăng
+        }
+    };
 
     private void stopAutoPlay() {
         isAutoPlaying = false;
-        if (autoPlayHandler != null && autoPlayRunnable != null) {
-            autoPlayHandler.removeCallbacks(autoPlayRunnable);
+        if (autoPlayHandler != null) {
+            autoPlayHandler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -454,33 +474,23 @@ public class FlashcardActivity extends AppCompatActivity
     }
 
     private void showExitDialog() {
-        // Tạo dialog từ Builder
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        // Nạp custom layout
+        androidx.appcompat.app.AlertDialog.Builder builder =
+                new androidx.appcompat.app.AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_exit_confirmation, null);
         builder.setView(view);
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
-
-        // Làm trong suốt background mặc định để lộ viền bo góc của custom layout
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // Ánh xạ các view trong dialog
         TextView tvMessage = view.findViewById(R.id.tvDialogMessage);
-        Button btnCancel = view.findViewById(R.id.btnCancelExit);
-        Button btnExit = view.findViewById(R.id.btnConfirmExit);
+        Button btnCancel   = view.findViewById(R.id.btnCancelExit);
+        Button btnExit     = view.findViewById(R.id.btnConfirmExit);
 
-        // Customize nội dung text riêng cho Flashcard (vì Flashcard không lưu kết quả lên server)
         tvMessage.setText(R.string.ask_to_exit_2);
-
-        // Bắt sự kiện cho nút
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-        btnExit.setOnClickListener(v -> {
-            dialog.dismiss();
-            finish(); // Thoát khỏi Activity
-        });
+        btnExit  .setOnClickListener(v -> { dialog.dismiss(); finish(); });
 
         dialog.show();
     }
@@ -491,14 +501,10 @@ public class FlashcardActivity extends AppCompatActivity
         this.ttsEnabled    = ttsEnabled;
         if (this.shuffleCards != shuffle) {
             this.shuffleCards = shuffle;
-            // Reset lại danh sách từ bản gốc
             flashcards.clear();
             flashcards.addAll(originalFlashcards);
-
-            if (shuffle) {
-                Collections.shuffle(flashcards);
-            }
-            currentIndex = 0; // Quay về thẻ đầu tiên khi đổi chế độ trộn
+            if (shuffle) Collections.shuffle(flashcards);
+            currentIndex = 0;
         }
         isFlipped   = false;
         isAnimating = false;

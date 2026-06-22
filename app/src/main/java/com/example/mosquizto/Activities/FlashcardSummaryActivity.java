@@ -16,7 +16,7 @@ public class FlashcardSummaryActivity extends AppCompatActivity {
 
     private TextView       tvTitle, tvKnownCount, tvLearningCount, tvSummaryCounter;
     private MaterialButton btnContinue, btnStudyMode;
-    private TextView       tvReset, tvBack;
+    private TextView       tvReset;
 
     private int total, known, learning;
 
@@ -42,7 +42,6 @@ public class FlashcardSummaryActivity extends AppCompatActivity {
         btnContinue     = findViewById(R.id.btn_continue_review);
         btnStudyMode    = findViewById(R.id.btn_study_mode);
         tvReset         = findViewById(R.id.tv_reset_flashcard);
-        tvBack          = findViewById(R.id.tv_back_last);
     }
 
     private void displayData() {
@@ -106,24 +105,6 @@ public class FlashcardSummaryActivity extends AppCompatActivity {
             intent.putStringArrayListExtra("definitions", origDefs);
             intent.putStringArrayListExtra("orig_terms",  origTerms); // vẫn giữ để session sau dùng
             intent.putStringArrayListExtra("orig_defs",   origDefs);
-            startActivity(intent);
-            finish();
-        });
-
-        tvBack.setOnClickListener(v -> {
-            // Truyền lại toàn bộ data như "Tiếp tục ôn" nhưng yêu cầu bắt đầu từ thẻ cuối
-            ArrayList<String> origTerms = getIntent().getStringArrayListExtra("orig_terms");
-            ArrayList<String> origDefs  = getIntent().getStringArrayListExtra("orig_defs");
-
-            Intent intent = new Intent(this, FlashcardActivity.class);
-            intent.putStringArrayListExtra("terms",       origTerms);
-            intent.putStringArrayListExtra("definitions", origDefs);
-            intent.putStringArrayListExtra("orig_terms",  origTerms);
-            intent.putStringArrayListExtra("orig_defs",   origDefs);
-            // Truyền index thẻ cuối để FlashcardActivity biết bắt đầu từ đâu
-            intent.putExtra("start_index", total - 1);
-            // Tắt shuffle để giữ đúng thứ tự
-            intent.putExtra("force_no_shuffle", true);
             startActivity(intent);
             finish();
         });

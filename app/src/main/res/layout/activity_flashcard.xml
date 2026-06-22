@@ -190,16 +190,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/iv_star_back"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/ic_bookmark"
-                    app:tint="@color/text_color_secondary" />
-
                 <TextView
                     android:id="@+id/tv_back_content"
                     android:layout_width="wrap_content"
