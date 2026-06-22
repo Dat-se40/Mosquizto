@@ -50,7 +50,7 @@
                 android:id="@+id/tvDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="46 cards • by lfor..."
+                android:text="@string/tvCollectionDetails"
                 android:textSize="13sp"
                 android:textColor="@color/text_color_secondary"
                 android:layout_alignParentStart="true"

@@ -40,6 +40,7 @@ import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.AvatarImageHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.card.MaterialCardView;
@@ -60,6 +61,7 @@ import retrofit2.Response;
 public class StudySetDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "StudySetDetailActivity";
+    private static final int MAX_CAROUSEL_DOTS = 5;
 
     private int collectionId = -1;
     private String author;
@@ -75,6 +77,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
     private List<CollectionItemResponse> originalItems = new ArrayList<>();
     private List<TermItemUIModel> uiItems = new ArrayList<>();
     private TextView tvAuthorName;
+    private TextView tvSetDescription;
+
+    private ViewPager2.OnPageChangeCallback carouselPageChangeCallback;
 
     @Inject
     CollectionApi collectionApi;
@@ -112,6 +117,9 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 String title = getIntent().getStringExtra(getString(R.string.intent_key_collection_title));
                 author = getIntent().getStringExtra(getString(R.string.intent_key_author));
                 authorImgUri = getIntent().getStringExtra(getString(R.string.intent_key_author_img_uri));
+                if (author == null || author.trim().isEmpty()) {
+                    author = getIntent().getStringExtra("AUTHOR");
+                }
 
                 if (author == null && collectionId != -1) {
                     author = sessionManager.getCollectionAuthor(collectionId);
@@ -124,10 +132,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     tvSetTitle.setText(title);
                 }
 
-                if (author != null && !author.trim().isEmpty() && tvAuthorName != null) {
-                    tvAuthorName.setText(author);
-                }
-                displayAuthorAvatar(authorImgUri);
+                applyAuthorDisplay();
 
                 setupListeners();
 
@@ -157,16 +162,31 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     CollectionResponse data = response.body().getData();
 
-                    author = data.getUserName();
-                    authorImgUri = data.getAuthorImgUri();
+                    if (data.getUserName() != null && !data.getUserName().trim().isEmpty()) {
+                        author = data.getUserName();
+                    }
+                    if (data.getAuthorImgUri() != null && !data.getAuthorImgUri().trim().isEmpty()) {
+                        authorImgUri = data.getAuthorImgUri();
+                    }
 
-                    if (tvSetTitle != null) {
+                    if (tvSetTitle != null && data.getTitle() != null) {
                         tvSetTitle.setText(data.getTitle());
                     }
-                    if (tvAuthorName != null && author != null) {
-                        tvAuthorName.setText(author);
+                    if (tvSetDescription != null) {
+                        String description = data.getDescription();
+                        if (description != null && !description.trim().isEmpty()) {
+                            tvSetDescription.setText(description.trim());
+                            tvSetDescription.setVisibility(View.VISIBLE);
+                        } else {
+                            tvSetDescription.setVisibility(View.GONE);
+                        }
                     }
-                    displayAuthorAvatar(authorImgUri);
+
+                    int count = data.getCount() != null ? data.getCount() : 0;
+                    if (author != null && collectionId != -1) {
+                        sessionManager.saveCollectionMetadata(collectionId, count, author);
+                    }
+                    applyAuthorDisplay();
                 }
             }
 
@@ -181,6 +201,75 @@ public class StudySetDetailActivity extends AppCompatActivity {
         AvatarImageHelper.loadInto(imgAuthorAvatar, imgUri);
     }
 
+    private void applyAuthorDisplay() {
+        if (tvAuthorName == null) {
+            return;
+        }
+
+        if (author == null || author.trim().isEmpty()) {
+            if (collectionId != -1) {
+                author = sessionManager.getCollectionAuthor(collectionId);
+            }
+            if ((author == null || author.trim().isEmpty()) && getIntent() != null) {
+                author = getIntent().getStringExtra("AUTHOR");
+            }
+        }
+
+        if (author != null && !author.trim().isEmpty()) {
+            tvAuthorName.setText(author.trim());
+            tvAuthorName.setVisibility(View.VISIBLE);
+        }
+
+        displayAuthorAvatar(authorImgUri);
+    }
+
+    private void setupCarouselIndicators(int itemCount) {
+        TabLayout tabLayoutIndicator = findViewById(R.id.tabLayoutIndicator);
+        if (tabLayoutIndicator == null || viewPagerFlashcards == null) {
+            return;
+        }
+
+        if (carouselPageChangeCallback != null) {
+            viewPagerFlashcards.unregisterOnPageChangeCallback(carouselPageChangeCallback);
+            carouselPageChangeCallback = null;
+        }
+
+        tabLayoutIndicator.removeAllTabs();
+        int dotCount = Math.min(itemCount, MAX_CAROUSEL_DOTS);
+        if (dotCount <= 1) {
+            tabLayoutIndicator.setVisibility(View.GONE);
+            return;
+        }
+
+        tabLayoutIndicator.setVisibility(View.VISIBLE);
+        for (int i = 0; i < dotCount; i++) {
+            tabLayoutIndicator.addTab(tabLayoutIndicator.newTab());
+        }
+        tabLayoutIndicator.selectTab(tabLayoutIndicator.getTabAt(0));
+
+        carouselPageChangeCallback = new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                int dotIndex = mapCarouselPageToDot(position, itemCount, dotCount);
+                TabLayout.Tab tab = tabLayoutIndicator.getTabAt(dotIndex);
+                if (tab != null) {
+                    tabLayoutIndicator.selectTab(tab);
+                }
+            }
+        };
+        viewPagerFlashcards.registerOnPageChangeCallback(carouselPageChangeCallback);
+    }
+
+    private int mapCarouselPageToDot(int page, int totalItems, int dotCount) {
+        if (totalItems <= 1 || dotCount <= 1) {
+            return 0;
+        }
+        if (totalItems <= dotCount) {
+            return page;
+        }
+        return Math.round((float) page * (dotCount - 1) / (totalItems - 1));
+    }
+
     private void initViews() {
         try {
             Toolbar toolbar = findViewById(R.id.toolbar);
@@ -193,6 +282,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 toolbar.setNavigationOnClickListener(v -> finish());
             }
             tvAuthorName = findViewById(R.id.tvAuthorName);
+            tvSetDescription = findViewById(R.id.tvSetDescription);
             imgAuthorAvatar = findViewById(R.id.imgAuthorAvatar);
             ImageButton btnBack = findViewById(R.id.btnBack);
             if (btnBack != null) btnBack.setOnClickListener(v -> finish());
@@ -381,11 +471,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             };
             viewPagerFlashcards.setPageTransformer(transformer);
 
-            TabLayout tabLayoutIndicator = findViewById(R.id.tabLayoutIndicator);
-            if (tabLayoutIndicator != null) {
-                new com.google.android.material.tabs.TabLayoutMediator(tabLayoutIndicator, viewPagerFlashcards,
-                        (tab, position) -> {}).attach();
-            }
+            setupCarouselIndicators(originalItems.size());
         }
 
         TextView tvTotalCardsCount = findViewById(R.id.tvTotalCardsCount);
@@ -393,7 +479,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             tvTotalCardsCount.setText(String.format(getString(R.string.tvTotalCardsCount), originalItems.size()));
         }
 
-        // ĐÃ XÓA: Bỏ dòng gán text author cũ ở đây để tránh đè dữ liệu vô ích của hàm fetchCollectionMetaData
+        applyAuthorDisplay();
 
         if (termListAdapter != null) {
             termListAdapter.updateData(uiItems);
@@ -426,10 +512,15 @@ public class StudySetDetailActivity extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_options, null);
 
         View btnEdit = view.findViewById(R.id.btnEdit);
+        View btnAddToClass = view.findViewById(R.id.btnAddToClass);
         View btnAddToFolder = view.findViewById(R.id.btnAddToFolder);
         View btnCopy = view.findViewById(R.id.btnMakeCopy);
         View btnReport = view.findViewById(R.id.btnReport);
         View btnShare = view.findViewById(R.id.btnShareCollection);
+
+        if (btnAddToClass != null) {
+            btnAddToClass.setVisibility(View.GONE);
+        }
 
         if (author != null && sessionManager.getCurrUser() != null) {
             boolean isOwner = author.equals(sessionManager.getCurrUser().getUsername());
@@ -582,38 +673,76 @@ public class StudySetDetailActivity extends AppCompatActivity {
     }
 
     private void showSimpleCreateFolderDialog(View parentDialogView, AlertDialog parentDialog) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.new_folder);
-        final EditText input = new EditText(this);
-        input.setHint(R.string.folder_name);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+        LinearLayout form = new LinearLayout(this);
+        form.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (24 * getResources().getDisplayMetrics().density);
+        form.setPadding(padding, padding / 2, padding, 0);
+
+        EditText etName = new EditText(this);
+        etName.setHint(R.string.folder_name);
+        form.addView(etName);
+
+        EditText etDescription = new EditText(this);
+        etDescription.setHint(R.string.et_description);
+        etDescription.setMinLines(3);
+        etDescription.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
+        LinearLayout.LayoutParams descLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        input.setLayoutParams(lp);
-        builder.setView(input);
+        descLp.topMargin = (int) (12 * getResources().getDisplayMetrics().density);
+        etDescription.setLayoutParams(descLp);
+        form.addView(etDescription);
 
-        builder.setPositiveButton(R.string.create, (dialog, which) -> {
-            String folderName = input.getText().toString().trim();
-            if (!folderName.isEmpty()) {
-                createNewFolderAndAddCollection(folderName, parentDialog);
-            }
-        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.new_folder);
+        builder.setView(form);
+        builder.setPositiveButton(R.string.create, null);
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
-        builder.show();
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String folderName = etName.getText().toString().trim();
+            String description = etDescription.getText().toString().trim();
+            if (folderName.isEmpty()) {
+                Toast.makeText(this, R.string.ntEnterFolderName, Toast.LENGTH_SHORT).show();
+            } else if (description.isEmpty()) {
+                Toast.makeText(this, R.string.ntEnterFolderDescription, Toast.LENGTH_SHORT).show();
+            } else {
+                dialog.dismiss();
+                createNewFolderAndAddCollection(folderName, description, parentDialog);
+            }
+        }));
+        dialog.show();
     }
 
-    private void createNewFolderAndAddCollection(String name, AlertDialog dialogToClose) {
-        folderApi.createFolder(new CreateFolderRequest(name, "")).enqueue(new Callback<ApiResponse<FolderResponse>>() {
+    private void createNewFolderAndAddCollection(String name, String description, AlertDialog dialogToClose) {
+        CreateFolderRequest request = new CreateFolderRequest(name, description);
+        Log.d(TAG, "createNewFolderAndAddCollection name=" + request.getName()
+                + ", descriptionLength=" + request.getDescription().length());
+
+        folderApi.createFolder(request).enqueue(new Callback<ApiResponse<FolderResponse>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Response<ApiResponse<FolderResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+            public void onResponse(@NonNull Call<ApiResponse<FolderResponse>> call,
+                                   @NonNull Response<ApiResponse<FolderResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null
+                        && response.body().getData().getId() != null) {
                     Long newFolderId = response.body().getData().getId();
-                    addCollectionToSpecificFolder(newFolderId, name, dialogToClose);
+                    String folderName = response.body().getData().getName() != null
+                            ? response.body().getData().getName()
+                            : name;
+                    addCollectionToSpecificFolder(newFolderId, folderName, dialogToClose);
                 } else {
-                    Toast.makeText(StudySetDetailActivity.this, R.string.msg_failed_create_folder, Toast.LENGTH_SHORT).show();
+                    String error = ApiErrorHelper.extractMessage(response);
+                    Log.e(TAG, "createFolder failed: " + error);
+                    Toast.makeText(StudySetDetailActivity.this,
+                            getString(R.string.msg_failed_create_folder) + ": " + error,
+                            Toast.LENGTH_LONG).show();
                 }
             }
-            @Override public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "createFolder onFailure", t);
                 Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
             }
         });

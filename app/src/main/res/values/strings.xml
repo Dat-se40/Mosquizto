@@ -83,6 +83,9 @@
     <string name="settings_clear_cache_progress">Clearing local storage…</string>
 
     <string name="settings_push_notifications">Push notifications</string>
+    <string name="settings_language">Language</string>
+    <string name="language_name_english" translatable="false">English</string>
+    <string name="language_name_vietnamese" translatable="false">Tiếng Việt</string>
     <string name="settings_sound_effects">Sound effects</string>
     <string name="settings_haptic_feedback">Haptic feedback</string>
     <string name="settings_privacy_cookie_choices">Privacy and cookie choices</string>
@@ -110,6 +113,8 @@
     <string name="tvCreateStudySet">Create study set</string>
     <string name="et_title">Title</string>
     <string name="et_description">Description</string>
+    <string name="folder_description_hint">Folder description</string>
+    <string name="ntEnterFolderDescription">Please enter folder description</string>
     <string name="btn_add_card">+ Add card</string>
     <string name="tvToolbarTitle">Folder name</string>
     <string name="tvEmptyTitle">This folder is empty</string>
@@ -228,6 +233,7 @@
     <string name="folder_name">Folder name</string>
     <string name="create">Create</string>
     <string name="msg_failed_create_folder">Failed to create folder</string>
+    <string name="msg_folder_created">Folder created: %1$s</string>
     <string name="msg_empty_set">This set is empty</string>
     <string name="create_new_folder">Create a new folder</string>
     <string name="create_folder">Create folder</string>
@@ -267,11 +273,14 @@
 
     <!--Dialog strings-->
     <string name="et_folder_name">Folder name</string>
-    <string name="tvStudySet">Flashcard set</string>
+    <string name="tvStudySet">Study set</string>
     <string name="tvFolder">Folder</string>
+    <string name="library_tab_study_sets">Study sets</string>
+    <string name="library_tab_folders">Folders</string>
     <string name="created_by">CREATED BY</string>
     <string name="visible_to">VISIBLE TO</string>
     <string name="jump_back_in">Jump back in</string>
+    <string name="jump_back_progress">%1$d%% completed</string>
     <string name="recents">Recents</string>
 
     <!--Flashcard strings-->
@@ -301,7 +310,7 @@
     <string name="tv_library_title">Your Library</string>
 
     <string name="progress_completed">%1$d%% of questions completed</string>
-    <string name="tvCollectionDetails">%1$d cards • by %2$s</string>
+    <string name="tvCollectionDetails">%1$d terms • by %2$s</string>
 
     <string name="notification_title">Notifications</string>
     <string name="no_notifications">You have no notifications</string>
@@ -337,7 +346,7 @@
     <string name="intent_key_author" translatable="false">AUTHOR</string>
     <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
 
-    <string name="tvTotalCardsCount">%1$d cards</string>
+    <string name="tvTotalCardsCount">%1$d terms</string>
     <string name="editStudySet">Edit set</string>
 
     <string name="tvNotifications">Notifications</string>
@@ -505,4 +514,9 @@ App version: <b>%1$s</b><br/>
     <string name="ask_to_exit">Are you sure you want to exit? Your progress may not be saved.</string>
     <string name="exit">Exit</string>
     <string name="ask_to_exit_2">Bạn có chắc chắn muốn thoát quá trình ôn tập thẻ ghi nhớ này không?</string>
+
+    <plurals name="term_count">
+        <item quantity="one">%d term</item>
+        <item quantity="other">%d terms</item>
+    </plurals>
 </resources>

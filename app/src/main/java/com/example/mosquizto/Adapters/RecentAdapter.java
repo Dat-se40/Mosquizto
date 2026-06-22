@@ -77,7 +77,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.ViewHolder
             String key = "COLLECTION_COUNT_" + item.getId();
             count = sharedPref.getInt(key, 0);
         }
-        holder.tvDetails.setText(count + " thẻ • bởi " + author);
+        holder.tvDetails.setText(holder.itemView.getContext().getString(
+                R.string.tvCollectionDetails, count, author));
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {

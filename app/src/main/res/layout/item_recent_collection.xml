@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="37 cards • by quanghieu"
+            android:text="@string/tvCollectionDetails"
             android:textSize="14sp"
             android:textColor="@color/text_color_secondary"
             android:maxLines="1"

@@ -20,6 +20,7 @@ import com.example.mosquizto.Services.LocalCacheClearManager;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Util.AboutDialogHelper;
+import com.example.mosquizto.Util.LocaleManager;
 import com.example.mosquizto.Util.ThemeManager;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -93,6 +94,16 @@ public class SettingsFragment extends Fragment {
                     webSocketManager.setPushNotificationEnabled(isChecked));
         }
 
+        TextView tvLanguageValue = view.findViewById(R.id.tvLanguageValue);
+        View itemLanguage = view.findViewById(R.id.itemLanguage);
+        if (tvLanguageValue != null) {
+            tvLanguageValue.setText(LocaleManager.getLanguageDisplayName(
+                    requireContext(), LocaleManager.getLanguageTag(requireContext())));
+        }
+        if (itemLanguage != null) {
+            itemLanguage.setOnClickListener(v -> showLanguageDialog(tvLanguageValue));
+        }
+
         //if (switchSound  != null) switchSound.setChecked(true);
         //if (switchHaptic != null) switchHaptic.setChecked(true);
 
@@ -139,6 +150,33 @@ public class SettingsFragment extends Fragment {
     }
 
     // ── Dialogs tài khoản ─────────────────────────────────────────────
+
+    private void showLanguageDialog(TextView tvLanguageValue) {
+        String currentTag = LocaleManager.getLanguageTag(requireContext());
+        String[] labels = new String[]{
+                getString(R.string.language_name_english),
+                getString(R.string.language_name_vietnamese)
+        };
+        String[] tags = new String[]{LocaleManager.LANG_EN, LocaleManager.LANG_VI};
+        int checkedItem = LocaleManager.LANG_VI.equals(currentTag) ? 1 : 0;
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_language)
+                .setSingleChoiceItems(labels, checkedItem, (dialog, which) -> {
+                    String selectedTag = tags[which];
+                    if (!selectedTag.equals(currentTag)) {
+                        LocaleManager.setLanguage(requireContext(), selectedTag);
+                        if (tvLanguageValue != null) {
+                            tvLanguageValue.setText(LocaleManager.getLanguageDisplayName(
+                                    requireContext(), selectedTag));
+                        }
+                        requireActivity().recreate();
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
 
     private void showClearCacheDialog() {
         new AlertDialog.Builder(requireContext())

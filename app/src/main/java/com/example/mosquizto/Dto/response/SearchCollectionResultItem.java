@@ -31,10 +31,6 @@ public class SearchCollectionResultItem implements SearchResultWrapper {
     public String getCreatedByUsername() { return createdByUsername; }
     public Double getCount() { return count; }
 
-    public String getSubtitle() {
-        return count + " thuật ngữ • " + createdByUsername;
-    }
-
     @Override
     public int getType() {
         return 1;

@@ -45,7 +45,9 @@ public class BasedOnRecentAdapter extends RecyclerView.Adapter<BasedOnRecentAdap
 
             if (holder.tvDetails != null) {
                 String author = (item.getUserName() != null) ? item.getUserName() : "Quizlet";
-                holder.tvDetails.setText(item.getCount() + " thẻ • bởi " + author);
+                int count = item.getCount() != null ? item.getCount() : 0;
+                holder.tvDetails.setText(holder.itemView.getContext().getString(
+                        R.string.tvCollectionDetails, count, author));
             }
             holder.itemView.setOnClickListener(v -> {
                 if (itemCollectionClickedListener != null) {

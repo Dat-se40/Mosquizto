@@ -8,8 +8,13 @@ public class CreateFolderRequest {
     }
 
     public CreateFolderRequest(String name, String description) {
-        this.name = name;
-        this.description = description;
+        this.name = name != null ? name.trim() : "";
+        this.description = description != null ? description.trim() : "";
+    }
+
+    public boolean isValid() {
+        return name != null && !name.isEmpty()
+                && description != null && !description.isEmpty();
     }
 
     public String getName() {

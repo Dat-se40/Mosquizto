@@ -41,8 +41,9 @@ public class FlashcardSetAdapter extends RecyclerView.Adapter<FlashcardSetAdapte
         holder.tvTitle.setText(collection.getTitle() != null ? collection.getTitle() : "Untitled");
 
         // Cập nhật số lượng term. Đảm bảo trong Model Collection của bạn có trường itemCount
-        int itemCount = collection.getCount();
-        holder.tvItemCount.setText(itemCount + (itemCount > 1 ? " terms" : " term"));
+        int itemCount = collection.getCount() != null ? collection.getCount() : 0;
+        holder.tvItemCount.setText(holder.itemView.getContext().getResources()
+                .getQuantityString(R.plurals.term_count, itemCount, itemCount));
         holder.itemView.setOnClickListener(v -> {
             if (onCollectionClickListener != null) {
                 onCollectionClickListener.OnItemClicked(collection);

@@ -44,10 +44,10 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
         holder.tvTitle.setText(collection.getTitle());
 
-        // Format chuỗi: "Số cards • by username"
         String author = (collection.getCreatedBy() != null) ? collection.getCreatedBy().getUsername() : "Unknown";
-        String details = collection.getCount() + " cards • by " + author;
-        holder.tvDetails.setText(details);
+        int count = collection.getCount();
+        holder.tvDetails.setText(holder.itemView.getContext().getString(
+                R.string.tvCollectionDetails, count, author));
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(collection);

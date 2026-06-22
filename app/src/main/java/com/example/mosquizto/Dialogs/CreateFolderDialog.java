@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import javax.inject.Inject;
 
@@ -32,6 +34,8 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class CreateFolderDialog extends DialogFragment {
+
+    private static final String TAG = "CreateFolderDialog";
 
     private EditText etFolderName;
     private EditText etFolderDesc;
@@ -57,11 +61,11 @@ public class CreateFolderDialog extends DialogFragment {
             String description = etFolderDesc.getText().toString().trim();
 
             if (name.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng nhập tên thư mục", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.ntEnterFolderName, Toast.LENGTH_SHORT).show();
+            } else if (description.isEmpty()) {
+                Toast.makeText(requireContext(), R.string.ntEnterFolderDescription, Toast.LENGTH_SHORT).show();
+                etFolderDesc.requestFocus();
             } else {
-                if(description.isEmpty()){
-                    description = "Không có mô tả";
-                }
                 createFolder(name, description);
             }
         });
@@ -91,9 +95,17 @@ public class CreateFolderDialog extends DialogFragment {
     }
 
     private void createFolder(String name, String description) {
-        btnSave.setEnabled(false);
+        if (folderApi == null) {
+            Log.e(TAG, "createFolder: folderApi is null");
+            Toast.makeText(requireContext(), R.string.msg_failed_create_folder, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        btnSave.setEnabled(false);
         CreateFolderRequest request = new CreateFolderRequest(name, description);
+        Log.d(TAG, "createFolder request name=" + request.getName()
+                + ", descriptionLength=" + request.getDescription().length());
+
         createFolderCall = folderApi.createFolder(request);
         createFolderCall.enqueue(new Callback<ApiResponse<FolderResponse>>() {
             @Override
@@ -101,18 +113,29 @@ public class CreateFolderDialog extends DialogFragment {
                 if (!isAdded()) return;
 
                 btnSave.setEnabled(true);
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     FolderResponse folder = response.body().getData();
-                    Bundle result = new Bundle();
-                    result.putLong("FOLDER_ID", folder.getId());
-                    result.putString("FOLDER_NAME", folder.getName());
-                    getParentFragmentManager().setFragmentResult("folder_created", result);
+                    if (folder != null && folder.getId() != null) {
+                        Bundle result = new Bundle();
+                        result.putLong("FOLDER_ID", folder.getId());
+                        result.putString("FOLDER_NAME", folder.getName());
+                        getParentFragmentManager().setFragmentResult("folder_created", result);
 
-                    Toast.makeText(requireContext(), "Đã tạo thư mục: " + folder.getName(), Toast.LENGTH_SHORT).show();
-                    dismiss();
-                } else {
-                    Toast.makeText(requireContext(), "Tạo thư mục thất bại", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                getString(R.string.msg_folder_created, folder.getName()),
+                                Toast.LENGTH_SHORT).show();
+                        dismiss();
+                        return;
+                    }
+                    Log.w(TAG, "createFolder success but data is null, message="
+                            + response.body().getMessage());
                 }
+
+                String error = ApiErrorHelper.extractMessage(response);
+                Log.e(TAG, "createFolder failed: " + error);
+                Toast.makeText(requireContext(),
+                        getString(R.string.msg_failed_create_folder) + ": " + error,
+                        Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -120,7 +143,8 @@ public class CreateFolderDialog extends DialogFragment {
                 if (call.isCanceled() || !isAdded()) return;
 
                 btnSave.setEnabled(true);
-                Toast.makeText(requireContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "createFolder onFailure", t);
+                Toast.makeText(requireContext(), R.string.ntConnectionError, Toast.LENGTH_SHORT).show();
             }
         });
     }

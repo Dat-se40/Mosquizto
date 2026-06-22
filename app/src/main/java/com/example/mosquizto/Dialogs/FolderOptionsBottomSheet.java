@@ -39,10 +39,10 @@ public class FolderOptionsBottomSheet extends BottomSheetDialogFragment {
             dismiss();
         });
 
-        view.findViewById(R.id.tvShareFolder).setOnClickListener(v -> {
-            if(listener != null) listener.onShareFolder();
-            dismiss();
-        });
+        View tvShareFolder = view.findViewById(R.id.tvShareFolder);
+        if (tvShareFolder != null) {
+            tvShareFolder.setVisibility(View.GONE);
+        }
 
         view.findViewById(R.id.tvDeleteFolder).setOnClickListener(v -> {
             if(listener != null) listener.onDeleteFolder();

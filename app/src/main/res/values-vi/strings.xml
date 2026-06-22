@@ -82,6 +82,7 @@
     <string name="settings_clear_cache_progress">Đang xóa bộ nhớ cục bộ…</string>
 
     <string name="settings_push_notifications">Thông báo đẩy</string>
+    <string name="settings_language">Ngôn ngữ</string>
     <string name="settings_sound_effects">Hiệu ứng âm thanh</string>
     <string name="settings_haptic_feedback">Phản hồi xúc giác</string>
     <string name="settings_privacy_cookie_choices">Lựa chọn về quyền riêng tư/cookie</string>
@@ -109,6 +110,8 @@
     <string name="tvCreateStudySet">Tạo học phần</string>
     <string name="et_title">Tiêu đề</string>
     <string name="et_description">Mô tả</string>
+    <string name="folder_description_hint">Mô tả thư mục</string>
+    <string name="ntEnterFolderDescription">Vui lòng nhập mô tả thư mục</string>
     <string name="btn_add_card">Thêm thẻ</string>
     <string name="tvToolbarTitle">Tên thư mục</string>
     <string name="tvEmptyTitle">Thư mục này chưa có học phần</string>
@@ -225,6 +228,7 @@
     <string name="folder_name">Tên thư mục</string>
     <string name="create">Tạo</string>
     <string name="msg_failed_create_folder">Không thể tạo thư mục</string>
+    <string name="msg_folder_created">Đã tạo thư mục: %1$s</string>
     <string name="msg_empty_set">Bộ thẻ này đang trống</string>
     <string name="create_new_folder">Tạo thư mục mới</string>
     <string name="create_folder">Tạo thư mục</string>
@@ -248,15 +252,15 @@
     <string name="btnMakeCopy">Tạo bản sao</string>
     <string name="btnShare">Chia sẻ</string>
     <string name="btnSetInfo">Thông tin</string>
-    <string name="btnReport">Báo cáo học phần này</string>
+    <string name="btnReport">Báo cáo bộ thẻ này</string>
     <string name="msg_share_success">Chia sẻ thành công\n</string>
     <string name="msg_share_failed">Chia sẻ thất bại\n</string>
 
     <!-- Share Dialog Strings -->
-    <string name="share_collection_title">Chia sẻ học phần</string>
+    <string name="share_collection_title">Chia sẻ bộ thẻ</string>
     <string name="role_label">Chọn vai trò</string>
     <string name="viewer_role">Người xem</string>
-    <string name="viewer_hint">Người xem có thể thấy và học học phần này.</string>
+    <string name="viewer_hint">Người xem có thể thấy và học bộ thẻ này.</string>
     <string name="share">Chia sẻ</string>
     <string name="tvRemoveSet">Xóa khỏi thư mục</string>
     <string name="et_folder_name">Tên thư mục</string>
@@ -265,6 +269,9 @@
     <string name="created_by">TẠO BỞI</string>
     <string name="visible_to">HIỂN THỊ VỚI</string>
     <string name="jump_back_in">Tiếp tục học</string>
+    <string name="jump_back_progress">%1$d%% hoàn thành</string>
+    <string name="library_tab_study_sets">Bộ thẻ</string>
+    <string name="library_tab_folders">Thư mục</string>
     <string name="recents">Gần đây</string>
 
 
@@ -496,4 +503,8 @@ Phiên bản ứng dụng: <b>%1$s</b><br/>
     <string name="ask_to_exit">Bạn có chắc chắn muốn thoát? \nKết quả của bạn có thể sẽ không được lưu lại.</string>
     <string name="exit">Thoát</string>
     <string name="ask_to_exit_2">Bạn có chắc chắn muốn thoát quá trình ôn tập thẻ ghi nhớ này không?</string>
+
+    <plurals name="term_count">
+        <item quantity="other">%d thẻ</item>
+    </plurals>
 </resources>

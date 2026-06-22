@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorkerFactory;
 import androidx.work.Configuration;
 
+import com.example.mosquizto.Util.LocaleManager;
 import com.example.mosquizto.Util.ThemeManager;
 
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ public class MosquiztoApp extends Application implements Configuration.Provider{
     @Override
     public void onCreate() {
         super.onCreate();
+        LocaleManager.applySavedLocale(this);
         ThemeManager.applySavedTheme(this);
     }
 

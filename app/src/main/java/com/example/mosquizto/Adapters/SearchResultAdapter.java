@@ -63,12 +63,15 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
             holder.tvTitle.setText(collection.getTitle());
 
-            // Subtitle cho Collection: Tên user • Số lượng thuật ngữ
-            String countInfo = (collection.getCount() != null ? collection.getCount() : 0) + " thuật ngữ";
+            int count = collection.getCount() != null
+                    ? (int) Math.round(collection.getCount())
+                    : 0;
+            String countInfo = holder.itemView.getContext().getResources()
+                    .getQuantityString(R.plurals.term_count, count, count);
             String subtitle = collection.getCreatedByUsername() + " • " + countInfo;
             holder.tvSubtitle.setText(subtitle);
 
-            holder.ivThumbnail.setImageResource(R.drawable.ic_study_set); // Icon học phần
+            holder.ivThumbnail.setImageResource(R.drawable.ic_card); // Icon học phần
             holder.ivMore.setVisibility(View.VISIBLE); // Hiện nút 3 chấm
 
         } else if (viewType == TYPE_USER) {

@@ -46,9 +46,9 @@ public class LibraryFragment extends Fragment {
         // Liên kết TabLayout với ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) {
-                tab.setText("Flashcard sets");
+                tab.setText(getString(R.string.library_tab_study_sets));
             } else {
-                tab.setText("Folders");
+                tab.setText(getString(R.string.library_tab_folders));
             }
         }).attach();
 

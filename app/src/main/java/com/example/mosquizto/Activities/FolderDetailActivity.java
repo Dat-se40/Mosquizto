@@ -15,7 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mosquizto.Adapters.RecentAdapter;
+import com.example.mosquizto.MainActivity;
+import com.example.mosquizto.Adapters.FolderCollectionAdapter;
 import com.example.mosquizto.Dialogs.FolderOptionsBottomSheet;
 import com.example.mosquizto.Dialogs.RemoveFromFolderBottomSheet;
 import com.example.mosquizto.Dto.request.UpdateFolderRequest;
@@ -25,6 +26,7 @@ import com.example.mosquizto.Dto.response.CollectionSummaryResponse;
 import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Services.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +46,19 @@ public class FolderDetailActivity extends AppCompatActivity {
     private String folderDescription;
 
     private TextView tvToolbarTitle;
+    private TextView tvFolderDescription;
     private ImageView btnBack, btnAddHeader, btnMore;
     private LinearLayout layoutEmpty;
     private Button btnBigAddMaterials;
     private RecyclerView rvFolderCollections;
 
-    private RecentAdapter adapter;
+    private FolderCollectionAdapter adapter;
 
     @Inject
     FolderApi folderApi;
+
+    @Inject
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +79,7 @@ public class FolderDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         tvToolbarTitle = findViewById(R.id.tvToolbarTitle);
+        tvFolderDescription = findViewById(R.id.tvFolderDescription);
         btnBack = findViewById(R.id.btnBack);
         btnAddHeader = findViewById(R.id.btnAddHeader);
         btnMore = findViewById(R.id.btnMore);
@@ -139,6 +146,7 @@ public class FolderDetailActivity extends AppCompatActivity {
                     folderName = data.getName();
                     folderDescription = data.getDescription();
                     tvToolbarTitle.setText(folderName);
+                    updateFolderDescriptionUi();
                     showCollections(data.getCollections());
                 } else {
                     Toast.makeText(FolderDetailActivity.this, getString(R.string.ntCannotLoadFolder), Toast.LENGTH_SHORT).show();
@@ -162,55 +170,17 @@ public class FolderDetailActivity extends AppCompatActivity {
         layoutEmpty.setVisibility(View.GONE);
         rvFolderCollections.setVisibility(View.VISIBLE);
 
-        adapter = new RecentAdapter(mapCollectionSummaries(summaries),
-                item -> {
-                    Intent intent = new Intent(this, StudySetDetailActivity.class);
-                    intent.putExtra("COLLECTION_ID", item.getId());
-                    intent.putExtra("COLLECTION_TITLE", item.getTitle());
-                    intent.putExtra("AUTHOR", item.getUserName()); // Truyền author sang màn hình chi tiết
-                    startActivity(intent);
-                },
+        adapter = new FolderCollectionAdapter(
+                mapCollectionSummaries(summaries),
+                item -> MainActivity.GoToStudySetActivity(FolderDetailActivity.this, item),
                 (item, position) -> {
-                    RemoveFromFolderBottomSheet removeDialog = new RemoveFromFolderBottomSheet(item.getTitle(), () ->
-                            removeCollectionFromFolder(item.getId(), position));
+                    RemoveFromFolderBottomSheet removeDialog = new RemoveFromFolderBottomSheet(
+                            item.getTitle(),
+                            () -> removeCollectionFromFolder(item.getId(), position));
                     removeDialog.show(getSupportFragmentManager(), removeDialog.getTag());
                 }
         );
-        // gắn mấy cái sự ki
-        adapter.SetOnCloclickListener(new RecentAdapter.OnCollectionActionListener() {
-            @Override
-            public void onEdit(CollectionResponse item, int position) {
-                // Mở màn hình Edit
-            }
-
-            @Override
-            public void onShare(CollectionResponse item, int position) {
-                // Gọi Intent Share
-            }
-
-            @Override
-            public void onDelete(CollectionResponse item, int position) {
-                deleteRecentItem(item.getId(),position);
-            }
-        });
         rvFolderCollections.setAdapter(adapter);
-    }
-
-    private void deleteRecentItem(Integer id, int position) {
-        folderApi.removeCollectionFromFolder(folderId,id).enqueue(new Callback<ApiResponse<Void>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-               if(response != null && response.isSuccessful())
-               {
-                   adapter.removeItem(position);
-               }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-
-            }
-        });
     }
 
     private void showEditFolderDialog() {
@@ -259,6 +229,7 @@ public class FolderDetailActivity extends AppCompatActivity {
                     folderName = folder.getName();
                     folderDescription = folder.getDescription();
                     tvToolbarTitle.setText(folderName);
+                    updateFolderDescriptionUi();
                     Toast.makeText(FolderDetailActivity.this, getString(R.string.ntUpdateFolder), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
@@ -326,17 +297,43 @@ public class FolderDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void updateFolderDescriptionUi() {
+        if (tvFolderDescription == null) {
+            return;
+        }
+        if (folderDescription != null && !folderDescription.trim().isEmpty()) {
+            tvFolderDescription.setText(folderDescription.trim());
+            tvFolderDescription.setVisibility(View.VISIBLE);
+        } else {
+            tvFolderDescription.setVisibility(View.GONE);
+        }
+    }
+
     private List<CollectionResponse> mapCollectionSummaries(List<CollectionSummaryResponse> summaries) {
         List<CollectionResponse> collections = new ArrayList<>();
         for (CollectionSummaryResponse summary : summaries) {
+            if (summary == null || summary.getId() == null) {
+                continue;
+            }
+
+            String author = summary.getUserName();
+            if ((author == null || author.isEmpty()) && sessionManager != null) {
+                author = sessionManager.getCollectionAuthor(summary.getId());
+            }
+
+            Integer count = summary.getCount();
+            if ((count == null || count == 0) && sessionManager != null) {
+                count = sessionManager.getCollectionCount(summary.getId());
+            }
+
             collections.add(new CollectionResponse(
                     summary.getId(),
                     summary.getTitle(),
                     null,
                     null,
                     null,
-                    null,
-                    null
+                    author,
+                    count
             ));
         }
         return collections;

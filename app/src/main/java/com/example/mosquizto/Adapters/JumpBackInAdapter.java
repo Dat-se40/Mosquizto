@@ -49,7 +49,8 @@ public class JumpBackInAdapter extends RecyclerView.Adapter<JumpBackInAdapter.Vi
         int progress = (totalCorrect * 100) / totalCount;
         
         holder.progressBar.setProgress(progress);
-        holder.tvProgressText.setText(progress + "% hoàn thành");
+        holder.tvProgressText.setText(
+                holder.itemView.getContext().getString(R.string.jump_back_progress, progress));
         holder.btnContinueLearn.setOnClickListener(v ->
         {
             if(listener != null) listener.OnItemClicked(item);

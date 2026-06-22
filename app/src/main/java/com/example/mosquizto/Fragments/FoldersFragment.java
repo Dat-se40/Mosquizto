@@ -1,5 +1,6 @@
 package com.example.mosquizto.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.FolderSummaryResponse;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +33,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.util.Log;
 
 @AndroidEntryPoint
 public class FoldersFragment extends Fragment {
+    private static final String TAG = "FoldersFragment";
+
     private RecyclerView rvFolders;
     private ProgressBar progressBar;
     private TextView tvEmpty;
@@ -82,12 +87,12 @@ public class FoldersFragment extends Fragment {
         tvEmpty = view.findViewById(R.id.tvEmpty);
 
         folderAdapter = new FolderAdapter(new ArrayList<>(), folder -> {
-            // Mở màn chi tiết và truyền id/tên folder đang chọn.
             Intent intent = new Intent(requireContext(), FolderDetailActivity.class);
             intent.putExtra("FOLDER_ID", folder.getId());
             intent.putExtra("FOLDER_TITLE", folder.getName());
             startActivity(intent);
         });
+        folderAdapter.setOnFolderOptionsListener(this::showDeleteFolderDialog);
 
         rvFolders.setLayoutManager(new LinearLayoutManager(getContext()));
         rvFolders.setAdapter(folderAdapter);
@@ -174,6 +179,51 @@ public class FoldersFragment extends Fragment {
 
         // Gọi hàm hiển thị (Hàm này tự lo việc ẩn hiện màn hình trống tvEmpty của bạn)
         showFolders(filteredList);
+    }
+
+    private void showDeleteFolderDialog(FolderSummaryResponse folder, int position) {
+        if (folder == null || folder.getId() == null || !isAdded()) {
+            return;
+        }
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.deleteFolder)
+                .setMessage(R.string.ntRemoveStudySets)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete, (dialog, which) ->
+                        deleteFolder(folder.getId(), position))
+                .show();
+    }
+
+    private void deleteFolder(Long folderId, int position) {
+        folderApi.deleteFolder(folderId).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful()) {
+                    if (originalList != null) {
+                        originalList.removeIf(f -> f.getId() != null && f.getId().equals(folderId));
+                    }
+                    folderAdapter.removeItem(position);
+                    if (folderAdapter.getItemCount() == 0) {
+                        showFolders(new ArrayList<>());
+                    }
+                    Toast.makeText(requireContext(), R.string.ntFolderDeleted, Toast.LENGTH_SHORT).show();
+                } else {
+                    String message = ApiErrorHelper.extractMessage(response);
+                    Log.e(TAG, "deleteFolder failed: " + message);
+                    Toast.makeText(requireContext(), getString(R.string.ntDeleteFailed) + ": " + message,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                if (!isAdded()) return;
+                Log.e(TAG, "deleteFolder onFailure", t);
+                Toast.makeText(requireContext(), R.string.ntConnectionError, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

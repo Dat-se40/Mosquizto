@@ -48,8 +48,9 @@ public class SelectCollectionAdapter extends RecyclerView.Adapter<SelectCollecti
         holder.tvTitle.setText(item.getTitle());
 
         String author = item.getUserName() != null ? item.getUserName() : "Me";
-        String count = item.getCount() != null ? String.valueOf(item.getCount()) : "0";
-        holder.tvDetails.setText(count + " thẻ • bởi " + author);
+        int count = item.getCount() != null ? item.getCount() : 0;
+        holder.tvDetails.setText(holder.itemView.getContext().getString(
+                R.string.tvCollectionDetails, count, author));
 
         boolean isSelected = selectedIds.contains(item.getId());
         holder.ivAction.setImageResource(isSelected ? R.drawable.ic_check : R.drawable.ic_add);
