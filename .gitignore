@@ -2,6 +2,14 @@
 .gradle/
 build/
 /*/build/
+app/build/
+app/release/
+
+# APK / artifact output (không commit)
+*.apk
+*.aab
+output-metadata.json
+baselineProfiles/
 
 # Các file cấu hình riêng của máy bạn (Chứa đường dẫn SDK)
 local.properties
