@@ -22,6 +22,7 @@ import com.example.mosquizto.Dto.response.SearchApiResponse;
 import com.example.mosquizto.Dto.response.SearchCollectionResultItem;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.SearchResultWrapper;
 
 import java.util.ArrayList;
@@ -137,8 +138,9 @@ public class OtherUserCollectionsFragment extends Fragment {
                     }
                     adapter.updateData(items);
                 } else {
-                    Toast.makeText(getContext(), "Không thể tải danh sách học phần", Toast.LENGTH_SHORT).show();
-                    Log.e("OtherUserColFrag", "Failed response: " + response.code());
+                    String message = ApiErrorHelper.extractMessage(response);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    Log.e("OtherUserColFrag", "Failed response: " + message);
                 }
             }
 
@@ -147,7 +149,7 @@ public class OtherUserCollectionsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 if (!isAdded()) return;
 
-                Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
                 Log.e("OtherUserColFrag", "API failure", t);
             }
         });

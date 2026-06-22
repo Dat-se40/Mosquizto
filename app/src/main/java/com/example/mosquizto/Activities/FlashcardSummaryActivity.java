@@ -51,11 +51,11 @@ public class FlashcardSummaryActivity extends AppCompatActivity {
         if (tvSummaryCounter != null) tvSummaryCounter.setText(total + " / " + total);
 
         if (percent >= 80) {
-            tvTitle.setText("Xuất sắc! Bạn đã học rất tốt rồi 🎉");
+            tvTitle.setText(R.string.summary_title_excellent);
         } else if (percent >= 60) {
-            tvTitle.setText("Bạn đang làm rất tuyệt! Hãy tiếp tục tập trung vào các thuật ngữ khó.");
+            tvTitle.setText(R.string.tv_summary_title);
         } else {
-            tvTitle.setText("Hãy tiếp tục luyện tập! Bạn sẽ làm tốt hơn.");
+            tvTitle.setText(R.string.summary_title_keep_practicing);
         }
 
         tvKnownCount   .setText(String.valueOf(known));

@@ -1,5 +1,6 @@
 package com.example.mosquizto.ViewModels;
 
+import android.content.Context;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,12 +14,14 @@ import com.example.mosquizto.Dto.response.StudySessionResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,8 +29,11 @@ import retrofit2.Response;
 @HiltViewModel
 public class HomeViewModel extends ViewModel {
 
+    private static final String TAG = "HomeViewModel";
+
     private final StudyApi studyApi;
     private final CollectionApi collectionApi;
+    private final Context appContext;
 
     private final MutableLiveData<List<StudySessionResponse>> _jumpBackIn = new MutableLiveData<>();
     public LiveData<List<StudySessionResponse>> jumpBackIn = _jumpBackIn;
@@ -53,19 +59,25 @@ public class HomeViewModel extends ViewModel {
     private boolean isDataLoaded = false;
     SessionManager sessionManager;
     @Inject
-    public HomeViewModel(StudyApi studyApi, CollectionApi collectionApi , SessionManager sessionManager) {
+    public HomeViewModel(StudyApi studyApi, CollectionApi collectionApi, SessionManager sessionManager,
+                         @ApplicationContext Context appContext) {
         this.studyApi = studyApi;
         this.collectionApi = collectionApi;
         this.sessionManager = sessionManager;
+        this.appContext = appContext;
     }
 
     // Kích hoạt đồng thời 3 luồng tải dữ liệu bất đồng bộ độc lập
     public void fetchAllData() {
         if (isDataLoaded) return;
+        refreshAllData();
+        isDataLoaded = true;
+    }
+
+    public void refreshAllData() {
         fetchJumpBackIn();
         fetchRecents();
         fetchRecommended();
-        isDataLoaded = true;
     }
 
     public void fetchJumpBackIn() {
@@ -74,11 +86,13 @@ public class HomeViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<List<StudySessionResponse>>> call, Response<ApiResponse<List<StudySessionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     _jumpBackIn.setValue(response.body().getData());
+                } else {
+                    Log.e(TAG, "fetchJumpBackIn failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<List<StudySessionResponse>>> call, Throwable t) {
-                Log.e("HomeViewModel", "Lỗi JumpBackIn: " + t.getMessage());
+                Log.e(TAG, "fetchJumpBackIn onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }
@@ -89,11 +103,13 @@ public class HomeViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<List<CollectionResponse>>> call, Response<ApiResponse<List<CollectionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     _recents.setValue(response.body().getData());
+                } else {
+                    Log.e(TAG, "fetchRecents failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<List<CollectionResponse>>> call, Throwable t) {
-                Log.e("HomeViewModel", "Lỗi Recents: " + t.getMessage());
+                Log.e(TAG, "fetchRecents onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }
@@ -104,11 +120,13 @@ public class HomeViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Response<ApiResponse<PageResponse<CollectionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     _recommended.setValue(response.body().getData().getContent());
+                } else {
+                    Log.e(TAG, "fetchRecommended failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
-                Log.e("HomeViewModel", "Lỗi Recommended: " + t.getMessage());
+                Log.e(TAG, "fetchRecommended onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }
@@ -122,13 +140,15 @@ public class HomeViewModel extends ViewModel {
                     if (currentList != null) {
                         List<CollectionResponse> updatedList = new ArrayList<>(currentList);
                         updatedList.removeIf(item -> item.getId().equals(id));
-                        _recents.setValue(updatedList); // Tự động cập nhật lại danh sách trên UI qua Observer
+                        _recents.setValue(updatedList);
                     }
+                } else {
+                    Log.e(TAG, "deleteRecentItem failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Log.e("HomeViewModel", "Lỗi xóa Recent: " + t.getMessage());
+                Log.e(TAG, "deleteRecentItem onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }
@@ -143,12 +163,14 @@ public class HomeViewModel extends ViewModel {
                     _mcqItems.setValue(response.body().getData());
                 } else {
                     _mcqItems.setValue(null);
+                    Log.e(TAG, "fetchItemsForQuickMcq failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {
                 _isMcqLoading.setValue(false);
                 _mcqItems.setValue(null);
+                Log.e(TAG, "fetchItemsForQuickMcq onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }
@@ -161,12 +183,14 @@ public class HomeViewModel extends ViewModel {
                 _isRandomGameLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
                     _randomGameItems.setValue(response.body().getData());
+                } else {
+                    Log.e(TAG, "fetchItemsForRandomGame failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {
                 _isRandomGameLoading.setValue(false);
-                Log.e("HomeViewModel", "Lỗi tải game ngẫu nhiên: " + t.getMessage());
+                Log.e(TAG, "fetchItemsForRandomGame onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }

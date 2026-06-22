@@ -1,5 +1,6 @@
 package com.example.mosquizto.ViewModels;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -13,8 +14,10 @@ import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +27,7 @@ import retrofit2.Response;
 public class LoginViewModel extends ViewModel {
     private final UserApi userApi;
     private final SessionManager sessionManager;
+    private final Context appContext;
 
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
     public LiveData<Boolean> isLoading = _isLoading;
@@ -45,9 +49,11 @@ public class LoginViewModel extends ViewModel {
 
 
     @Inject
-    public LoginViewModel(UserApi userApi, SessionManager sessionManager) {
+    public LoginViewModel(UserApi userApi, SessionManager sessionManager,
+                          @ApplicationContext Context appContext) {
         this.userApi = userApi;
         this.sessionManager = sessionManager;
+        this.appContext = appContext;
     }
 
     public void login(String user, String pass) {
@@ -73,14 +79,14 @@ public class LoginViewModel extends ViewModel {
                     fetchUserProfile();
                 } else {
                     _isLoading.setValue(false);
-                    _errorMessage.setValue("Sai tài khoản hoặc mật khẩu!");
+                    _errorMessage.setValue(ApiErrorHelper.extractMessage(response));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
                 _isLoading.setValue(false);
-                _errorMessage.setValue("Lỗi kết nối server! " + t.getMessage() + "\n call: " + call.toString() );
+                _errorMessage.setValue(ApiErrorHelper.networkError(appContext));
                 Log.e("LoginViewModel", "onFailure: " + t.getMessage());
             }
         });
@@ -108,14 +114,14 @@ public class LoginViewModel extends ViewModel {
                     // Báo UI biết toàn bộ quá trình (Đăng nhập + Lấy Profile) đã thành công
                     _loginSuccess.setValue(true);
                 } else {
-                    _errorMessage.setValue("Không thể lấy thông tin người dùng!");
+                    _errorMessage.setValue(ApiErrorHelper.extractMessage(response));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
                 _isLoading.setValue(false);
-                _errorMessage.setValue("Lỗi khi tải profile!");
+                _errorMessage.setValue(ApiErrorHelper.networkError(appContext));
             }
         });
     }

@@ -152,6 +152,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true" />
 
+            <!--
             <TextView
                 android:id="@+id/tvSeeAll"
                 android:layout_width="wrap_content"
@@ -162,7 +163,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:clickable="true"
-                android:focusable="true" />
+                android:focusable="true" />-->
         </RelativeLayout>
 
         <LinearLayout

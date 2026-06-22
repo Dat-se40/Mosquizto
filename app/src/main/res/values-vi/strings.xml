@@ -94,6 +94,9 @@
     <string name="settings_support_center">Trung tâm Hỗ trợ</string>
 
     <string name="settings_logout">Đăng xuất</string>
+    <string name="settings_logout_dialog_title">Đăng xuất</string>
+    <string name="settings_logout_dialog_message">Bạn có chắc muốn đăng xuất không?</string>
+    <string name="settings_logout_confirm">Đăng xuất</string>
     <string name="settings_delete_account">Xóa tài khoản</string>
     <string name="settings_version">v10.35</string>
     <string name="settings_back_description">Quay lại</string>
@@ -280,7 +283,16 @@
     <string name="hint_tap_to_flip">Chạm vào thẻ để lật</string>
     <string name="auto_scroll_is_on">Tự động cuộn thẻ đang bật</string>
     <string name="auto_scroll_is_off">Tự động cuộn thẻ đang tắt</string>
+    <string name="summary_title_excellent">Xuất sắc! Bạn đã học rất tốt rồi 🎉</string>
     <string name="tv_summary_title">Bạn đang làm rất tuyệt! Hãy tiếp tục tập trung vào các thuật ngữ khó.</string>
+    <string name="summary_title_keep_practicing">Hãy tiếp tục luyện tập! Bạn sẽ làm tốt hơn.</string>
+    <string name="settings_delete_account_dialog_title">Xóa tài khoản</string>
+    <string name="settings_delete_account_dialog_message">Hành động này không thể hoàn tác. Toàn bộ dữ liệu và bộ sưu tập của bạn sẽ bị xóa vĩnh viễn.</string>
+    <string name="settings_delete_account_confirm">Xóa</string>
+    <string name="delete_collection_dialog_title">Xóa bộ sưu tập?</string>
+    <string name="delete_collection_dialog_message">"%1$s" sẽ bị xóa vĩnh viễn.</string>
+    <string name="collection_deleted">Đã xóa bộ sưu tập</string>
+    <string name="unknown_collection">Bộ sưu tập không tên</string>
     <string name="tv_progress_label">Tiến độ của bạn</string>
     <string name="known">Đã biết</string>
     <string name="learning">Đang học</string>

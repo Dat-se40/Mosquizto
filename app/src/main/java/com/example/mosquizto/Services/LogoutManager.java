@@ -31,5 +31,5 @@ public class LogoutManager {
     public void clearSession() {
         webSocketManager.disconnect();
         sessionManager.clearSession();
-    }
+   }
 }

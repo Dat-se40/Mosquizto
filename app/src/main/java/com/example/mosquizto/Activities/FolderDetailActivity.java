@@ -27,6 +27,7 @@ import com.example.mosquizto.Dto.response.FolderResponse;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,13 +150,15 @@ public class FolderDetailActivity extends AppCompatActivity {
                     updateFolderDescriptionUi();
                     showCollections(data.getCollections());
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntCannotLoadFolder), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this,
+                            getString(R.string.ntCannotLoadFolder) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, ApiErrorHelper.networkError(FolderDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -233,13 +236,15 @@ public class FolderDetailActivity extends AppCompatActivity {
                     Toast.makeText(FolderDetailActivity.this, getString(R.string.ntUpdateFolder), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntUpdateFailed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this,
+                            getString(R.string.ntUpdateFailed) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, ApiErrorHelper.networkError(FolderDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -261,13 +266,15 @@ public class FolderDetailActivity extends AppCompatActivity {
                     Toast.makeText(FolderDetailActivity.this, getString(R.string.ntFolderDeleted), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntDeleteFailed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this,
+                            getString(R.string.ntDeleteFailed) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, ApiErrorHelper.networkError(FolderDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -286,13 +293,15 @@ public class FolderDetailActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    Toast.makeText(FolderDetailActivity.this, getString(R.string.ntDeleteFailed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FolderDetailActivity.this,
+                            getString(R.string.ntDeleteFailed) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                Toast.makeText(FolderDetailActivity.this, getString(R.string.ntConnectionError), Toast.LENGTH_SHORT).show();
+                Toast.makeText(FolderDetailActivity.this, ApiErrorHelper.networkError(FolderDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -183,16 +183,26 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     }
 
                     int count = data.getCount() != null ? data.getCount() : 0;
-                    if (author != null && collectionId != -1) {
-                        sessionManager.saveCollectionMetadata(collectionId, count, author);
+                    if (collectionId != -1) {
+                        sessionManager.saveCollectionMetadata(
+                                collectionId,
+                                count,
+                                author,
+                                data.getUserId(),
+                                data.getAuthorImgUri(),
+                                data.getTitle());
                     }
                     applyAuthorDisplay();
+                } else {
+                    Log.e(TAG, "fetchCollectionMetaData failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<CollectionResponse>> call, @NonNull Throwable t) {
                 Log.e(TAG, "fetchCollectionMetaData onFailure", t);
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -415,11 +425,15 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     originalItems = response.body().getData();
                     if (originalItems == null) originalItems = new ArrayList<>();
                     fetchStarredItemInCollection();
+                } else {
+                    Toast.makeText(StudySetDetailActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<CollectionItemResponse>>> call, @NonNull Throwable t) {
-                Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -437,7 +451,10 @@ public class StudySetDetailActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<StarredCollectionItemResponse>>> call, @NonNull Throwable t) {
+                Log.e(TAG, "fetchStarred onFailure", t);
                 mapDataAndSetupUI(new ArrayList<>());
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -495,15 +512,27 @@ public class StudySetDetailActivity extends AppCompatActivity {
 
     public void StarItem(Integer itemId) {
         collectionApi.starCollectionItem(itemId).enqueue(new Callback<ApiResponse<StarredCollectionItemResponse>>() {
-            @Override public void onResponse(@NonNull Call<ApiResponse<StarredCollectionItemResponse>> call, @NonNull Response<ApiResponse<StarredCollectionItemResponse>> response) {}
-            @Override public void onFailure(@NonNull Call<ApiResponse<StarredCollectionItemResponse>> call, @NonNull Throwable t) {}
+            @Override public void onResponse(@NonNull Call<ApiResponse<StarredCollectionItemResponse>> call, @NonNull Response<ApiResponse<StarredCollectionItemResponse>> response) {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "starItem failed: " + ApiErrorHelper.extractMessage(response));
+                }
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse<StarredCollectionItemResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "starItem onFailure", t);
+            }
         });
     }
 
     public void UStarItem(Integer itemId) {
         collectionApi.unstarCollectionItem(itemId).enqueue(new Callback<ApiResponse<Void>>() {
-            @Override public void onResponse(@NonNull Call<ApiResponse<Void>> call, @NonNull Response<ApiResponse<Void>> response) {}
-            @Override public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {}
+            @Override public void onResponse(@NonNull Call<ApiResponse<Void>> call, @NonNull Response<ApiResponse<Void>> response) {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "unstarItem failed: " + ApiErrorHelper.extractMessage(response));
+                }
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {
+                Log.e(TAG, "unstarItem onFailure", t);
+            }
         });
     }
 
@@ -582,7 +611,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
                                         R.string.msg_share_success, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(StudySetDetailActivity.this,
-                                        R.string.msg_share_failed, Toast.LENGTH_SHORT).show();
+                                        getString(R.string.msg_share_failed) + ApiErrorHelper.extractMessage(response),
+                                        Toast.LENGTH_LONG).show();
                             }
                         }
 
@@ -590,7 +620,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                         public void onFailure(@NonNull Call<ApiResponse<Void>> call,
                                               @NonNull Throwable t) {
                             Toast.makeText(StudySetDetailActivity.this,
-                                    R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                                    ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
                         }
                     });
         });
@@ -640,12 +670,15 @@ public class StudySetDetailActivity extends AppCompatActivity {
                     Toast.makeText(StudySetDetailActivity.this, R.string.msg_report_success, Toast.LENGTH_SHORT).show();
                     reportDialog.dismiss();
                 } else {
-                    Toast.makeText(StudySetDetailActivity.this, R.string.msg_report_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudySetDetailActivity.this,
+                            getString(R.string.msg_report_error) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ApiResponse<CollectionReportResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -743,7 +776,8 @@ public class StudySetDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
                 Log.e(TAG, "createFolder onFailure", t);
-                Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -755,11 +789,16 @@ public class StudySetDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Toast.makeText(StudySetDetailActivity.this, getString(R.string.msg_added_to_folder, folderName), Toast.LENGTH_SHORT).show();
                     if (dialog != null) dialog.dismiss();
+                } else {
+                    Toast.makeText(StudySetDetailActivity.this,
+                            getString(R.string.msg_failed_add_to_folder) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudySetDetailActivity.this,
+                        ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -789,7 +828,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
                             }
                         }
                     } else {
-                        tvMsg.setText(R.string.msg_failed_add_to_folder);
+                        tvMsg.setText(ApiErrorHelper.extractMessage(response));
                         layoutFolderList.addView(tvMsg);
                     }
                 }
@@ -798,7 +837,7 @@ public class StudySetDetailActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<ApiResponse<List<FolderSummaryResponse>>> call, @NonNull Throwable t) {
                 if (dialog.isShowing()) {
                     layoutFolderList.removeAllViews();
-                    tvMsg.setText(R.string.msg_network_error);
+                    tvMsg.setText(ApiErrorHelper.networkError(StudySetDetailActivity.this));
                     layoutFolderList.addView(tvMsg);
                 }
             }
@@ -823,13 +862,16 @@ public class StudySetDetailActivity extends AppCompatActivity {
                         Toast.makeText(StudySetDetailActivity.this, getString(R.string.msg_added_to_folder, folder.getName()), Toast.LENGTH_SHORT).show();
                         v.postDelayed(dialog::dismiss, 600);
                     } else {
-                        Toast.makeText(StudySetDetailActivity.this, R.string.msg_failed_add_to_folder, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudySetDetailActivity.this,
+                                getString(R.string.msg_failed_add_to_folder) + ": " + ApiErrorHelper.extractMessage(response),
+                                Toast.LENGTH_LONG).show();
                         ivStatus.setEnabled(true);
                     }
                 }
                 @Override
                 public void onFailure(@NonNull Call<ApiResponse<FolderResponse>> call, @NonNull Throwable t) {
-                    Toast.makeText(StudySetDetailActivity.this, R.string.msg_network_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudySetDetailActivity.this,
+                            ApiErrorHelper.networkError(StudySetDetailActivity.this), Toast.LENGTH_SHORT).show();
                     ivStatus.setEnabled(true);
                 }
             });

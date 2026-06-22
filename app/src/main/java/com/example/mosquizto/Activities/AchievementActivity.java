@@ -17,6 +17,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.StreakResponse;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,14 +99,14 @@ public class AchievementActivity extends AppCompatActivity {
                     }
                 } else {
                     Toast.makeText(AchievementActivity.this,
-                            "Không thể tải dữ liệu thành tựu", Toast.LENGTH_SHORT).show();
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<StreakResponse>> call, Throwable t) {
                 Toast.makeText(AchievementActivity.this,
-                        "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ApiErrorHelper.networkError(AchievementActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }

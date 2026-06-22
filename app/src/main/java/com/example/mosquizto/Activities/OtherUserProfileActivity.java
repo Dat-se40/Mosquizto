@@ -30,6 +30,7 @@ import com.example.mosquizto.Dto.response.OtherUserProfileResponse;
 import com.example.mosquizto.Dto.response.UserReportResponse;
 import com.example.mosquizto.Network.itf.UserApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -123,14 +124,16 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                     profileData = response.body().getData();
                     bindProfileData();
                 } else {
-                    Toast.makeText(OtherUserProfileActivity.this, "Không thể tải hồ sơ người dùng", Toast.LENGTH_SHORT).show();
-                    Log.e("OtherUserProfileAct", "Failed: " + response.code());
+                    Toast.makeText(OtherUserProfileActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
+                    Log.e("OtherUserProfileAct", "Failed: " + ApiErrorHelper.extractMessage(response));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<OtherUserProfileResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(OtherUserProfileActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OtherUserProfileActivity.this,
+                        ApiErrorHelper.networkError(OtherUserProfileActivity.this), Toast.LENGTH_SHORT).show();
                 Log.e("OtherUserProfileAct", "Failure loading profile", t);
             }
         });
@@ -199,7 +202,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                     profileData.setFollowed(currentFollowed);
                     profileData.setFollowersCount(currentFollowers);
                     updateFollowUI();
-                    Toast.makeText(OtherUserProfileActivity.this, "Thao tác thất bại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OtherUserProfileActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -209,7 +213,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                 profileData.setFollowed(currentFollowed);
                 profileData.setFollowersCount(currentFollowers);
                 updateFollowUI();
-                Toast.makeText(OtherUserProfileActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OtherUserProfileActivity.this,
+                        ApiErrorHelper.networkError(OtherUserProfileActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -276,13 +281,16 @@ public class OtherUserProfileActivity extends AppCompatActivity {
                     Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_success, Toast.LENGTH_SHORT).show();
                     reportDialog.dismiss();
                 } else {
-                    Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OtherUserProfileActivity.this,
+                            getString(R.string.msg_report_error) + ": " + ApiErrorHelper.extractMessage(response),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<UserReportResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(OtherUserProfileActivity.this, R.string.msg_report_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(OtherUserProfileActivity.this,
+                        ApiErrorHelper.networkError(OtherUserProfileActivity.this), Toast.LENGTH_SHORT).show();
                 Log.e("OtherUserProfileAct", "sendUserReport failed", t);
             }
         });

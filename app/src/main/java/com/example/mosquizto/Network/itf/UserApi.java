@@ -2,7 +2,6 @@ package com.example.mosquizto.Network.itf;
 
 
 import com.example.mosquizto.Dto.request.LoginRequest;
-import com.example.mosquizto.Dto.request.ResetPasswordRequest;
 import com.example.mosquizto.Dto.request.SignupRequest;
 import com.example.mosquizto.Dto.request.UpdateAvatarRequest;
 import com.example.mosquizto.Dto.request.UserReportRequest;
@@ -33,7 +32,7 @@ public interface UserApi {
     @POST("auth/login")
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
     @POST("auth/forgot-password")
-    Call<ApiResponse<String>> forgotPassword(@Body ResetPasswordRequest request);
+    Call<ApiResponse<String>> forgotPassword(@Body String email);
     @POST("auth/register")
     Call<ApiResponse<String>> signUp(@Body SignupRequest signupRequest);
     @POST("auth/logout")
@@ -85,5 +84,8 @@ Call<ApiResponse<OtherUserProfileResponse>> getUserProfile(@Path("username") Str
             @Path("reportId") Long reportId,
             @Query("status") String status
     );
+
+    @DELETE("user/delete/{userId}")
+    Call<ApiResponse<Void>> deleteUser(@Path("userId") Long userId);
 }
 

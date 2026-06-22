@@ -35,6 +35,7 @@ import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.StudyApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.CompleteSessionWorker;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.GameMode;
 import com.example.mosquizto.Util.QuestionType;
 import com.google.gson.Gson;
@@ -208,10 +209,15 @@ public class MemoryGameActivity extends AppCompatActivity {
                         generateGamePlan();
                         loadNextQuestion();
                     }
+                } else {
+                    Toast.makeText(MemoryGameActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(Call<ApiResponse<Long>> call, Throwable t) {
+                Toast.makeText(MemoryGameActivity.this,
+                        ApiErrorHelper.networkError(MemoryGameActivity.this), Toast.LENGTH_SHORT).show();
                 Log.e("DEBUG_GAME", "API Error: " + t.getMessage());
             }
         });
@@ -638,17 +644,17 @@ public class MemoryGameActivity extends AppCompatActivity {
         studyApi.completeStudySession(sessionId, bulkResults, isFullTest).enqueue(new Callback<ApiResponse<StudySessionResultResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<StudySessionResultResponse>> call, Response<ApiResponse<StudySessionResultResponse>> response) {
-                // Đánh dấu đã submit thành công để luồng onStop() ko gọi WorkManager trùng lặp nữa
                 hasSubmitted = true;
-
-                // Lưu xong xuôi mới đóng màn hình chơi game để về lại Home
+                if (!response.isSuccessful()) {
+                    Log.e("DEBUG_GAME", "completeSession failed: " + ApiErrorHelper.extractMessage(response));
+                    enqueueCompleteWorker();
+                }
                 finish();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<StudySessionResultResponse>> call, Throwable t) {
-                Log.e("DEBUG_GAME", getString(R.string.nt_direct_save_failed_fallback_to_workmanager) + t.getMessage());
-                // Nếu lỗi mạng/lỗi kết nối trực tiếp, dùng WorkManager làm cứu cánh để sync sau
+                Log.e("DEBUG_GAME", ApiErrorHelper.networkError(MemoryGameActivity.this), t);
                 enqueueCompleteWorker();
                 finish();
             }

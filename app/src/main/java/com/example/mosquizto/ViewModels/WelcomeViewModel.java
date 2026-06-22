@@ -1,6 +1,6 @@
 package com.example.mosquizto.ViewModels;
 
-import android.se.omapi.Session;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -12,10 +12,12 @@ import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Network.itf.UserApi;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,12 +36,15 @@ public class WelcomeViewModel extends ViewModel {
     private final SessionManager sessionManager ;
     private final UserApi userApi ;
     private final LogoutManager logoutManager;
+    private final Context appContext;
 
     @Inject
-    public WelcomeViewModel(SessionManager sessionManager, UserApi userApi, LogoutManager logoutManager)  {
+    public WelcomeViewModel(SessionManager sessionManager, UserApi userApi, LogoutManager logoutManager,
+                            @ApplicationContext Context appContext)  {
         this.sessionManager = sessionManager;
         this.userApi = userApi;
         this.logoutManager = logoutManager;
+        this.appContext = appContext;
     }
 //    public void onGoogleClicked() {
 //        _navigateTo.setValue("register");
@@ -66,16 +71,16 @@ public class WelcomeViewModel extends ViewModel {
                     _navigateTo.setValue("main");
                 }else
                 {
-                    //Ko có user profile do token hết hạn
-                    _errorMessage.postValue("You are not logged in");
+                    _errorMessage.postValue(ApiErrorHelper.extractMessage(response));
                     logoutManager.logout();
                     userName.setValue("");
-                    Log.e("DEBUG_WELCOME", "API Error: " + response.code());
+                    Log.e("DEBUG_WELCOME", "API Error: " + ApiErrorHelper.extractMessage(response));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                _errorMessage.postValue(ApiErrorHelper.networkError(appContext));
                 Log.e("DEBUG_WELCOME", "API Error: " + t.getMessage());
             }
         }) ;

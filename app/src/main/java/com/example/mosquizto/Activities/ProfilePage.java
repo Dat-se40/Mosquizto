@@ -33,6 +33,7 @@ import com.example.mosquizto.R;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.AvatarImageHelper;
 import com.example.mosquizto.Util.CloudinaryHelper;
 import com.google.android.material.badge.BadgeDrawable;
@@ -163,8 +164,8 @@ public class ProfilePage extends AppCompatActivity {
         findViewById(R.id.menuActivity).setOnClickListener(v ->
                 startActivity(new Intent(ProfilePage.this, NotificationActivity.class)));
 
-        findViewById(R.id.tvSeeAll).setOnClickListener(v ->
-                startActivity(new Intent(ProfilePage.this, AchievementActivity.class)));
+//        findViewById(R.id.tvSeeAll).setOnClickListener(v ->
+//                startActivity(new Intent(ProfilePage.this, AchievementActivity.class)));
 
         findViewById(R.id.cardStreakStart).setOnClickListener(v ->
                 startActivity(new Intent(ProfilePage.this, AchievementActivity.class)));
@@ -181,7 +182,10 @@ public class ProfilePage extends AppCompatActivity {
                     public void onResponse(Call<ApiResponse<OtherUserProfileResponse>> call,
                                            Response<ApiResponse<OtherUserProfileResponse>> response) {
                         if (isFinishing() || isDestroyed()) return;
-                        if (!response.isSuccessful() || response.body() == null) return;
+                        if (!response.isSuccessful() || response.body() == null) {
+                            Log.e(TAG, "loadUserProfile failed: " + ApiErrorHelper.extractMessage(response));
+                            return;
+                        }
 
                         OtherUserProfileResponse userProfile = response.body().getData();
                         if (userProfile == null) return;
@@ -235,8 +239,9 @@ public class ProfilePage extends AppCompatActivity {
                                    Response<ApiResponse<MediaSignResponse>> response) {
                 if (!response.isSuccessful() || response.body() == null || response.body().getData() == null) {
                     isUploading = false;
-                    Log.e(TAG, "Sign failed: HTTP " + response.code());
-                    Snackbar.make(root, R.string.profile_pic_upload_failed, Snackbar.LENGTH_SHORT).show();
+                    String message = ApiErrorHelper.extractMessage(response);
+                    Log.e(TAG, "Sign failed: " + message);
+                    Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -249,7 +254,7 @@ public class ProfilePage extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<MediaSignResponse>> call, Throwable t) {
                 isUploading = false;
                 Log.e(TAG, "Sign request failed", t);
-                Snackbar.make(root, R.string.profile_pic_upload_failed, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root, ApiErrorHelper.networkError(ProfilePage.this), Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -325,8 +330,8 @@ public class ProfilePage extends AppCompatActivity {
                     sessionManager.saveUserImgUri(avatarUrl);
                     Snackbar.make(root, R.string.profile_pic_upload_success, Snackbar.LENGTH_SHORT).show();
                 } else {
-                    Log.e(TAG, "PATCH /user/avatar failed: HTTP " + response.code());
-                    Snackbar.make(root, R.string.profile_pic_upload_failed, Snackbar.LENGTH_SHORT).show();
+                    Log.e(TAG, "PATCH /user/avatar failed: " + ApiErrorHelper.extractMessage(response));
+                    Snackbar.make(root, ApiErrorHelper.extractMessage(response), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -334,7 +339,7 @@ public class ProfilePage extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 isUploading = false;
                 Log.e(TAG, "PATCH /user/avatar failed", t);
-                Snackbar.make(root, R.string.profile_pic_upload_failed, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(root, ApiErrorHelper.networkError(ProfilePage.this), Snackbar.LENGTH_SHORT).show();
             }
         });
     }

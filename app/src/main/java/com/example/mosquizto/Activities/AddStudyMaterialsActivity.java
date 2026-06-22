@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import com.example.mosquizto.Dto.response.PageResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.FolderApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,13 +84,15 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
                     originalList = response.body().getData().getContent();
                     setupAdapter(originalList != null ? originalList : new ArrayList<>());
                 } else {
-                    Toast.makeText(AddStudyMaterialsActivity.this, "Không thể tải học phần", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddStudyMaterialsActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
-                Toast.makeText(AddStudyMaterialsActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddStudyMaterialsActivity.this,
+                        ApiErrorHelper.networkError(AddStudyMaterialsActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -152,12 +156,15 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
                 public void onResponse(Call<ApiResponse<FolderResponse>> call, Response<ApiResponse<FolderResponse>> response) {
                     if (response.isSuccessful()) {
                         successCount[0]++;
+                    } else {
+                        Log.e("AddStudyMaterials", "addCollection failed: " + ApiErrorHelper.extractMessage(response));
                     }
                     checkIfDone(++completedCount[0], successCount[0], total);
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse<FolderResponse>> call, Throwable t) {
+                    Log.e("AddStudyMaterials", "addCollection onFailure", t);
                     checkIfDone(++completedCount[0], successCount[0], total);
                 }
             });
@@ -173,7 +180,7 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
         } else {
             btnConfirmAdd.setEnabled(true);
             btnConfirmAdd.setText("Thêm " + total + " mục");
-            Toast.makeText(this, "Thêm học phần thất bại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, ApiErrorHelper.networkError(this), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -6,6 +6,7 @@ import com.example.mosquizto.Util.ReportStatus;
 public class CollectionReportResponse implements NotificationWrapper {
     private Integer id;
     private Integer collectionId ;
+    private Integer reporterId;
     private Integer reportedId ;
     private String reason;
     private String description;
@@ -29,6 +30,14 @@ public class CollectionReportResponse implements NotificationWrapper {
 
     public void setCollectionId(Integer collectionId) {
         this.collectionId = collectionId;
+    }
+
+    public Integer getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(Integer reporterId) {
+        this.reporterId = reporterId;
     }
 
     public Integer getReportedId() {

@@ -24,6 +24,7 @@ import com.example.mosquizto.Dto.response.UserResponse;
 import com.example.mosquizto.Network.itf.UserApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.SearchResultWrapper;
 import com.google.android.material.tabs.TabLayout;
 
@@ -191,7 +192,8 @@ public class FollowListActivity extends AppCompatActivity {
                     showResults(wrappers);
                 } else {
                     showResults(new ArrayList<>());
-                    Toast.makeText(FollowListActivity.this, "Không thể tải danh sách", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowListActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -202,7 +204,8 @@ public class FollowListActivity extends AppCompatActivity {
                 if (isFinishing()) return;
 
                 showResults(new ArrayList<>());
-                Toast.makeText(FollowListActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FollowListActivity.this,
+                        ApiErrorHelper.networkError(FollowListActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }

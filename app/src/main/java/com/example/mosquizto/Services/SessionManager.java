@@ -21,8 +21,11 @@ public class SessionManager {
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String PREFIX_COLLECTION_COUNT = "COLLECTION_COUNT_";
     private static final String PREFIX_COLLECTION_AUTHOR = "COLLECTION_AUTHOR_";
+    private static final String PREFIX_COLLECTION_AUTHOR_ID = "COLLECTION_AUTHOR_ID_";
+    private static final String PREFIX_COLLECTION_AUTHOR_IMG = "COLLECTION_AUTHOR_IMG_";
     private static final String KEY_IMAGE_LINK = "image_link" ;
     private static final String PREFIX_COLLECTION_TITLE = "COLLECTION_TITLE_";
+    private static final String PREFIX_USER_AVATAR = "USER_AVATAR_";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private String accessToken;
@@ -57,11 +60,46 @@ public class SessionManager {
     }
 
     public void saveCollectionMetadata(int collectionId, int count, String author) {
+        saveCollectionMetadata(collectionId, count, author, null, null, null);
+    }
+
+    public void saveCollectionMetadata(int collectionId, int count, String author,
+                                       Long authorId, String authorImgUri, String title) {
         editor.putInt(PREFIX_COLLECTION_COUNT + collectionId, count);
         if (author != null) {
             editor.putString(PREFIX_COLLECTION_AUTHOR + collectionId, author);
         }
+        if (authorId != null) {
+            editor.putLong(PREFIX_COLLECTION_AUTHOR_ID + collectionId, authorId);
+            saveUserAvatar(authorId, authorImgUri);
+        }
+        if (authorImgUri != null) {
+            editor.putString(PREFIX_COLLECTION_AUTHOR_IMG + collectionId, authorImgUri);
+        }
+        if (title != null) {
+            editor.putString(PREFIX_COLLECTION_TITLE + collectionId, title);
+        }
         editor.apply();
+    }
+
+    public Long getCollectionAuthorId(int collectionId) {
+        long id = sharedPreferences.getLong(PREFIX_COLLECTION_AUTHOR_ID + collectionId, -1L);
+        return id >= 0 ? id : null;
+    }
+
+    public String getCollectionAuthorImgUri(int collectionId) {
+        return sharedPreferences.getString(PREFIX_COLLECTION_AUTHOR_IMG + collectionId, null);
+    }
+
+    public void saveUserAvatar(long userId, String imgUri) {
+        if (imgUri != null && !imgUri.trim().isEmpty()) {
+            editor.putString(PREFIX_USER_AVATAR + userId, imgUri);
+            editor.apply();
+        }
+    }
+
+    public String getUserAvatar(long userId) {
+        return sharedPreferences.getString(PREFIX_USER_AVATAR + userId, null);
     }
 
     public int getCollectionCount(int collectionId) {

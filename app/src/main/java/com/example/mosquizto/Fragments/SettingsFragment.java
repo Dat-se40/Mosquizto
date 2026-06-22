@@ -12,21 +12,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mosquizto.Activities.ResetPass;
 import com.example.mosquizto.Activities.WelcomeActivity;
+import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Models.User;
 import com.example.mosquizto.Network.WebSocketManager;
+import com.example.mosquizto.Network.itf.UserApi;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Services.LocalCacheClearManager;
 import com.example.mosquizto.Services.LogoutManager;
 import com.example.mosquizto.Services.SessionManager;
 import com.example.mosquizto.Util.AboutDialogHelper;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.LocaleManager;
 import com.example.mosquizto.Util.ThemeManager;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import android.widget.Toast;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @AndroidEntryPoint
 public class SettingsFragment extends Fragment {
@@ -42,6 +51,9 @@ public class SettingsFragment extends Fragment {
 
     @Inject
     LocalCacheClearManager localCacheClearManager;
+
+    @Inject
+    UserApi userApi;
 
     private AlertDialog progressDialog;
 
@@ -110,6 +122,11 @@ public class SettingsFragment extends Fragment {
         View itemStorage = view.findViewById(R.id.itemStorage);
         if (itemStorage != null) {
             itemStorage.setOnClickListener(v -> showClearCacheDialog());
+        }
+
+        View itemPassword = view.findViewById(R.id.itemPassword);
+        if (itemPassword != null) {
+            itemPassword.setOnClickListener(v -> openForgotPassword());
         }
 
         // Xóa tài khoản
@@ -206,28 +223,81 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    private void openForgotPassword() {
+        Intent intent = new Intent(requireContext(), ResetPass.class);
+        User currentUser = sessionManager.getCurrUser();
+        if (currentUser != null && currentUser.getEmail() != null && !currentUser.getEmail().trim().isEmpty()) {
+            intent.putExtra(getString(R.string.intent_key_email), currentUser.getEmail().trim());
+        }
+        startActivity(intent);
+    }
+
     private void showLogoutDialog() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Đăng xuất")
-                .setMessage("Bạn có chắc muốn đăng xuất không?")
-                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                .setTitle(R.string.settings_logout_dialog_title)
+                .setMessage(R.string.settings_logout_dialog_message)
+                .setPositiveButton(R.string.settings_logout_confirm, (dialog, which) -> {
                     logoutManager.logout();
                     navigateToWelcome();
                 })
-                .setNegativeButton("Huỷ", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
     private void showDeleteDialog() {
+        if (!isAdded()) return;
+
+        User currentUser = sessionManager.getCurrUser();
+        if (currentUser == null || currentUser.getId() == null) {
+            Toast.makeText(requireContext(), R.string.DialogError, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         new AlertDialog.Builder(requireContext())
-                .setTitle("Xóa tài khoản")
-                .setMessage("Hành động này không thể hoàn tác. Toàn bộ dữ liệu sẽ bị xóa vĩnh viễn.")
-                .setPositiveButton("Xóa", (dialog, which) -> {
+                .setTitle(R.string.settings_delete_account_dialog_title)
+                .setMessage(R.string.settings_delete_account_dialog_message)
+                .setPositiveButton(R.string.settings_delete_account_confirm, (dialog, which) ->
+                        performDeleteAccount(currentUser.getId()))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void performDeleteAccount(Long userId) {
+        if (!isAdded()) return;
+
+        View progressView = getLayoutInflater().inflate(R.layout.dialog_clear_cache_progress, null);
+        progressDialog = new AlertDialog.Builder(requireContext())
+                .setView(progressView)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        userApi.deleteUser(userId).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (!isAdded()) return;
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                if (response.isSuccessful()) {
                     logoutManager.logout();
                     navigateToWelcome();
-                })
-                .setNegativeButton("Huỷ", null)
-                .show();
+                } else {
+                    Toast.makeText(requireContext(),
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                if (!isAdded()) return;
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(requireContext(),
+                        ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void navigateToWelcome() {

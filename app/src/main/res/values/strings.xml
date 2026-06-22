@@ -97,6 +97,9 @@
     <string name="settings_support_center">Help center</string>
 
     <string name="settings_logout">Log out</string>
+    <string name="settings_logout_dialog_title">Log out</string>
+    <string name="settings_logout_dialog_message">Are you sure you want to log out?</string>
+    <string name="settings_logout_confirm">Log out</string>
     <string name="settings_delete_account">Delete account</string>
     <string name="settings_version">v10.35</string>
     <string name="settings_back_description">Back</string>
@@ -288,7 +291,16 @@
     <string name="hint_tap_to_flip">Tap to flip</string>
     <string name="auto_scroll_is_on">Auto-scroll is on</string>
     <string name="auto_scroll_is_off">Auto-scroll is off</string>
+    <string name="summary_title_excellent">Excellent! You studied really well 🎉</string>
     <string name="tv_summary_title">You are doing great! Keep focusing on the hard terms.</string>
+    <string name="summary_title_keep_practicing">Keep practicing! You will do better.</string>
+    <string name="settings_delete_account_dialog_title">Delete account</string>
+    <string name="settings_delete_account_dialog_message">This action cannot be undone. All your data and collections will be permanently deleted.</string>
+    <string name="settings_delete_account_confirm">Delete</string>
+    <string name="delete_collection_dialog_title">Delete collection?</string>
+    <string name="delete_collection_dialog_message">"%1$s" will be permanently deleted.</string>
+    <string name="collection_deleted">Collection deleted</string>
+    <string name="unknown_collection">Untitled collection</string>
     <string name="tv_progress_label">Your progress</string>
     <string name="known">Learned</string>
     <string name="learning">Learning</string>
@@ -345,6 +357,7 @@
     <string name="intent_key_collection_title" translatable="false">COLLECTION_TITLE</string>
     <string name="intent_key_author" translatable="false">AUTHOR</string>
     <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
+    <string name="intent_key_email" translatable="false">USER_EMAIL</string>
 
     <string name="tvTotalCardsCount">%1$d terms</string>
     <string name="editStudySet">Edit set</string>

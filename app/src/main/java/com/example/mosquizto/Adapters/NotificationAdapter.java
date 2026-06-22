@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,7 +177,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             followHolder.tvFollowTime.setVisibility(View.GONE);
         }
 
-        AvatarImageHelper.loadInto(followHolder.ivFollowerAvatar, follow.getFollowerImgUri());
+        AvatarImageHelper.loadInto(followHolder.ivFollowerAvatar, resolveFollowerAvatar(follow));
+    }
+
+    private String resolveFollowerAvatar(FollowNotificationResponse follow) {
+        if (!TextUtils.isEmpty(follow.getFollowerImgUri())) {
+            return follow.getFollowerImgUri();
+        }
+        if (sessionManager != null && follow.getFollowerId() != null) {
+            return sessionManager.getUserAvatar(follow.getFollowerId());
+        }
+        return null;
     }
 
     private void bindUserReport(UserReportViewHolder reportHolder, UserReportResponse report, Context context, int colorInt, int position) {

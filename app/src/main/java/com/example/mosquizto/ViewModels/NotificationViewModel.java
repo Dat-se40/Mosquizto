@@ -1,5 +1,6 @@
 package com.example.mosquizto.ViewModels;
 
+import android.content.Context;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,6 +15,8 @@ import com.example.mosquizto.Network.WebSocketManager;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.NotificationApi;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Services.SessionManager;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.NotificationType;
 import com.example.mosquizto.Util.NotificationWrapper;
 
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +39,8 @@ public class NotificationViewModel extends ViewModel {
     private final UserApi userApi;
     private final WebSocketManager webSocketManager;
     private final NotificationApi notificationApi;
+    private final SessionManager sessionManager;
+    private final Context appContext;
 
     private final MutableLiveData<List<NotificationWrapper>> _notifications = new MutableLiveData<>();
     public LiveData<List<NotificationWrapper>> notifications = _notifications;
@@ -44,6 +50,9 @@ public class NotificationViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
     public LiveData<Boolean> isLoading = _isLoading;
+
+    private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
+    public LiveData<String> errorMessage = _errorMessage;
 
     private List<ShareCollectionResponse> currentInvites = new ArrayList<>();
     private List<CollectionReportResponse> currentReports = new ArrayList<>();
@@ -64,12 +73,16 @@ public class NotificationViewModel extends ViewModel {
             CollectionApi collectionApi,
             UserApi userApi,
             WebSocketManager webSocketManager,
-            NotificationApi notificationApi
+            NotificationApi notificationApi,
+            SessionManager sessionManager,
+            @ApplicationContext Context appContext
     ) {
         this.collectionApi = collectionApi;
         this.userApi = userApi;
         this.webSocketManager = webSocketManager;
         this.notificationApi = notificationApi;
+        this.sessionManager = sessionManager;
+        this.appContext = appContext;
         webSocketManager.getForceRefreshTrigger().observeForever(refreshObserver);
     }
 
@@ -102,13 +115,15 @@ public class NotificationViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<List<ShareCollectionResponse>>> call, Response<ApiResponse<List<ShareCollectionResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     currentInvites = response.body().getData() != null ? response.body().getData() : new ArrayList<>();
+                } else {
+                    Log.e(TAG, "fetchInvitations failed: " + ApiErrorHelper.extractMessage(response));
                 }
                 onRequestCompleted();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<ShareCollectionResponse>>> call, Throwable t) {
-                Log.e(TAG, "fetchInvitations onFailure", t);
+                Log.e(TAG, "fetchInvitations onFailure: " + ApiErrorHelper.networkError(appContext), t);
                 onRequestCompleted();
             }
         });
@@ -120,13 +135,15 @@ public class NotificationViewModel extends ViewModel {
             public void onResponse(Call<ApiResponse<List<CollectionReportResponse>>> call, Response<ApiResponse<List<CollectionReportResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     currentReports = response.body().getData() != null ? response.body().getData() : new ArrayList<>();
+                } else {
+                    Log.e(TAG, "fetchReports failed: " + ApiErrorHelper.extractMessage(response));
                 }
                 onRequestCompleted();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<CollectionReportResponse>>> call, Throwable t) {
-                Log.e(TAG, "fetchReports onFailure", t);
+                Log.e(TAG, "fetchReports onFailure: " + ApiErrorHelper.networkError(appContext), t);
                 onRequestCompleted();
             }
         });
@@ -139,13 +156,16 @@ public class NotificationViewModel extends ViewModel {
                                    Response<ApiResponse<List<FollowNotificationResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     currentFollows = response.body().getData() != null ? response.body().getData() : new ArrayList<>();
+                    cacheFollowerAvatars(currentFollows);
+                } else {
+                    Log.e(TAG, "fetchFollowNotifications failed: " + ApiErrorHelper.extractMessage(response));
                 }
                 onRequestCompleted();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<FollowNotificationResponse>>> call, Throwable t) {
-                Log.e(TAG, "fetchFollowNotifications onFailure", t);
+                Log.e(TAG, "fetchFollowNotifications onFailure: " + ApiErrorHelper.networkError(appContext), t);
                 onRequestCompleted();
             }
         });
@@ -158,16 +178,27 @@ public class NotificationViewModel extends ViewModel {
                                    Response<ApiResponse<List<UserReportResponse>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     currentUserReports = response.body().getData() != null ? response.body().getData() : new ArrayList<>();
+                } else {
+                    Log.e(TAG, "fetchUserReports failed: " + ApiErrorHelper.extractMessage(response));
                 }
                 onRequestCompleted();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<UserReportResponse>>> call, Throwable t) {
-                Log.e(TAG, "fetchUserReports onFailure", t);
+                Log.e(TAG, "fetchUserReports onFailure: " + ApiErrorHelper.networkError(appContext), t);
                 onRequestCompleted();
             }
         });
+    }
+
+    private void cacheFollowerAvatars(List<FollowNotificationResponse> follows) {
+        if (follows == null || sessionManager == null) return;
+        for (FollowNotificationResponse follow : follows) {
+            if (follow.getFollowerId() != null && follow.getFollowerImgUri() != null) {
+                sessionManager.saveUserAvatar(follow.getFollowerId(), follow.getFollowerImgUri());
+            }
+        }
     }
 
     private synchronized void onRequestCompleted() {
@@ -193,6 +224,7 @@ public class NotificationViewModel extends ViewModel {
                 if (invite != null && invite.getCollectionId() != null
                         && invite.getTitle() != null && !invite.getTitle().trim().isEmpty()
                         && invite.getInviterUsername() != null) {
+                    sessionManager.saveCollectionTitle(invite.getCollectionId(), invite.getTitle());
                     Long notifId = webSocketManager.getNotificationIdForReference(
                             NotificationType.COLLECTION_SHARED.name(),
                             invite.getCollectionId().longValue());
@@ -204,10 +236,10 @@ public class NotificationViewModel extends ViewModel {
 
         if (currentReports != null) {
             for (CollectionReportResponse report : currentReports) {
-                if (report != null && report.getId() != null && report.getCollectionId() != null) {
+                if (report != null && report.getId() != null && report.getReporterId() != null) {
                     Long notifId = webSocketManager.getNotificationIdForReference(
                             NotificationType.COLLECTION_REPORTED.name(),
-                            report.getCollectionId().longValue());
+                            report.getReporterId().longValue());
                     report.setNotificationId(notifId);
                     mixedList.add(report);
                 }
@@ -216,11 +248,10 @@ public class NotificationViewModel extends ViewModel {
 
         if (currentFollows != null) {
             for (FollowNotificationResponse follow : currentFollows) {
-                if (follow != null && follow.getFollowerId() != null) {
-                    Long refId = follow.getId() != null ? follow.getId() : follow.getFollowerId();
+                if (follow != null && follow.getId() != null) {
                     Long notifId = webSocketManager.getNotificationIdForReference(
                             NotificationType.HAS_FOLLOWER.name(),
-                            refId);
+                            follow.getId());
                     follow.setNotificationId(notifId);
                     mixedList.add(follow);
                 }
@@ -229,10 +260,10 @@ public class NotificationViewModel extends ViewModel {
 
         if (currentUserReports != null) {
             for (UserReportResponse report : currentUserReports) {
-                if (report != null && report.getId() != null) {
+                if (report != null && report.getId() != null && report.getReporterId() != null) {
                     Long notifId = webSocketManager.getNotificationIdForReference(
                             NotificationType.USER_REPORTED.name(),
-                            report.getId().longValue());
+                            report.getReporterId().longValue());
                     report.setNotificationId(notifId);
                     mixedList.add(report);
                 }
@@ -250,13 +281,18 @@ public class NotificationViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 _isLoading.postValue(false);
-                markAsRead(invite);
-                removeFromList(invite);
+                if (response.isSuccessful()) {
+                    markAsRead(invite);
+                    removeFromList(invite);
+                } else {
+                    _errorMessage.postValue(ApiErrorHelper.extractMessage(response));
+                }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 _isLoading.postValue(false);
+                _errorMessage.postValue(ApiErrorHelper.networkError(appContext));
             }
         });
     }
@@ -268,13 +304,18 @@ public class NotificationViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 _isLoading.postValue(false);
-                markAsRead(report);
-                removeFromList(report);
+                if (response.isSuccessful()) {
+                    markAsRead(report);
+                    removeFromList(report);
+                } else {
+                    _errorMessage.postValue(ApiErrorHelper.extractMessage(response));
+                }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 _isLoading.postValue(false);
+                _errorMessage.postValue(ApiErrorHelper.networkError(appContext));
             }
         });
     }
@@ -286,13 +327,18 @@ public class NotificationViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 _isLoading.postValue(false);
-                markAsRead(report);
-                removeFromList(report);
+                if (response.isSuccessful()) {
+                    markAsRead(report);
+                    removeFromList(report);
+                } else {
+                    _errorMessage.postValue(ApiErrorHelper.extractMessage(response));
+                }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 _isLoading.postValue(false);
+                _errorMessage.postValue(ApiErrorHelper.networkError(appContext));
             }
         });
     }
@@ -313,30 +359,42 @@ public class NotificationViewModel extends ViewModel {
         notificationApi.markAsRead(notifId).enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
-                if (!response.isSuccessful()) return;
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "markAsRead failed: " + ApiErrorHelper.extractMessage(response));
+                    return;
+                }
 
                 if (item instanceof ShareCollectionResponse) {
                     webSocketManager.removeNotificationFromMap(
                             NotificationType.COLLECTION_SHARED.name(),
                             ((ShareCollectionResponse) item).getCollectionId().longValue());
                 } else if (item instanceof CollectionReportResponse) {
-                    webSocketManager.removeNotificationFromMap(
-                            NotificationType.COLLECTION_REPORTED.name(),
-                            ((CollectionReportResponse) item).getCollectionId().longValue());
+                    CollectionReportResponse report = (CollectionReportResponse) item;
+                    if (report.getReporterId() != null) {
+                        webSocketManager.removeNotificationFromMap(
+                                NotificationType.COLLECTION_REPORTED.name(),
+                                report.getReporterId().longValue());
+                    }
                 } else if (item instanceof FollowNotificationResponse) {
                     FollowNotificationResponse follow = (FollowNotificationResponse) item;
-                    Long refId = follow.getId() != null ? follow.getId() : follow.getFollowerId();
-                    webSocketManager.removeNotificationFromMap(NotificationType.HAS_FOLLOWER.name(), refId);
+                    if (follow.getId() != null) {
+                        webSocketManager.removeNotificationFromMap(
+                                NotificationType.HAS_FOLLOWER.name(), follow.getId());
+                    }
                 } else if (item instanceof UserReportResponse) {
-                    webSocketManager.removeNotificationFromMap(
-                            NotificationType.USER_REPORTED.name(),
-                            ((UserReportResponse) item).getId().longValue());
+                    UserReportResponse report = (UserReportResponse) item;
+                    if (report.getReporterId() != null) {
+                        webSocketManager.removeNotificationFromMap(
+                                NotificationType.USER_REPORTED.name(),
+                                report.getReporterId().longValue());
+                    }
                 }
                 Log.d(TAG, "Mark as read: " + notifId);
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.e(TAG, "markAsRead onFailure: " + ApiErrorHelper.networkError(appContext), t);
             }
         });
     }

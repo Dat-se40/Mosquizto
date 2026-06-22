@@ -144,7 +144,7 @@ public class CreateFolderDialog extends DialogFragment {
 
                 btnSave.setEnabled(true);
                 Log.e(TAG, "createFolder onFailure", t);
-                Toast.makeText(requireContext(), R.string.ntConnectionError, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
             }
         });
     }

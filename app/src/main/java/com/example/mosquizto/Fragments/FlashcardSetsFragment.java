@@ -1,5 +1,6 @@
 package com.example.mosquizto.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.example.mosquizto.MainActivity;
 import com.example.mosquizto.Models.Collection;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,10 @@ public class FlashcardSetsFragment extends Fragment {
                 if(mainActivity != null) mainActivity.GoToStudySetActivity(getContext(),item);
             }
         });
+        if (sessionManager.getCurrUser() != null) {
+            adapter.setCurrentUsername(sessionManager.getCurrUser().getUsername());
+        }
+        adapter.setDeleteListener(this::confirmDeleteCollection);
         rv.setAdapter(adapter);
 
         // =========== XỬ LÝ TEXTVIEW BẬT MENU THẢ XUỐNG ===========
@@ -121,8 +127,15 @@ public class FlashcardSetsFragment extends Fragment {
                     if (remoteList != null) {
                         for (CollectionResponse col : remoteList) {
                             if (col.getId() != null) {
-                                sessionManager.saveCollectionCount(col.getId(), col.getCount() != null ? col.getCount() : 0);
-                                sessionManager.saveCollectionTitle(col.getId(), col.getTitle() != null ? col.getTitle() : "UNKNOW");
+                                int count = col.getCount() != null ? col.getCount() : 0;
+                                String title = col.getTitle() != null ? col.getTitle() : "UNKNOW";
+                                sessionManager.saveCollectionMetadata(
+                                        col.getId(),
+                                        count,
+                                        col.getUserName(),
+                                        col.getUserId(),
+                                        col.getAuthorImgUri(),
+                                        title);
                             }
                         }
                     }
@@ -131,15 +144,16 @@ public class FlashcardSetsFragment extends Fragment {
                     adapter.setCollectionList(remoteList);
                     cacheCollectionCounts(getContext(), remoteList);
                 } else {
-                    Toast.makeText(getContext(), "Không thể tải bộ thẻ", Toast.LENGTH_SHORT).show();
-                    Log.e("API_ERROR", "Code: " + response.code() + "\n" + response);
+                    String message = ApiErrorHelper.extractMessage(response);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    Log.e("API_ERROR", "Code: " + response.code() + " " + message);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<PageResponse<CollectionResponse>>> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
                 Log.e("API_ERROR", t.getMessage(), t);
             }
         });
@@ -198,5 +212,48 @@ public class FlashcardSetsFragment extends Fragment {
 
         // Cập nhật danh sách hiển thị lên RecyclerView
         adapter.setCollectionList(filteredList);
+    }
+
+    private void confirmDeleteCollection(CollectionResponse item, int position) {
+        if (!isAdded() || item == null || item.getId() == null) return;
+
+        String title = item.getTitle() != null ? item.getTitle() : getString(R.string.unknown_collection);
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_collection_dialog_title)
+                .setMessage(getString(R.string.delete_collection_dialog_message, title))
+                .setPositiveButton(R.string.delete, (dialog, which) -> deleteCollection(item, position))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void deleteCollection(CollectionResponse item, int position) {
+        if (!isAdded() || item.getId() == null) return;
+
+        swipeRefreshLayout.setRefreshing(true);
+        collectionApi.deleteCollection(item.getId()).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Void>> call,
+                                   @NonNull Response<ApiResponse<Void>> response) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (!isAdded()) return;
+
+                if (response.isSuccessful()) {
+                    if (originalList != null) {
+                        originalList.removeIf(c -> c.getId() != null && c.getId().equals(item.getId()));
+                    }
+                    adapter.removeItem(position);
+                    Toast.makeText(getContext(), R.string.collection_deleted, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (!isAdded()) return;
+                Toast.makeText(getContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

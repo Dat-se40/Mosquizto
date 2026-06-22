@@ -20,6 +20,7 @@ import com.example.mosquizto.Dto.response.ApiResponse;
 import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.R;
 import com.example.mosquizto.Network.itf.CollectionApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,14 +132,16 @@ public class CreateCollectionActivity extends AppCompatActivity {
                     createAllItemsSequentially(0);
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(CreateCollectionActivity.this, "Lỗi tạo học phần", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateCollectionActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<Integer>> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
-                Toast.makeText(CreateCollectionActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateCollectionActivity.this,
+                        ApiErrorHelper.networkError(CreateCollectionActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -165,11 +168,15 @@ public class CreateCollectionActivity extends AppCompatActivity {
         collectionApi.createCollectionItem(item).enqueue(new Callback<ApiResponse<CollectionItemResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<CollectionItemResponse>> call, Response<ApiResponse<CollectionItemResponse>> response) {
+                if (!response.isSuccessful()) {
+                    Log.e("CreateCollection", "createItem failed: " + ApiErrorHelper.extractMessage(response));
+                }
                 createAllItemsSequentially(index + 1);
             }
 
             @Override
             public void onFailure(Call<ApiResponse<CollectionItemResponse>> call, Throwable t) {
+                Log.e("CreateCollection", "createItem onFailure", t);
                 createAllItemsSequentially(index + 1);
             }
         });

@@ -27,8 +27,10 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -58,6 +60,7 @@ public class WebSocketManager {
     private final Gson gson;
 
     private final Map<String, Long> unreadNotificationMap = new HashMap<>();
+    private final Set<Long> seenNotificationIds = new HashSet<>();
     private boolean pushNotificationsEnabled;
 
     @Inject
@@ -150,13 +153,23 @@ public class WebSocketManager {
                 if (incomingNotifs != null && !incomingNotifs.isEmpty()) {
 
                     int newItems = 0;
+                    List<NotificationResponse> genuinelyNew = new ArrayList<>();
+
                     for (NotificationResponse notif : incomingNotifs) {
-                        if (notif.getNotificationType() != null && notif.getReferenceId() != null) {
-                            String key = getNotificationKey(notif.getNotificationType().name(), notif.getReferenceId());
-                            if (!unreadNotificationMap.containsKey(key)) {
-                                newItems++;
-                            }
-                            unreadNotificationMap.put(key, notif.getId());
+                        if (notif.getId() == null) continue;
+
+                        boolean isNew = !seenNotificationIds.contains(notif.getId());
+                        if (isNew) {
+                            newItems++;
+                            genuinelyNew.add(notif);
+                            seenNotificationIds.add(notif.getId());
+                        }
+
+                        if (notif.getNotificationType() != null) {
+                            String mapKey = notif.getReferenceId() != null
+                                    ? getNotificationKey(notif.getNotificationType().name(), notif.getReferenceId())
+                                    : "NOTIF_" + notif.getId();
+                            unreadNotificationMap.put(mapKey, notif.getId());
                         }
                     }
 
@@ -168,11 +181,12 @@ public class WebSocketManager {
                     } else if (newItems > 0) {
                         updateNotificationCount(newItems);
 
-                        for (NotificationResponse notif : incomingNotifs) {
+                        for (NotificationResponse notif : genuinelyNew) {
                             handleNewIncomingNotification(notif);
+                            if (notif.getMessage() != null && !notif.getMessage().isEmpty()) {
+                                _notifications.postValue(notif.getMessage());
+                            }
                         }
-
-                        _notifications.postValue(incomingNotifs.get(0).getMessage());
                     }
                 }
             } catch (Exception e) {
@@ -257,6 +271,7 @@ public class WebSocketManager {
 
         hasReceivedInitialBatch = false;
         unreadNotificationMap.clear();
+        seenNotificationIds.clear();
 
         // Xóa số đếm thông báo trên icon
         editor.putInt(KEY_COUNT, 0).apply();

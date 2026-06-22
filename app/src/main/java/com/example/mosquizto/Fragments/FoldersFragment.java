@@ -127,7 +127,9 @@ public class FoldersFragment extends Fragment {
                     showFolders(folders != null ? folders : new ArrayList<>());
                 } else {
                     showFolders(new ArrayList<>());
-                    Toast.makeText(requireContext(), "Không thể tải danh sách thư mục", Toast.LENGTH_SHORT).show();
+                    String message = ApiErrorHelper.extractMessage(response);
+                    Log.e(TAG, "loadFolders failed: " + message);
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -137,7 +139,8 @@ public class FoldersFragment extends Fragment {
 
                 showLoading(false);
                 showFolders(new ArrayList<>());
-                Toast.makeText(requireContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "loadFolders onFailure", t);
+                Toast.makeText(requireContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -221,7 +224,7 @@ public class FoldersFragment extends Fragment {
             public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 if (!isAdded()) return;
                 Log.e(TAG, "deleteFolder onFailure", t);
-                Toast.makeText(requireContext(), R.string.ntConnectionError, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), ApiErrorHelper.networkError(requireContext()), Toast.LENGTH_SHORT).show();
             }
         });
     }

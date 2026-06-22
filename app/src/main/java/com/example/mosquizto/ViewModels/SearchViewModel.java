@@ -16,6 +16,7 @@ import com.example.mosquizto.Models.RecentSearchItem;
 import com.example.mosquizto.Dto.response.SearchApiResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.Network.itf.UserApi;
+import com.example.mosquizto.Util.ApiErrorHelper;
 import com.example.mosquizto.Util.SearchResultWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -77,12 +78,14 @@ public class SearchViewModel extends ViewModel {
     private static final long DEBOUNCE_DELAY_MS = 300;
 
     private final UserApi userApi ;
+    private final Context appContext;
 
 
     @Inject
     public SearchViewModel(CollectionApi collectionApi, @ApplicationContext Context context,
                             UserApi userApi) {
         this.collectionApi = collectionApi;
+        this.appContext = context;
         // Khởi tạo SharedPreferences và Gson
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
@@ -236,13 +239,14 @@ public class SearchViewModel extends ViewModel {
                         }
                     } else {
                         _searchState.setValue(SearchState.EMPTY);
+                        _errorMessage.setValue(ApiErrorHelper.extractMessage(response));
                     }
                 }
                 @Override
                 public void onFailure(Call<SearchApiResponse> call, Throwable t) {
                     _isLoading.setValue(false);
                     _searchState.setValue(SearchState.EMPTY);
-                    _errorMessage.setValue("Lỗi kết nối");
+                    _errorMessage.setValue(ApiErrorHelper.networkError(appContext));
                 }
             });
         } else {
@@ -265,14 +269,17 @@ public class SearchViewModel extends ViewModel {
                             _searchResults.setValue(new ArrayList<>());
                             _searchState.setValue(SearchState.EMPTY);
                         }
-                    }else _searchState.setValue(SearchState.EMPTY);
+                    }else {
+                        _searchState.setValue(SearchState.EMPTY);
+                        _errorMessage.setValue(ApiErrorHelper.extractMessage(response));
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse<PageResponse<UserResponse>>> call, Throwable t) {
                     _isLoading.setValue(false);
                     _searchState.setValue(SearchState.EMPTY);
-                    _errorMessage.setValue("Lỗi kết nối");
+                    _errorMessage.setValue(ApiErrorHelper.networkError(appContext));
                 }
             });
 

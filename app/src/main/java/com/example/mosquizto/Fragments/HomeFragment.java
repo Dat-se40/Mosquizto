@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mosquizto.Activities.MemoryGameActivity;
 import com.example.mosquizto.Activities.ProfilePage;
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
     SessionManager sessionManager;
 
     private RecyclerView rvJumpBackIn, rvRecents, rvBasedOnRecent;
+    private SwipeRefreshLayout swipeRefreshHome;
     private JumpBackInAdapter jumpAdapter;
     private RecentAdapter recentAdapter;
     private BasedOnRecentAdapter basedAdapter;
@@ -92,6 +94,7 @@ public class HomeFragment extends Fragment {
         initQuickMcqViews(view);
         initRandomGameViews(view);
         initViewModel();
+        setupSwipeRefresh(view);
 
         return view;
     }
@@ -112,12 +115,32 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void setupSwipeRefresh(View view) {
+        swipeRefreshHome = view.findViewById(R.id.swipe_refresh_home);
+        if (swipeRefreshHome == null) return;
+
+        swipeRefreshHome.setOnRefreshListener(() -> {
+            if (viewModel != null) {
+                viewModel.refreshAllData();
+            } else {
+                swipeRefreshHome.setRefreshing(false);
+            }
+        });
+    }
+
+    private void stopHomeRefresh() {
+        if (swipeRefreshHome != null) {
+            swipeRefreshHome.setRefreshing(false);
+        }
+    }
+
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         // Đăng ký các bộ lắng nghe LiveData thay đổi từ ViewModel
         viewModel.jumpBackIn.observe(getViewLifecycleOwner(), sessions -> {
             if (sessions != null) jumpAdapter.setSessions(sessions);
+            stopHomeRefresh();
         });
 
         viewModel.recents.observe(getViewLifecycleOwner(), recents -> {
@@ -126,12 +149,12 @@ public class HomeFragment extends Fragment {
                 recentAdapter.setCollections(recents);
                 recentAdapter.notifyDataSetChanged();
 
-                // Tạo phân luồng xử lý nhẹ để giao diện hiển thị danh sách trước không bị khựng
                 new Handler(Looper.getMainLooper()).post(() -> {
                     pickRandomCollectionForMcq();
                     setupRandomGameSection();
                 });
             }
+            stopHomeRefresh();
         });
 
         viewModel.recommended.observe(getViewLifecycleOwner(), collections -> {
@@ -139,6 +162,7 @@ public class HomeFragment extends Fragment {
                 basedAdapter.setCollections(collections);
                 basedAdapter.notifyDataSetChanged();
             }
+            stopHomeRefresh();
         });
 
         viewModel.mcqItems.observe(getViewLifecycleOwner(), items -> {

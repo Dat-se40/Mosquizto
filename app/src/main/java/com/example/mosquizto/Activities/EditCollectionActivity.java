@@ -20,6 +20,7 @@ import com.example.mosquizto.Dto.response.CollectionItemResponse;
 import com.example.mosquizto.Dto.response.CollectionResponse;
 import com.example.mosquizto.Network.itf.CollectionApi;
 import com.example.mosquizto.R;
+import com.example.mosquizto.Util.ApiErrorHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +115,15 @@ public class EditCollectionActivity extends AppCompatActivity {
                     if (collection.getVisibility() != null) {
                         currentVisibility = collection.getVisibility();
                     }
+                } else {
+                    Toast.makeText(EditCollectionActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
-            @Override public void onFailure(Call<ApiResponse<CollectionResponse>> call, Throwable t) {}
+            @Override public void onFailure(Call<ApiResponse<CollectionResponse>> call, Throwable t) {
+                Toast.makeText(EditCollectionActivity.this,
+                        ApiErrorHelper.networkError(EditCollectionActivity.this), Toast.LENGTH_SHORT).show();
+            }
         });
 
         // 2. Lấy danh sách item
@@ -127,9 +134,15 @@ public class EditCollectionActivity extends AppCompatActivity {
                     itemList.clear();
                     itemList.addAll(response.body().getData());
                     adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(EditCollectionActivity.this,
+                            ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }
             }
-            @Override public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {}
+            @Override public void onFailure(Call<ApiResponse<List<CollectionItemResponse>>> call, Throwable t) {
+                Toast.makeText(EditCollectionActivity.this,
+                        ApiErrorHelper.networkError(EditCollectionActivity.this), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -203,14 +216,16 @@ public class EditCollectionActivity extends AppCompatActivity {
     private class ParallelCallback<T> implements Callback<T> {
         @Override
         public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
-            // Có thể check thêm response.isSuccessful() nếu muốn báo lỗi cụ thể
+            if (!response.isSuccessful()) {
+                Log.e(TAG, "Save task failed: " + ApiErrorHelper.extractMessage(response));
+            }
             decrementAndCheck();
         }
 
         @Override
         public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
-            Log.e(TAG, "Task error: " + t.getMessage());
-            decrementAndCheck(); // Dù lỗi mạng vẫn phải trừ counter để không bị kẹt ProgressDialog
+            Log.e(TAG, "Save task onFailure: " + ApiErrorHelper.networkError(EditCollectionActivity.this), t);
+            decrementAndCheck();
         }
     }
 }

@@ -46,6 +46,16 @@ public class ResetPass extends AppCompatActivity {
 
         initViews();
         setupListeners();
+        prefillEmailIfProvided();
+    }
+
+    private void prefillEmailIfProvided() {
+        String email = getIntent().getStringExtra(getString(R.string.intent_key_email));
+        if (email != null && !email.trim().isEmpty()) {
+            etMailReset.setText(email.trim());
+            btnSendLink.setEnabled(true);
+            btnSendLink.setAlpha(1.0f);
+        }
     }
 
     private void initViews() {
