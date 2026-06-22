@@ -45,6 +45,7 @@ public class FlashcardSetsFragment extends Fragment {
     private RecyclerView rv;
     private FlashcardSetAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvEmptyCollections;
     @Inject CollectionApi collectionApi;
     @Inject
     SessionManager sessionManager;
@@ -60,6 +61,7 @@ public class FlashcardSetsFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_flashcard_sets, container, false);
         rv = v.findViewById(R.id.recycler_flashcard_sets);
+        tvEmptyCollections = v.findViewById(R.id.tvEmptyCollections);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
         if (getActivity() instanceof MainActivity)
@@ -140,8 +142,8 @@ public class FlashcardSetsFragment extends Fragment {
                         }
                     }
 
-                    originalList = remoteList;
-                    adapter.setCollectionList(remoteList);
+                    originalList = remoteList != null ? remoteList : new ArrayList<>();
+                    applyFilter();
                     cacheCollectionCounts(getContext(), remoteList);
                 } else {
                     String message = ApiErrorHelper.extractMessage(response);
@@ -212,25 +214,77 @@ public class FlashcardSetsFragment extends Fragment {
 
         // Cập nhật danh sách hiển thị lên RecyclerView
         adapter.setCollectionList(filteredList);
+        updateEmptyState(filteredList);
+    }
+
+    private void updateEmptyState(List<CollectionResponse> displayedList) {
+        if (tvEmptyCollections == null || rv == null) return;
+
+        boolean isDisplayedEmpty = displayedList == null || displayedList.isEmpty();
+        boolean hasOriginalData = originalList != null && !originalList.isEmpty();
+        boolean showFilterEmpty = hasOriginalData && isDisplayedEmpty
+                && (!currentSearchQuery.isEmpty()
+                || getString(R.string.created).equals(currentFilterMode));
+
+        if (isDisplayedEmpty) {
+            tvEmptyCollections.setText(showFilterEmpty
+                    ? R.string.default_recycleview_empty_fragment_flashcard_sets_filter
+                    : R.string.default_recycleview_empty_fragment_flashcard_sets);
+            tvEmptyCollections.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.GONE);
+        } else {
+            tvEmptyCollections.setVisibility(View.GONE);
+            rv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean isOwnedByCurrentUser(CollectionResponse item) {
+        return sessionManager != null
+                && sessionManager.getCurrUser() != null
+                && item.getUserName() != null
+                && item.getUserName().equalsIgnoreCase(sessionManager.getCurrUser().getUsername());
     }
 
     private void confirmDeleteCollection(CollectionResponse item, int position) {
         if (!isAdded() || item == null || item.getId() == null) return;
 
         String title = item.getTitle() != null ? item.getTitle() : getString(R.string.unknown_collection);
+        boolean isOwner = isOwnedByCurrentUser(item);
+
+        int titleRes = isOwner
+                ? R.string.delete_collection_owner_dialog_title
+                : R.string.delete_collection_shared_dialog_title;
+        int messageRes = isOwner
+                ? R.string.delete_collection_owner_dialog_message
+                : R.string.delete_collection_shared_dialog_message;
+
         new AlertDialog.Builder(requireContext())
-                .setTitle(R.string.delete_collection_dialog_title)
-                .setMessage(getString(R.string.delete_collection_dialog_message, title))
-                .setPositiveButton(R.string.delete, (dialog, which) -> deleteCollection(item, position))
+                .setTitle(titleRes)
+                .setMessage(getString(messageRes, title))
+                .setPositiveButton(R.string.delete, (dialog, which) -> deleteCollection(item, position, isOwner))
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    private void deleteCollection(CollectionResponse item, int position) {
+    private void deleteCollection(CollectionResponse item, int position, boolean isOwner) {
         if (!isAdded() || item.getId() == null) return;
 
         swipeRefreshLayout.setRefreshing(true);
-        collectionApi.deleteCollection(item.getId()).enqueue(new Callback<ApiResponse<Void>>() {
+
+        Call<ApiResponse<Void>> call;
+        if (isOwner) {
+            call = collectionApi.deleteCollection(item.getId());
+        } else {
+            Long userId = sessionManager.getCurrUser() != null ? sessionManager.getCurrUser().getId() : null;
+            if (userId == null) {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(), R.string.DialogError, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            call = collectionApi.removeCollectionMember(item.getId(), userId);
+        }
+
+        call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Void>> call,
                                    @NonNull Response<ApiResponse<Void>> response) {
@@ -241,8 +295,10 @@ public class FlashcardSetsFragment extends Fragment {
                     if (originalList != null) {
                         originalList.removeIf(c -> c.getId() != null && c.getId().equals(item.getId()));
                     }
-                    adapter.removeItem(position);
-                    Toast.makeText(getContext(), R.string.collection_deleted, Toast.LENGTH_SHORT).show();
+                    applyFilter();
+                    Toast.makeText(getContext(),
+                            isOwner ? R.string.collection_deleted : R.string.collection_removed_from_library,
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), ApiErrorHelper.extractMessage(response), Toast.LENGTH_LONG).show();
                 }

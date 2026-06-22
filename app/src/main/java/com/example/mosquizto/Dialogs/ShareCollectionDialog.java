@@ -35,11 +35,6 @@ public class ShareCollectionDialog extends DialogFragment {
             "Viewer"
     };
 
-    private static final String[] ALL_ROLE_HINTS = {
-            "Can edit the collection",
-            "Can view the collection"
-    };
-
     // Nếu không phải owner, chỉ được share VIEWER
     private static final CollectionRole[] VIEWER_ONLY_ROLES = {
             CollectionRole.VIEWER
@@ -47,10 +42,6 @@ public class ShareCollectionDialog extends DialogFragment {
 
     private static final String[] VIEWER_ONLY_LABELS = {
             "Viewer"
-    };
-
-    private static final String[] VIEWER_ONLY_HINTS = {
-            "Can view the collection"
     };
 
     private DialogShareCollectionBinding binding;
@@ -83,11 +74,16 @@ public class ShareCollectionDialog extends DialogFragment {
         if (isOwner) {
             availableRoles = ALL_ROLES;
             roleLabels = ALL_ROLE_LABELS;
-            roleHints = ALL_ROLE_HINTS;
+            roleHints = new String[]{
+                    getString(R.string.share_role_editor_hint),
+                    getString(R.string.share_role_viewer_hint)
+            };
         } else {
             availableRoles = VIEWER_ONLY_ROLES;
             roleLabels = VIEWER_ONLY_LABELS;
-            roleHints = VIEWER_ONLY_HINTS;
+            roleHints = new String[]{
+                    getString(R.string.share_role_viewer_hint)
+            };
         }
 
         setupRoleDropdown();

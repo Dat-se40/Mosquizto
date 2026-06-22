@@ -154,7 +154,7 @@ public class EditCollectionActivity extends AppCompatActivity {
         String description = adapter.getDescription().trim();
 
         if (title.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ntEnterStudySetTitle, Toast.LENGTH_SHORT).show();
             return;
         }
 

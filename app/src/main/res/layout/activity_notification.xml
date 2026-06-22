@@ -63,7 +63,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_notifications"
+            android:text="@string/default_recycleview_empty_activity_notification"
             android:layout_marginTop="16dp"
             android:textSize="16sp"
             android:textColor="@color/text_color_secondary"/>

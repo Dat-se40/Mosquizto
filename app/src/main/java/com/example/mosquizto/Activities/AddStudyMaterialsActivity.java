@@ -101,7 +101,7 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
         adapter = new SelectCollectionAdapter(list, selectedCount -> {
             if (selectedCount > 0) {
                 btnConfirmAdd.setVisibility(View.VISIBLE);
-                btnConfirmAdd.setText("Thêm " + selectedCount + " mục");
+                btnConfirmAdd.setText(getString(R.string.btn_add_study_sets_count, selectedCount));
             } else {
                 btnConfirmAdd.setVisibility(View.GONE);
             }
@@ -144,7 +144,7 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
         if (selectedIds.isEmpty()) return;
 
         btnConfirmAdd.setEnabled(false);
-        btnConfirmAdd.setText("Đang thêm...");
+        btnConfirmAdd.setText(R.string.msg_adding);
 
         int total = selectedIds.size();
         final int[] completedCount = {0};
@@ -175,11 +175,11 @@ public class AddStudyMaterialsActivity extends AppCompatActivity {
         if (completed != total) return;
 
         if (success > 0) {
-            Toast.makeText(this, "Đã thêm " + success + " học phần", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_study_sets_added, success), Toast.LENGTH_SHORT).show();
             finish();
         } else {
             btnConfirmAdd.setEnabled(true);
-            btnConfirmAdd.setText("Thêm " + total + " mục");
+            btnConfirmAdd.setText(getString(R.string.btn_add_study_sets_count, total));
             Toast.makeText(this, ApiErrorHelper.networkError(this), Toast.LENGTH_SHORT).show();
         }
     }

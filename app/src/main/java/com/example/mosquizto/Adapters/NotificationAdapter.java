@@ -116,7 +116,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void bindInvite(InviteViewHolder inviteHolder, ShareCollectionResponse invite, Context context, int colorInt, int position) {
         String username = invite.getInviterUsername() != null ? invite.getInviterUsername() : "Someone";
-        String title = invite.getTitle() != null ? invite.getTitle() : "a collection";
+        String title = invite.getTitle() != null ? invite.getTitle() : context.getString(R.string.fallback_study_set_name);
         CollectionRole collectionRole = invite.getCollectionRole();
         String role = (collectionRole != null) ? collectionRole.name() : "VIEWER";
 
@@ -136,7 +136,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void bindCollectionReport(ReportViewHolder reportHolder, CollectionReportResponse report, Context context, int colorInt, int position) {
-        String collectionTitle = "Unknown";
+        String collectionTitle = context.getString(R.string.unknown_collection);
         Integer collectionId = report.getCollectionId();
         if (collectionId == null) {
             Log.w(TAG, "report title: collectionId=null, reportId=" + report.getId());

@@ -102,13 +102,13 @@
     <string name="settings_email">Email</string>
     <string name="settings_reset_password">Đặt lại mật khẩu</string>
 
-    <string name="settings_offline_save_title">Lưu học phần để học ngoại tuyến</string>
-    <string name="settings_offline_save_desc">8 học phần mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
+    <string name="settings_offline_save_title">Lưu bộ thẻ để học ngoại tuyến</string>
+    <string name="settings_offline_save_desc">8 bộ thẻ mới học gần đây nhất của bạn sẽ được tự động tải xuống</string>
     <string name="settings_manage_storage">Quản lý dung lượng lưu trữ</string>
     <string name="settings_clear_local_cache">Xóa bộ nhớ cục bộ</string>
-    <string name="settings_clear_local_cache_desc">Ảnh cache, dữ liệu học phần, phiên đăng nhập và socket</string>
+    <string name="settings_clear_local_cache_desc">Ảnh cache, dữ liệu bộ thẻ, phiên đăng nhập và socket</string>
     <string name="settings_clear_cache_dialog_title">Xóa bộ nhớ cục bộ?</string>
-    <string name="settings_clear_cache_dialog_message">Bạn có muốn xóa bộ nhớ cục bộ trên máy không?\n\nThao tác này sẽ xóa:\n• Ảnh đã cache\n• Dữ liệu học phần đã lưu\n• Phiên đăng nhập hiện tại\n• Kết nối WebSocket\n\nBạn sẽ cần đăng nhập lại. Quá trình này có thể mất một lúc.</string>
+    <string name="settings_clear_cache_dialog_message">Bạn có muốn xóa bộ nhớ cục bộ trên máy không?\n\nThao tác này sẽ xóa:\n• Ảnh đã cache\n• Dữ liệu bộ thẻ đã lưu\n• Phiên đăng nhập hiện tại\n• Kết nối WebSocket\n\nBạn sẽ cần đăng nhập lại. Quá trình này có thể mất một lúc.</string>
     <string name="settings_clear_cache_confirm">Xóa và đăng xuất</string>
     <string name="settings_clear_cache_progress">Đang xóa bộ nhớ cục bộ…</string>
 
@@ -135,21 +135,21 @@
     <string name="logout">Đăng xuất</string>
 
     <string name="etSearch">Tìm kiếm</string>
-    <string name="btnCreateNew">Tạo học phần mới</string>
+    <string name="btnCreateNew">Tạo bộ thẻ mới</string>
     <string name="tvOption">Tùy chọn</string>
     <string name="tvWhocanaccess">AI CÓ QUYỀN XEM?</string>
     <string name="rb_public">Mọi người</string>
     <string name="rb_private">Chỉ mình tôi</string>
 
-    <string name="tvCreateStudySet">Tạo học phần</string>
+    <string name="tvCreateStudySet">Tạo bộ thẻ</string>
     <string name="et_title">Tiêu đề</string>
     <string name="et_description">Mô tả</string>
     <string name="folder_description_hint">Mô tả thư mục</string>
     <string name="ntEnterFolderDescription">Vui lòng nhập mô tả thư mục</string>
     <string name="btn_add_card">Thêm thẻ</string>
     <string name="tvToolbarTitle">Tên thư mục</string>
-    <string name="tvEmptyTitle">Thư mục này chưa có học phần</string>
-    <string name="btnBigAddMaterials">Thêm học phần</string>
+    <string name="tvEmptyTitle">Thư mục này chưa có bộ thẻ</string>
+    <string name="btnBigAddMaterials">Thêm bộ thẻ</string>
     <string name="ntInvalidFolder">Thư mục không hợp lệ</string>
     <string name="ntCannotLoadFolder">Không thể tải thư mục</string>
     <string name="editFolder">Chỉnh sửa thư mục</string>
@@ -157,7 +157,7 @@
     <string name="ntUpdateFolder">Đã cập nhật thư mục</string>
     <string name="ntUpdateFailed">Cập nhật thất bại</string>
     <string name="deleteFolder">Xóa thư mục?</string>
-    <string name="ntRemoveStudySets">Các học phần sẽ bị xóa khỏi thư mục này.</string>
+    <string name="ntRemoveStudySets">Các bộ thẻ sẽ bị xóa khỏi thư mục này.</string>
     <string name="ntFolderDeleted">Đã xóa thư mục</string>
     <string name="ntDeleteFailed">Xóa thất bại</string>
     <string name="ntDeleted">Đã xóa khỏi thư mục</string>
@@ -175,7 +175,7 @@
     <string name="tvModeLabelFb">ĐIỀN VÀO Ô TRỐNG</string>
     <string name="tvResultMessageFb">Hãy thử lại sau</string>
     <string name="tvModeLabelMatch">NỐI Ô</string>
-    <string name="tvIntroMatching">Nhấp vào từ, sau đó nhấp vào định nghĩa.</string>
+    <string name="tvIntroMatching">Nhấp vào một thẻ, sau đó nhấp vào định nghĩa.</string>
     <string name="tvCorrectAnswer">Chính xác!</string>
     <string name="tvNotCorrectAnswer">Chưa chính xác!</string>
     <string name="tvExcellentAnswer">Xuất sắc!</string>
@@ -191,7 +191,7 @@
     <string name="round_1_done">Hoàn thành vòng 1!</string>
     <string name="tvContinueRound2">Tiếp tục vòng 2</string>
     <string name="tvTestFinished">Kiểm tra kết thúc!\nĐiểm: %1$d%%</string>
-    <string name="tvYouMaster">Bạn đã thành thạo học phần này!</string>
+    <string name="tvYouMaster">Bạn đã thành thạo bộ thẻ này!</string>
     <string name="tvfinish_and_save">Hoàn thành và lưu</string>
     <string name="tvSavingProgress">Đang lưu tiến độ...</string>
     <string name="ntCompleteSession">hoan_thanh_phien_hoc_</string>
@@ -225,9 +225,9 @@
     <string name="game_btn_test">Làm Kiểm tra</string>
     <string name="game_desc_mcq">Nhanh chóng chọn câu trả lời đúng</string>
     <string name="game_btn_mcq">Chơi Trắc nghiệm</string>
-    <string name="game_desc_fb">Tự nhập chính xác các thuật ngữ</string>
+    <string name="game_desc_fb">Tự nhập chính xác các thẻ</string>
     <string name="game_btn_fb">Chơi Điền từ</string>
-    <string name="game_desc_match">Ghép cặp thuật ngữ và định nghĩa</string>
+    <string name="game_desc_match">Ghép cặp thẻ và định nghĩa</string>
     <string name="game_btn_match">Chơi Ghép thẻ</string>
 
     <!-- Report Dialog -->
@@ -272,7 +272,7 @@
     <string name="InvalidId">ID bộ thẻ không hợp lệ!</string>
     <string name="ActivityInitializationError">Lỗi khởi tạo Activity!</string>
     <string name="LearnModeDisplayError">Lỗi hiển thị Learn Mode!</string>
-    <string name="tvAddMaterials">Thêm học phần</string>
+    <string name="tvAddMaterials">Thêm bộ thẻ</string>
     <string name="tvEditFolder">Chỉnh sửa thư mục</string>
     <string name="tvShareFolder">Chia sẻ thư mục</string>
     <string name="tvDeleteFolder">Xóa thư mục</string>
@@ -315,20 +315,36 @@
     <string name="auto_scroll_is_on">Tự động cuộn thẻ đang bật</string>
     <string name="auto_scroll_is_off">Tự động cuộn thẻ đang tắt</string>
     <string name="summary_title_excellent">Xuất sắc! Bạn đã học rất tốt rồi 🎉</string>
-    <string name="tv_summary_title">Bạn đang làm rất tuyệt! Hãy tiếp tục tập trung vào các thuật ngữ khó.</string>
+    <string name="tv_summary_title">Bạn đang làm rất tuyệt! Hãy tiếp tục tập trung vào các thẻ khó.</string>
     <string name="summary_title_keep_practicing">Hãy tiếp tục luyện tập! Bạn sẽ làm tốt hơn.</string>
     <string name="settings_delete_account_dialog_title">Xóa tài khoản</string>
-    <string name="settings_delete_account_dialog_message">Hành động này không thể hoàn tác. Toàn bộ dữ liệu và bộ sưu tập của bạn sẽ bị xóa vĩnh viễn.</string>
+    <string name="settings_delete_account_dialog_message">Hành động này không thể hoàn tác. Toàn bộ dữ liệu và bộ thẻ của bạn sẽ bị xóa vĩnh viễn.</string>
     <string name="settings_delete_account_confirm">Xóa</string>
-    <string name="delete_collection_dialog_title">Xóa bộ sưu tập?</string>
-    <string name="delete_collection_dialog_message">"%1$s" sẽ bị xóa vĩnh viễn.</string>
-    <string name="collection_deleted">Đã xóa bộ sưu tập</string>
-    <string name="unknown_collection">Bộ sưu tập không tên</string>
+    <string name="delete_collection_owner_dialog_title">Xóa bộ thẻ vĩnh viễn?</string>
+    <string name="delete_collection_owner_dialog_message">"%1$s" sẽ bị xóa hoàn toàn khỏi hệ thống, gồm toàn bộ thẻ và các bên được chia sẻ liên quan. Không thể hoàn tác.</string>
+    <string name="delete_collection_shared_dialog_title">Gỡ khỏi thư viện?</string>
+    <string name="delete_collection_shared_dialog_message">"%1$s" được chia sẻ với bạn. Bạn sẽ mất quyền truy cập hiện tại và bộ thẻ sẽ không còn hiển thị trong Thư viện.</string>
+    <string name="collection_removed_from_library">Đã gỡ khỏi thư viện</string>
+    <string name="collection_deleted">Đã xóa bộ thẻ</string>
+    <string name="unknown_collection">Bộ thẻ không tên</string>
+    <string name="fallback_study_set_name">một bộ thẻ</string>
+
+    <!-- RecyclerView empty states -->
+    <string name="default_recycleview_empty_home_jump_back_in">Chưa có phiên học nào. Chạm vào đây hoặc dùng Tìm kiếm để tìm bộ thẻ và bắt đầu học.</string>
+    <string name="default_recycleview_empty_home_recents">Bạn chưa mở bộ thẻ nào gần đây. Dùng Tìm kiếm để khám phá bộ thẻ bạn muốn học.</string>
+    <string name="default_recycleview_empty_home_recommendation">Chưa có gợi ý nào. Khám phá Tìm kiếm để tìm bộ thẻ phù hợp với bạn.</string>
+    <string name="default_recycleview_empty_fragment_flashcard_sets">Thư viện của bạn chưa có bộ thẻ nào. Hãy tạo mới hoặc chấp nhận lời mời chia sẻ.</string>
+    <string name="default_recycleview_empty_fragment_flashcard_sets_filter">Không có bộ thẻ nào khớp bộ lọc. Thử từ khóa khác hoặc xóa tìm kiếm.</string>
+    <string name="default_recycleview_empty_other_user_collections">%1$s chưa tạo bộ thẻ công khai nào.</string>
+    <string name="default_recycleview_empty_activity_notification">Bạn chưa có thông báo nào.</string>
+    <string name="default_recycleview_empty_fragment_folders">Bạn chưa tạo thư mục nào. Hãy tạo thư mục để sắp xếp bộ thẻ.</string>
+    <string name="default_recycleview_empty_activity_follow_list_followers">Bạn chưa có người theo dõi nào.</string>
+    <string name="default_recycleview_empty_activity_follow_list_following">Bạn chưa theo dõi ai. Dùng Tìm kiếm để tìm người dùng và theo dõi.</string>
     <string name="tv_progress_label">Tiến độ của bạn</string>
     <string name="known">Đã biết</string>
     <string name="learning">Đang học</string>
     <string name="tv_back_last">Quay lại câu hỏi cuối cùng</string>
-    <string name="btn_continue_review">Tiếp tục ôn thuật ngữ</string>
+    <string name="btn_continue_review">Tiếp tục ôn thẻ</string>
     <string name="btn_study_mode">Ôn luyện trong chế độ Học</string>
     <string name="tv_reset_flashcard">Đặt lại Thẻ ghi nhớ</string>
     <string name="general">Chung</string>
@@ -337,7 +353,7 @@
     <string name="shuffle">Trộn thẻ</string>
     <string name="Flashcard_Settings">Thiết lập thẻ ghi nhớ</string>
     <string name="card_front">Mặt trước</string>
-    <string name="term">Thuật ngữ</string>
+    <string name="term">Thẻ</string>
     <string name="definition">Định nghĩa</string>
     <string name="username_must_not_be_empty">Tên người dùng không được để trống</string>
     <string name="username_must_not_exceed_100_characters">Tên người dùng không được vượt quá 100 ký tự</string>
@@ -347,10 +363,10 @@
     <string name="tvCollectionDetails">%1$d thẻ • bởi %2$s</string>
 
     <string name="notification_title">Thông báo</string>
-    <string name="no_notifications">Bạn không có thông báo nào</string>
+    <string name="no_notifications">@string/default_recycleview_empty_activity_notification</string>
 
-    <string name="invite_message">%1$s đã mời bạn tham gia học phần %2$s với quyền %3$s</string>
-    <string name="report_message">Học %1$s phần của bạn đã bị báo cáo.\nLý do: %2$s. \n Mô tả chi tiết: %3$s</string>
+    <string name="invite_message">%1$s đã mời bạn tham gia bộ thẻ %2$s với quyền %3$s</string>
+    <string name="report_message">Bộ thẻ %1$s của bạn đã bị báo cáo.\nLý do: %2$s.\nMô tả chi tiết: %3$s</string>
 
     <string name="invite_accept">Đồng ý</string>
     <string name="invite_denied">Từ chối</string>
@@ -381,11 +397,20 @@
     <string name="intent_key_author_img_uri" translatable="false">AUTHOR_IMG_URI</string>
 
     <string name="tvTotalCardsCount">%1$d thẻ</string>
-    <string name="editStudySet">Sửa học phần</string>
+    <string name="editStudySet">Sửa bộ thẻ</string>
 
     <string name="tvNotifications">Thông báo</string>
-    <string name="tvInviteContent">%1$s đã mời bạn tham gia học phần %2$s làm %3$s</string>
-    <string name="tvReportContent">Học phần %1$s của bạn đã bị báo cáo.\nLý do: %2$s.</string>
+    <string name="tvInviteContent">%1$s đã mời bạn tham gia bộ thẻ %2$s với quyền %3$s</string>
+    <string name="tvReportContent">Bộ thẻ %1$s của bạn đã bị báo cáo.\nLý do: %2$s.</string>
+    <string name="share_role_editor_hint">Có thể chỉnh sửa bộ thẻ</string>
+    <string name="share_role_viewer_hint">Có thể xem và học bộ thẻ</string>
+    <string name="ntEnterStudySetTitle">Vui lòng nhập tiêu đề</string>
+    <string name="msg_saving_study_set">Đang lưu bộ thẻ…</string>
+    <string name="msg_study_set_created">Đã tạo bộ thẻ thành công!</string>
+    <string name="msg_adding">Đang thêm…</string>
+    <string name="btn_add_study_sets_count">Thêm %1$d bộ thẻ</string>
+    <string name="msg_study_sets_added">Đã thêm %1$d bộ thẻ</string>
+    <string name="msg_copy_of_title">Bản sao của %1$s</string>
     <string name="welcome_back">"Chào mừng "</string>
 
     <string name="followers_following">%1$d người theo dõi • %2$d Đang theo dõi</string>

@@ -107,9 +107,9 @@
     <string name="settings_offline_save_desc">Your 8 most recently studied sets will be automatically downloaded</string>
     <string name="settings_manage_storage">Manage storage</string>
     <string name="settings_clear_local_cache">Clear local storage</string>
-    <string name="settings_clear_local_cache_desc">Images, collection cache, login session, and socket</string>
+    <string name="settings_clear_local_cache_desc">Images, study set cache, login session, and socket</string>
     <string name="settings_clear_cache_dialog_title">Clear local storage?</string>
-    <string name="settings_clear_cache_dialog_message">Do you want to clear local storage on this device?\n\nThis will delete:\n• Cached images \n• Saved collection data\n• Your login session\n• WebSocket connection\n\nYou will need to sign in again. This may take a moment.</string>
+    <string name="settings_clear_cache_dialog_message">Do you want to clear local storage on this device?\n\nThis will delete:\n• Cached images \n• Saved study set data\n• Your login session\n• WebSocket connection\n\nYou will need to sign in again. This may take a moment.</string>
     <string name="settings_clear_cache_confirm">Clear and sign out</string>
     <string name="settings_clear_cache_progress">Clearing local storage…</string>
 
@@ -236,7 +236,7 @@
     <string name="game_btn_match">Play Match</string>
 
     <!-- Report Dialog -->
-    <string name="report_collection_title">Report set</string>
+    <string name="report_collection_title">Report study set</string>
     <string name="report_reason_title">Select a reason (Required)</string>
     <string name="report_reason_inaccurate">Inaccurate information</string>
     <string name="report_reason_offensive">Offensive content / Violation</string>
@@ -268,7 +268,7 @@
     <string name="create">Create</string>
     <string name="msg_failed_create_folder">Failed to create folder</string>
     <string name="msg_folder_created">Folder created: %1$s</string>
-    <string name="msg_empty_set">This set is empty</string>
+    <string name="msg_empty_set">This study set is empty</string>
     <string name="create_new_folder">Create a new folder</string>
     <string name="create_folder">Create folder</string>
     <string name="msg_share_success">Share Successfully\n</string>
@@ -326,12 +326,28 @@
     <string name="tv_summary_title">You are doing great! Keep focusing on the hard terms.</string>
     <string name="summary_title_keep_practicing">Keep practicing! You will do better.</string>
     <string name="settings_delete_account_dialog_title">Delete account</string>
-    <string name="settings_delete_account_dialog_message">This action cannot be undone. All your data and collections will be permanently deleted.</string>
+    <string name="settings_delete_account_dialog_message">This action cannot be undone. All your data and study sets will be permanently deleted.</string>
     <string name="settings_delete_account_confirm">Delete</string>
-    <string name="delete_collection_dialog_title">Delete collection?</string>
-    <string name="delete_collection_dialog_message">"%1$s" will be permanently deleted.</string>
-    <string name="collection_deleted">Collection deleted</string>
-    <string name="unknown_collection">Untitled collection</string>
+    <string name="delete_collection_owner_dialog_title">Delete study set permanently?</string>
+    <string name="delete_collection_owner_dialog_message">"%1$s" will be permanently deleted from the database, including all terms and related shares. This cannot be undone.</string>
+    <string name="delete_collection_shared_dialog_title">Remove from library?</string>
+    <string name="delete_collection_shared_dialog_message">"%1$s" is shared with you. You will lose your current access and it will no longer appear in your Library.</string>
+    <string name="collection_removed_from_library">Removed from library</string>
+    <string name="collection_deleted">Study set deleted</string>
+    <string name="unknown_collection">Untitled study set</string>
+    <string name="fallback_study_set_name">a study set</string>
+
+    <!-- RecyclerView empty states -->
+    <string name="default_recycleview_empty_home_jump_back_in">No study sessions yet. Tap here or use Search to find study sets and start learning.</string>
+    <string name="default_recycleview_empty_home_recents">You haven\'t opened any study sets recently. Use Search to discover study sets you want.</string>
+    <string name="default_recycleview_empty_home_recommendation">No recommendations yet. Explore Search to find study sets that match your interests.</string>
+    <string name="default_recycleview_empty_fragment_flashcard_sets">You don\'t have any study sets in your library yet. Create one or accept a shared invite.</string>
+    <string name="default_recycleview_empty_fragment_flashcard_sets_filter">No study sets match your filter. Try another keyword or clear the search.</string>
+    <string name="default_recycleview_empty_other_user_collections">%1$s hasn\'t created any public study sets yet.</string>
+    <string name="default_recycleview_empty_activity_notification">You have no notifications yet.</string>
+    <string name="default_recycleview_empty_fragment_folders">You haven\'t created any folders yet. Create one to organize your study sets.</string>
+    <string name="default_recycleview_empty_activity_follow_list_followers">You don\'t have any followers yet.</string>
+    <string name="default_recycleview_empty_activity_follow_list_following">You\'re not following anyone yet. Use Search to find users to follow.</string>
     <string name="tv_progress_label">Your progress</string>
     <string name="known">Learned</string>
     <string name="learning">Learning</string>
@@ -356,10 +372,10 @@
     <string name="tvCollectionDetails">%1$d terms • by %2$s</string>
 
     <string name="notification_title">Notifications</string>
-    <string name="no_notifications">You have no notifications</string>
+    <string name="no_notifications">@string/default_recycleview_empty_activity_notification</string>
 
-    <string name="invite_message">%1$s invited you to join course %2$s with role %3$s</string>
-    <string name="report_message">Your course which is named %1$s has been reported.\nReason: %2$s.\n Details: %3$s</string>
+    <string name="invite_message">%1$s invited you to join study set %2$s with role %3$s</string>
+    <string name="report_message">Your study set %1$s has been reported.\nReason: %2$s.\nDetails: %3$s</string>
 
     <string name="invite_accept">Accept</string>
     <string name="invite_denied">Deny</string>
@@ -391,11 +407,20 @@
     <string name="intent_key_email" translatable="false">USER_EMAIL</string>
 
     <string name="tvTotalCardsCount">%1$d terms</string>
-    <string name="editStudySet">Edit set</string>
+    <string name="editStudySet">Edit study set</string>
 
     <string name="tvNotifications">Notifications</string>
-    <string name="tvInviteContent">%1$s invited you to join course %2$s with role %3$s</string>
-    <string name="tvReportContent">Your course which is named %1$s has been reported. Reason: %2$s.</string>
+    <string name="tvInviteContent">%1$s invited you to join study set %2$s with role %3$s</string>
+    <string name="tvReportContent">Your study set %1$s has been reported. Reason: %2$s.</string>
+    <string name="share_role_editor_hint">Can edit the study set</string>
+    <string name="share_role_viewer_hint">Can view the study set</string>
+    <string name="ntEnterStudySetTitle">Please enter a title</string>
+    <string name="msg_saving_study_set">Saving study set…</string>
+    <string name="msg_study_set_created">Study set created successfully!</string>
+    <string name="msg_adding">Adding…</string>
+    <string name="btn_add_study_sets_count">Add %1$d study sets</string>
+    <string name="msg_study_sets_added">Added %1$d study sets</string>
+    <string name="msg_copy_of_title">Copy of %1$s</string>
     <string name="welcome_back">"Welcome back "</string>
 
 

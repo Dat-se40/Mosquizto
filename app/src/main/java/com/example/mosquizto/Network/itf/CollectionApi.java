@@ -81,6 +81,12 @@ public interface CollectionApi {
 
     @DELETE("collection/{id}")
     Call<ApiResponse<Void>> deleteCollection(@Path("id") int id);
+
+    @DELETE("user-collection/delete/member/{collectionId}/{userId}")
+    Call<ApiResponse<Void>> removeCollectionMember(
+            @Path("collectionId") int collectionId,
+            @Path("userId") long userId
+    );
     @DELETE("collection/item/{id}")
     Call<ApiResponse<CollectionItemResponse>> deleteCollectionItem(@Path("id") int id);
     @GET("collection/item/starred")

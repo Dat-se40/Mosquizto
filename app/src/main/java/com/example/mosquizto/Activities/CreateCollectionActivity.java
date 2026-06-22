@@ -62,7 +62,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         RecyclerView rvItems = findViewById(R.id.rv_items);
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Đang lưu học phần...");
+        progressDialog.setMessage(getString(R.string.msg_saving_study_set));
         progressDialog.setCancelable(false);
 
         adapter = new CreateCardAdapter(itemList);
@@ -75,7 +75,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra("COPY_ITEMS")) {
             // Trường hợp COPY: Điền dữ liệu từ bộ thẻ gốc
             String title = intent.getStringExtra("COPY_TITLE");
-            if (title != null) etTitle.setText("Bản sao của " + title);
+            if (title != null) etTitle.setText(getString(R.string.msg_copy_of_title, title));
             
             ArrayList<CollectionItemResponse> incomingItems = intent.getParcelableArrayListExtra("COPY_ITEMS");
             if (incomingItems != null) {
@@ -116,7 +116,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         String description = etDescription.getText().toString().trim();
         
         if (title.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ntEnterStudySetTitle, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -149,7 +149,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
     private void createAllItemsSequentially(int index) {
         if (index >= itemList.size()) {
             progressDialog.dismiss();
-            Toast.makeText(this, "Đã tạo học phần thành công!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.msg_study_set_created, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

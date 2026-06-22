@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment {
 
     private ImageView ivAvatarHome;
     private EditText etSearch;
+    private TextView tvEmptyJumpBackIn, tvEmptyRecents, tvEmptyRecommendation;
 
     private View multiChoiceLayout;
     private TextView tvQuestionNumber, tvQuestionContent, btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4;
@@ -107,6 +108,9 @@ public class HomeFragment extends Fragment {
         rvJumpBackIn = view.findViewById(R.id.rvJumpBackIn);
         rvRecents = view.findViewById(R.id.rvRecents);
         rvBasedOnRecent = view.findViewById(R.id.rvBasedOnRecent);
+        tvEmptyJumpBackIn = view.findViewById(R.id.tvEmptyJumpBackIn);
+        tvEmptyRecents = view.findViewById(R.id.tvEmptyRecents);
+        tvEmptyRecommendation = view.findViewById(R.id.tvEmptyRecommendation);
 
         etSearch = view.findViewById(R.id.etSearch);
 
@@ -140,6 +144,7 @@ public class HomeFragment extends Fragment {
         // Đăng ký các bộ lắng nghe LiveData thay đổi từ ViewModel
         viewModel.jumpBackIn.observe(getViewLifecycleOwner(), sessions -> {
             if (sessions != null) jumpAdapter.setSessions(sessions);
+            updateSectionEmpty(tvEmptyJumpBackIn, rvJumpBackIn, sessions);
             stopHomeRefresh();
         });
 
@@ -154,6 +159,7 @@ public class HomeFragment extends Fragment {
                     setupRandomGameSection();
                 });
             }
+            updateSectionEmpty(tvEmptyRecents, rvRecents, recents);
             stopHomeRefresh();
         });
 
@@ -162,6 +168,7 @@ public class HomeFragment extends Fragment {
                 basedAdapter.setCollections(collections);
                 basedAdapter.notifyDataSetChanged();
             }
+            updateSectionEmpty(tvEmptyRecommendation, rvBasedOnRecent, collections);
             stopHomeRefresh();
         });
 
@@ -192,7 +199,7 @@ public class HomeFragment extends Fragment {
                 // Xóa trạng thái ngay lập tức tránh việc quay lại màn hình Home bị kích hoạt trùng lặp
                 viewModel.clearRandomGameItems();
             } else if (items != null) {
-                Toast.makeText(getContext(), "Bộ học phần rỗng", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.msg_empty_set, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -250,9 +257,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void createListener() {
-        if (etSearch != null) etSearch.setOnClickListener(v -> {
+        View.OnClickListener openSearch = v -> {
             if (mainActivity != null) mainActivity.switchToFragment(FragmentTag.search);
-        });
+        };
+        if (etSearch != null) etSearch.setOnClickListener(openSearch);
+        if (tvEmptyJumpBackIn != null) tvEmptyJumpBackIn.setOnClickListener(openSearch);
+        if (tvEmptyRecents != null) tvEmptyRecents.setOnClickListener(openSearch);
+        if (tvEmptyRecommendation != null) tvEmptyRecommendation.setOnClickListener(openSearch);
+    }
+
+    private void updateSectionEmpty(TextView emptyView, RecyclerView recyclerView, List<?> data) {
+        boolean isEmpty = data == null || data.isEmpty();
+        if (recyclerView != null) {
+            recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
+        if (emptyView != null) {
+            emptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void setupEmptyRecyclerViews() {
